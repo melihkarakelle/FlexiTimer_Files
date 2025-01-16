@@ -264,25 +264,12 @@
         <input type="submit" value="SAVE">
     </form>
 
-    <script>
-        // Form submission handler
-        function submitForm(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Collect form data
-            var formData = new FormData(event.target);
-
-            // Convert form data to JSON
-            var formDataJSON = {};
-            formData.forEach(function(value, key) {
-                formDataJSON[key] = value;
-            });
-
-            // Send data to Flutter or server
-            // For example: window.FormChannel.postMessage(JSON.stringify(formDataJSON));
-            console.log(JSON.stringify(formDataJSON));
-        }
-    </script>
+<script>
+function submitForm(event) {
+  event.preventDefault();
+  Submit.postMessage('submit');
+}
+</script>
 
 </body>
 </html>

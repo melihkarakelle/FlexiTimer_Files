@@ -264,14 +264,24 @@
         <input type="submit" value="SAVE">
     </form>
 
-    <script>
-        // Form submission handler
-        function submitForm(event) {
-            event.preventDefault(); // Prevent default form submission
-            window.FormChannel.postMessage('Submit');
-            console.log(JSON.stringify(formDataJSON));
-        }
-    </script>
+   <script>
+  // Form gönderildiğinde bu fonksiyon çalışacaktır
+  function submitForm(event) {
+    event.preventDefault(); // Formun normal submit işlemini durdur
+
+    // Form verilerini FormData nesnesine topla
+    var formData = new FormData(event.target);
+
+    // FormData nesnesini JSON formatına dönüştür
+    var formDataJSON = {};
+    formData.forEach(function(value, key) {
+      formDataJSON[key] = value;
+    });
+
+    // FormChannel üzerinden Flutter tarafına veriyi gönder
+    window.FormChannel.postMessage(JSON.stringify(formDataJSON));
+  }
+</script>
 
 </body>
 </html>

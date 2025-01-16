@@ -279,7 +279,7 @@
             });
 
             // Send data to Flutter or server
-            // For example: window.FormChannel.postMessage(JSON.stringify(formDataJSON));
+            window.FormChannel.postMessage(JSON.stringify(formDataJSON));
             console.log(JSON.stringify(formDataJSON));
         }
     </script>

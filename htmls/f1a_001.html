@@ -278,8 +278,13 @@
                 formDataJSON[key] = value;
             });
 
+            let inputs = document.querySelectorAll('input');
+            let data = [];
+            inputs.forEach(input => {
+              data.push(input.id + '=' + input.value);
+            });
             // Send data to Flutter or server
-            // For example: window.FormChannel.postMessage(JSON.stringify(formDataJSON));
+            window.FormChannel.postMessage(data.join(','));
             console.log(JSON.stringify(formDataJSON));
         }
     </script>

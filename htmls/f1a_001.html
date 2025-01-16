@@ -302,6 +302,8 @@
         formString = formString.slice(0, -1);
     }
 
+     formString += ';'; //strign sonu  
+
     // FormChannel üzerinden Flutter tarafına veriyi gönder
     FormChannel.postMessage(formString);
     

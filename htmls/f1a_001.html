@@ -268,20 +268,45 @@
   // Form gönderildiğinde bu fonksiyon çalışacaktır
   function submitForm(event) {
     event.preventDefault(); // Formun normal submit işlemini durdur
-
-    // Form verilerini FormData nesnesine topla
-    var formData = new FormData(event.target);
-
-    // FormData nesnesini JSON formatına dönüştür
-    var formDataJSON = {};
-    formData.forEach(function(value, key) {
-      formDataJSON[key] = value;
-    });
+    
+    // Form elementlerini topla
+    var form = event.target;
+    var elements = form.elements;
+    var formString = '';
+    
+    // Her form elementini döngüyle kontrol et
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i];
+        
+        // Sadece name özelliği olan ve submit butonu olmayan elementleri al
+        if (element.name && element.type !== 'submit') {
+            // Eğer checkbox ise, checked durumunu kontrol et
+            if (element.type === 'checkbox') {
+                formString += element.name + '=' + (element.checked ? '1' : '0') + ',';
+            }
+            // Radio butonlar için sadece seçili olanı al
+            else if (element.type === 'radio') {
+                if (element.checked) {
+                    formString += element.name + '=' + element.value + ',';
+                }
+            }
+            // Diğer tüm input tipleri için
+            else {
+                formString += element.name + '=' + element.value + ',';
+            }
+        }
+    }
+    
+    // Son virgülü kaldır
+    if (formString.endsWith(',')) {
+        formString = formString.slice(0, -1);
+    }
 
     // FormChannel üzerinden Flutter tarafına veriyi gönder
-    window.FormChannel.postMessage(JSON.stringify(formDataJSON));
-    //console.log(JSON.stringify(formDataJSON));  
-  }
+    FormChannel.postMessage(formString);
+    
+    return false; // Formun normal submit işlemini engelle
+}
 </script>
 
 </body>

@@ -122,7 +122,7 @@
 
     <h1>F1A Config</h1>
 
-    <form onsubmit="return submitForm()">
+    <form onsubmit="submitForm()">
 
         <!-- Model Identification -->
         <div class="section">
@@ -265,11 +265,23 @@
     </form>
 
 <script>
-function submitForm(event) {
-  event.preventDefault();
-  Submit.postMessage('submit');
-}
-</script>
+  // Form gönderildiğinde bu fonksiyon çalışacaktır
+  function submitForm(event) {
+    event.preventDefault(); // Formun normal submit işlemini durdur
+
+    // Form verilerini FormData nesnesine topla
+    var formData = new FormData(event.target);
+
+    // FormData nesnesini JSON formatına dönüştür
+    var formDataJSON = {};
+    formData.forEach(function(value, key) {
+      formDataJSON[key] = value;
+    });
+
+    // FormChannel üzerinden Flutter tarafına veriyi gönder
+    window.FormChannel.postMessage(JSON.stringify(formDataJSON));
+  }
+</script>    
 
 </body>
 </html>

@@ -7,15 +7,15 @@
     <style>
         /* Mobile-first styling */
         body {
-            background-color: #000; /* High contrast black background */
-            color: #fff; /* High contrast white text */
+            background-color: #000; /* Yüksek kontrastlı siyah arka plan */
+            color: #fff; /* Yüksek kontrastlı beyaz metin */
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 10px;
         }
 
         h1 {
-            color: #FFD700; /* Gold color for headers */
+            color: #FFD700; /* Başlıklar için altın rengi */
             text-align: center;
             font-size: 24px;
             margin-bottom: 20px;
@@ -114,8 +114,102 @@
             cursor: pointer;
         }
 
-        /* Color-blind friendly styling */
-        /* Avoid problematic color combinations */
+        /* Strobe pattern styling */
+        .strobe-pattern {
+            margin: 10px 0;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 30px;
+            height: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Mevcut stillere ekleyin */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: 60px 1fr 1fr;
+            gap: 2px;
+            background-color: #444;
+            padding: 2px;
+            border-radius: 5px;
+        }
+
+        .timer-header {
+            background-color: #FFD700;
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .timer-cell {
+            background-color: #333;
+            padding: 5px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-cell input {
+            width: 90%;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        /* Time inputları için sağa yasla */
+        .timer-cell input[id$="-time"] {
+            text-align: right;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        /* Angle inputları için ortala */
+        .timer-cell input[id$="-angle"] {
+            text-align: center;
+        }
+
+        /* Time inputları için virgülden sonra iki basamak gösterme */
+        .timer-cell input[id$="-time"]::-webkit-inner-spin-button,
+        .timer-cell input[id$="-time"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .dt-input-row {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dt-input-row label {
+            margin: 0;
+            flex: 1;
+        }
+
+        .dt-input-row input {
+            width: 120px;
+            margin: 0 0 0 10px;
+        }
+
+        .checkbox-label {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -132,6 +226,21 @@
 
             <label for="model-name">Name:</label>
             <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+
+            <label for="strobe-pattern">Strobe Pattern:</label>
+            <div class="strobe-pattern">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="bit7" name="strobe-bit" value="128">
+                    <input type="checkbox" id="bit6" name="strobe-bit" value="64">
+                    <input type="checkbox" id="bit5" name="strobe-bit" value="32">
+                    <input type="checkbox" id="bit4" name="strobe-bit" value="16">
+                    <input type="checkbox" id="bit3" name="strobe-bit" value="8">
+                    <input type="checkbox" id="bit2" name="strobe-bit" value="4">
+                    <input type="checkbox" id="bit1" name="strobe-bit" value="2">
+                    <input type="checkbox" id="bit0" name="strobe-bit" value="1">
+                </div>
+                <input type="hidden" id="strobe-value" name="strobe-value" value="0">
+            </div>
         </div>
 
         <!-- Servo Configuration -->
@@ -174,72 +283,64 @@
         <!-- Timer Settings -->
         <div class="section">
             <h2>Timer Settings</h2>
+            <div class="timer-grid">
+                <div class="timer-header">Steps</div>
+                <div class="timer-header">Time (s)</div>
+                <div class="timer-header">Angle (°)</div>
 
-            <!-- T1 -->
-            <div class="timer-row">
-                <div>
-                    <label for="t1-time">T1 Time (0-999s):</label>
+                <div class="timer-cell">T1</div>
+                <div class="timer-cell">
                     <input type="number" id="t1-time" name="t1-time" min="0" max="999" step="0.01" value="2.50">
                 </div>
-                <div>
-                    <label for="t1-angle">T1 Angle (0-180°):</label>
+                <div class="timer-cell">
                     <input type="number" id="t1-angle" name="t1-angle" min="0" max="180" value="90">
                 </div>
-            </div>
 
-            <!-- T2 -->
-            <div class="timer-row">
-                <div>
-                    <label for="t2-time">T2 Time (0-999s):</label>
+                <div class="timer-cell">T2</div>
+                <div class="timer-cell">
                     <input type="number" id="t2-time" name="t2-time" min="0" max="999" step="0.01" value="2.50">
                 </div>
-                <div>
-                    <label for="t2-angle">T2 Angle (0-180°):</label>
-                    <input type="number" id="t2-angle" name="t2-angle" min="0" max="180" value="90">
+                <div class="timer-cell">
+                    <input type="number" id="t2-angle" name="t2-angle" min="0" max="180" value="100">
                 </div>
-            </div>
 
-            <!-- T3 -->
-            <div class="timer-row">
-                <div>
-                    <label for="t3-time">T3 Time (0-999s):</label>
-                    <input type="number" id="t3-time" name="t3-time" min="0" max="999" step="0.01" value="2.50">
+                <div class="timer-cell">T3</div>
+                <div class="timer-cell">
+                    <input type="number" id="t3-time" name="t3-time" min="0" max="999" step="0.01" value="4.32">
                 </div>
-                <div>
-                    <label for="t3-angle">T3 Angle (0-180°):</label>
-                    <input type="number" id="t3-angle" name="t3-angle" min="0" max="180" value="90">
+                <div class="timer-cell">
+                    <input type="number" id="t3-angle" name="t3-angle" min="0" max="180" value="120">
                 </div>
-            </div>
 
-            <!-- T4 -->
-            <div class="timer-row">
-                <div>
-                    <label for="t4-time">T4 Time (0-999s):</label>
+                <div class="timer-cell">T4</div>
+                <div class="timer-cell">
                     <input type="number" id="t4-time" name="t4-time" min="0" max="999" step="0.01" value="2.50">
                 </div>
-                <div>
-                    <label for="t4-angle">T4 Angle (0-180°):</label>
-                    <input type="number" id="t4-angle" name="t4-angle" min="0" max="180" value="90">
+                <div class="timer-cell">
+                    <input type="number" id="t4-angle" name="t4-angle" min="0" max="180" value="140">
+                </div>
+                
+                <div class="timer-cell">DT</div>
+                <div class="timer-cell">
+                    <input type="number" id="dt-time" name="dt-time" min="0" max="999" step="0.01" value="240">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="dt-angle" name="dt-angle" min="0" max="180" value="180">
                 </div>
             </div>
-        </div>
-
-        <!-- DT Settings -->
-        <div class="section">
-            <h2>DT Settings</h2>
-            <label for="dt-servo-position">DT Servo Position (0-180°):</label>
-            <input type="number" id="dt-servo-position" name="dt-servo-position" min="0" max="180" value="90">
-
-            <label for="auto-dt-altitude">Auto DT Max Altitude (0-1000m):</label>
-            <input type="number" id="auto-dt-altitude" name="auto-dt-altitude" min="0" max="1000" value="0">
-
-            <label for="auto-dt-speed">Auto DT Max Vertical Speed (-10 to 0 m/s):</label>
-            <input type="number" id="auto-dt-speed" name="auto-dt-speed" min="-10" max="0" step="0.1" value="0">
         </div>
 
         <!-- Auto DT Features -->
         <div class="section">
             <h2>Auto DT Features</h2>
+            <div class="dt-input-row">
+                <label for="max-altitude">Max Altitude (m):</label>
+                <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="0">
+            </div>
+            <div class="dt-input-row">
+                <label for="max-distance">Max Distance (m):</label>
+                <input type="number" id="max-distance-value" name="max-distance-value" min="0" max="10000" value="0">
+            </div>
             <div class="checkbox-label">
                 <input type="checkbox" id="flip-detection" name="flip-detection">
                 <label for="flip-detection">Flip Detection</label>
@@ -248,16 +349,7 @@
                 <input type="checkbox" id="loop-detection" name="loop-detection">
                 <label for="loop-detection">Loop Detection</label>
             </div>
-            <div class="checkbox-label">
-                <input type="checkbox" id="max-altitude" name="max-altitude">
-                <label for="max-altitude">Max Altitude (m):</label>
-                <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="0" style="width: 100px; margin-left: 10px;">
-            </div>
-            <div class="checkbox-label">
-                <input type="checkbox" id="max-distance" name="max-distance">
-                <label for="max-distance">Max Distance (m):</label>
-                <input type="number" id="max-distance-value" name="max-distance-value" min="0" max="10000" value="0" style="width: 100px; margin-left: 10px;">
-            </div>
+            
         </div>
 
         <!-- Submit Button -->
@@ -307,6 +399,28 @@
     
     return false; // Formun normal submit işlemini engelle
 }
+
+    document.querySelectorAll('input[name="strobe-bit"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let value = 0;
+            document.querySelectorAll('input[name="strobe-bit"]').forEach(cb => {
+                if (cb.checked) {
+                    value += parseInt(cb.value);
+                }
+            });
+            document.getElementById('strobe-value').value = value;
+        });
+    });
+
+    // Time inputları için virgülden sonra iki basamak formatı
+    document.querySelectorAll('input[id$="-time"]').forEach(input => {
+        input.addEventListener('change', function() {
+            this.value = parseFloat(this.value).toFixed(2);
+        });
+        input.addEventListener('blur', function() {
+            this.value = parseFloat(this.value).toFixed(2);
+        });
+    });
 </script>
 
 </body>

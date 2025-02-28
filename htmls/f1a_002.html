@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <title>Model Airplane Timer Configuration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        /* Mobile-first styling */
+        body {
+            background-color: #000; /* Yüksek kontrastlı siyah arka plan */
+            color: #fff; /* Yüksek kontrastlı beyaz metin */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+        }
+
+        h1 {
+            color: #FFD700; /* Başlıklar için altın rengi */
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .preset-buttons button {
+            width: 23%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .timer-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .timer-row > div {
+            flex: 0 0 48%;
+        }
+
+        .timer-row > div label {
+            margin-bottom: 5px;
+        }
+
+        .timer-row > div input {
+            width: 100%;
+        }
+
+        input[type="submit"] {
+            background-color: #FFD700;
+            color: #000;
+            font-size: 18px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Strobe pattern styling */
+        .strobe-pattern {
+            margin: 10px 0;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 30px;
+            height: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Mevcut stillere ekleyin */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: 60px 80px 1fr 1fr 1fr;
+            gap: 2px;
+            background-color: #444;
+            padding: 2px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .timer-header {
+            background-color: #FFD700;
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .timer-cell {
+            background-color: #333;
+            padding: 5px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-cell input {
+            width: 90%;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .timer-cell input::-webkit-inner-spin-button,
+        .timer-cell input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Time inputları için sağa yasla */
+        .timer-cell input[id$="-time"] {
+            text-align: right;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        /* Angle inputları için ortala */
+        .timer-cell input[id$="-angle"] {
+            text-align: center;
+        }
+
+        /* Time inputları için virgülden sonra iki basamak gösterme */
+        .timer-cell input[id$="-time"]::-webkit-inner-spin-button,
+        .timer-cell input[id$="-time"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .dt-input-row {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dt-input-row label {
+            margin: 0;
+            flex: 1;
+        }
+
+        .dt-input-row input {
+            width: 120px;
+            margin: 0 0 0 10px;
+        }
+
+        .checkbox-label {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-row {
+            margin-top: 15px;
+        }
+        
+        .option-row label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .option-row select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .hook-options-container {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+        }
+        
+        .hook-options-container h3 {
+            color: #FFD700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .option-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .option-row label {
+            flex: 1;
+            margin: 0;
+            padding-right: 10px;
+        }
+        
+        .option-row select,
+        .option-row input {
+            flex: 1;
+            width: auto;
+            margin: 0;
+        }
+
+        /* Timer grid için CSS güncellemesi */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: 60px 80px 1fr 1fr 1fr;
+            gap: 2px;
+            background-color: #444;
+            padding: 2px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .timer-header {
+            background-color: #FFD700;
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .timer-cell {
+            background-color: #333;
+            padding: 5px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-cell input {
+            width: 90%;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .timer-cell input::-webkit-inner-spin-button,
+        .timer-cell input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Fonksiyon isimlerine özel stil */
+        .function-name {
+            cursor: help;
+            position: relative;
+            font-weight: bold;
+        }
+        
+        .function-name:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            z-index: 1;
+            background-color: #222;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>F1A Config</h1>
+
+    <form onsubmit="submitForm(event)">
+
+        <!-- Model Identification -->
+        <div class="section">
+            <h2>Model Identification</h2>
+            
+            <label for="model-name">Name:</label>
+            <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+            
+            <label for="preset-name">Preset Name:</label>
+            <input type="text" id="preset-name" name="preset-name" placeholder="e.g., Competition Setup">
+
+            <label for="strobe-pattern">Strobe Pattern:</label>
+            <div class="strobe-pattern">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="bit7" name="strobe-bit" value="128">
+                    <input type="checkbox" id="bit6" name="strobe-bit" value="64">
+                    <input type="checkbox" id="bit5" name="strobe-bit" value="32">
+                    <input type="checkbox" id="bit4" name="strobe-bit" value="16">
+                    <input type="checkbox" id="bit3" name="strobe-bit" value="8">
+                    <input type="checkbox" id="bit2" name="strobe-bit" value="4">
+                    <input type="checkbox" id="bit1" name="strobe-bit" value="2">
+                    <input type="checkbox" id="bit0" name="strobe-bit" value="1">
+                </div>
+                <input type="hidden" id="strobe-value" name="strobe-value" value="0">
+            </div>
+        </div>
+
+        <!-- Servo Configuration -->
+        <div class="section">
+            <h2>Servo Configuration</h2>
+            <div class="option-row">
+                <label for="ru-servo-pin">RU Servo Pin:</label>
+                <select id="ru-servo-pin" name="ru-servo-pin">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <div class="option-row">
+                <label for="tl-servo-pin">TL Servo Pin:</label>
+                <select id="tl-servo-pin" name="tl-servo-pin">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <div class="option-row">
+                <label for="ww-servo-pin">WW Servo Pin:</label>
+                <select id="ww-servo-pin" name="ww-servo-pin">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Servo & Port Set-Up -->
+        <div class="section">
+            <h2>Servo & Port Set-Up</h2>
+            
+            <label for="hook-type">Hook Type:</label>
+            <select id="hook-type" name="hook-type" onchange="updateHookOptions()">
+                <option value="2switch">2 Switch</option>
+                <option value="2switch_servo">2 Switch + Servo</option>
+                <option value="rotary_servo">Rotary Enc. + Servo</option>
+            </select>
+            
+            <div id="hook-options">
+                <!-- Bu alan dinamik olarak doldurulacak -->
+            </div>
+        </div>
+
+        <!-- Timer Settings -->
+        <div class="section">
+            <h2>Timer Settings</h2>
+            <div class="timer-grid">
+                <div class="timer-header">Function</div>
+                <div class="timer-header">Time (s)</div>
+                <div class="timer-header">RU</div>
+                <div class="timer-header">TL</div>
+                <div class="timer-header">WW</div>
+
+                <div class="timer-cell function-name" title="Power ON">On</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="on-ru" name="on-ru" min="0" max="255" value="45">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="on-tl" name="on-tl" min="0" max="255" value="35">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="on-ww" name="on-ww" min="0" max="255" value="0">
+                </div>
+
+                <div class="timer-cell function-name" title="Straight Tow">Str</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="str-ru" name="str-ru" min="0" max="255" value="5">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="str-tl" name="str-tl" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="str-ww" name="str-ww" min="0" max="255" value="50">
+                </div>
+
+                <div class="timer-cell function-name" title="Circle Tow">Cir</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="cir-ru" name="cir-ru" min="0" max="255" value="105">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cir-tl" name="cir-tl" min="0" max="255" value="15">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cir-ww" name="cir-ww" min="0" max="255" value="150">
+                </div>
+
+                <div class="timer-cell function-name" title="On Line Acceleration">OLA</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="ola-ru" name="ola-ru" min="0" max="255" value="35">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="ola-tl" name="ola-tl" min="0" max="255" value="5">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="ola-ww" name="ola-ww" min="0" max="255" value="75">
+                </div>
+
+                <div class="timer-cell function-name" title="Pitch Up 1">Pu1</div>
+                <div class="timer-cell">
+                    <input type="number" id="pu1-time" name="pu1-time" min="0" max="10" step="0.01" value="0.03">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu1-ru" name="pu1-ru" min="0" max="255" value="35">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu1-tl" name="pu1-tl" min="0" max="255" value="0">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu1-ww" name="pu1-ww" min="0" max="255" value="75">
+                </div>
+
+                <div class="timer-cell function-name" title="Pitch Up 2">Pu2</div>
+                <div class="timer-cell">
+                    <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.1">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu2-ru" name="pu2-ru" min="0" max="255" value="30">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu2-tl" name="pu2-tl" min="0" max="255" value="2">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pu2-ww" name="pu2-ww" min="0" max="255" value="70">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 1">Cr1</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.4">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr1-ru" name="cr1-ru" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr1-tl" name="cr1-tl" min="0" max="255" value="60">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr1-ww" name="cr1-ww" min="0" max="255" value="60">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 2">Cr2</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.7">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr2-ru" name="cr2-ru" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr2-tl" name="cr2-tl" min="0" max="255" value="65">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr2-ww" name="cr2-ww" min="0" max="255" value="60">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 3">Cr3</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr3-ru" name="cr3-ru" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr3-tl" name="cr3-tl" min="0" max="255" value="75">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="cr3-ww" name="cr3-ww" min="0" max="255" value="60">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 1">Bu1</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.5">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu1-ru" name="bu1-ru" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu1-tl" name="bu1-tl" min="0" max="255" value="200">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu1-ww" name="bu1-ww" min="0" max="255" value="60">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 2">Bu2</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="1.1">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu2-ru" name="bu2-ru" min="0" max="255" value="25">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu2-tl" name="bu2-tl" min="0" max="255" value="220">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu2-ww" name="bu2-ww" min="0" max="255" value="75">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 3">Bu3</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.7">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu3-ru" name="bu3-ru" min="0" max="255" value="55">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu3-tl" name="bu3-tl" min="0" max="255" value="240">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="bu3-ww" name="bu3-ww" min="0" max="255" value="85">
+                </div>
+
+                <div class="timer-cell function-name" title="Fast Glide">Fg</div>
+                <div class="timer-cell">
+                    <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="7.1">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="fg-ru" name="fg-ru" min="0" max="255" value="57">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="fg-tl" name="fg-tl" min="0" max="255" value="35">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="fg-ww" name="fg-ww" min="0" max="255" value="15">
+                </div>
+
+                <div class="timer-cell function-name" title="Glide">GL</div>
+                <div class="timer-cell">
+                    <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="180">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="gl-ru" name="gl-ru" min="0" max="255" value="52">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="gl-tl" name="gl-tl" min="0" max="255" value="32">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="gl-ww" name="gl-ww" min="0" max="255" value="5">
+                </div>
+
+                <div class="timer-cell function-name" title="De-Thermalised">DT</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="dt-ru" name="dt-ru" min="0" max="255" value="100">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="dt-tl" name="dt-tl" min="0" max="255" value="255">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="dt-ww" name="dt-ww" min="0" max="255" value="0">
+                </div>
+
+                <div class="timer-cell function-name" title="Park mode 10s after DT">Pk</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell">
+                    <input type="number" id="pk-ru" name="pk-ru" min="0" max="255" value="100">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pk-tl" name="pk-tl" min="0" max="255" value="0">
+                </div>
+                <div class="timer-cell">
+                    <input type="number" id="pk-ww" name="pk-ww" min="0" max="255" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto DT Features -->
+        <div class="section">
+            <h2>Auto DT Features</h2>
+            <div class="dt-input-row">
+                <label for="max-sink">Max Sink (m/s):</label>
+                <input type="number" id="max-sink-value" name="max-sink-value" min="0" max="10" step="0.1" value="2">
+            </div>
+            <div class="dt-input-row">
+                <label for="max-altitude">Max Altitude (m):</label>
+                <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="500">
+            </div>
+            <div class="checkbox-label">
+                <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
+                <label for="flip-loop-detection">Flip & Loop Detection</label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <input type="submit" value="SAVE">
+    </form>
+
+   <script>
+  // Form gönderildiğinde bu fonksiyon çalışacaktır
+  function submitForm(event) {
+    event.preventDefault(); // Formun normal submit işlemini durdur
+    
+    // Form elementlerini topla
+    var form = event.target;
+    var elements = form.elements;
+    var formString = '';
+    
+    // Her form elementini döngüyle kontrol et
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i];
+        
+        // Sadece name özelliği olan ve submit butonu olmayan elementleri al
+        if (element.name && element.type !== 'submit') {
+            // Eğer checkbox ise, checked durumunu kontrol et
+            if (element.type === 'checkbox') {
+                formString += element.name + '=' + (element.checked ? '1' : '0') + ',';
+            }
+            // Radio butonlar için sadece seçili olanı al
+            else if (element.type === 'radio') {
+                if (element.checked) {
+                    formString += element.name + '=' + element.value + ',';
+                }
+            }
+            // Diğer tüm input tipleri için
+            else {
+                formString += element.name + '=' + element.value + ',';
+            }
+        }
+    }
+    
+    // Son virgülü kaldır
+    if (formString.endsWith(',')) {
+        formString = formString.slice(0, -1);
+    }
+
+    // FormChannel üzerinden Flutter tarafına veriyi gönder
+    FormChannel.postMessage(formString);
+    
+    return false; // Formun normal submit işlemini engelle
+}
+
+    document.querySelectorAll('input[name="strobe-bit"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let value = 0;
+            document.querySelectorAll('input[name="strobe-bit"]').forEach(cb => {
+                if (cb.checked) {
+                    value += parseInt(cb.value);
+                }
+            });
+            document.getElementById('strobe-value').value = value;
+        });
+    });
+
+    // Time inputları için virgülden sonra iki basamak formatı
+    document.querySelectorAll('input[id$="-time"]').forEach(input => {
+        input.addEventListener('change', function() {
+            this.value = parseFloat(this.value).toFixed(2);
+        });
+        input.addEventListener('blur', function() {
+            this.value = parseFloat(this.value).toFixed(2);
+        });
+    });
+
+    function updateHookOptions() {
+        const hookType = document.getElementById('hook-type').value;
+        const optionsDiv = document.getElementById('hook-options');
+        
+        // Önce mevcut içeriği temizle
+        optionsDiv.innerHTML = '';
+        
+        // Seçime göre yeni içerik oluştur
+        if (hookType === '2switch') {
+            optionsDiv.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>2 Switch Options</h3>
+                    <div class="option-row">
+                        <label for="switch1-pin">Switch 1 Pin:</label>
+                        <select id="switch1-pin" name="switch1-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="switch2-pin">Switch 2 Pin:</label>
+                        <select id="switch2-pin" name="switch2-pin">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-bounce-time">Hook Bounce Time (mS):</label>
+                        <input type="number" id="hook-bounce-time" name="hook-bounce-time" min="0" max="1000" value="12">
+                    </div>
+                </div>
+            `;
+        } else if (hookType === '2switch_servo') {
+            optionsDiv.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>2 Switch + Servo Options</h3>
+                    <div class="option-row">
+                        <label for="switch1-pin">Switch 1 Pin:</label>
+                        <select id="switch1-pin" name="switch1-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="switch2-pin">Switch 2 Pin:</label>
+                        <select id="switch2-pin" name="switch2-pin">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-pin">Servo Pin:</label>
+                        <select id="servo-pin" name="servo-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-bounce-time">Hook Bounce Time (mS):</label>
+                        <input type="number" id="hook-bounce-time" name="hook-bounce-time" min="0" max="1000" value="12">
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-open-value">Servo Open Value:</label>
+                        <input type="number" id="servo-open-value" name="servo-open-value" min="0" max="255" value="20">
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-closed-value">Servo Closed Value:</label>
+                        <input type="number" id="servo-closed-value" name="servo-closed-value" min="0" max="255" value="200">
+                    </div>
+                    <div class="option-row">
+                        <label for="ola-delay-start">OLA Delay Start (mS):</label>
+                        <input type="number" id="ola-delay-start" name="ola-delay-start" min="0" max="1000" value="200">
+                    </div>
+                    <div class="option-row">
+                        <label for="ola-delay-end">OLA Delay End (mS):</label>
+                        <input type="number" id="ola-delay-end" name="ola-delay-end" min="0" max="1000" value="500">
+                    </div>
+                    <div class="option-row">
+                        <label for="gust-delay">Gust Delay (mS):</label>
+                        <input type="number" id="gust-delay" name="gust-delay" min="0" max="1000" value="100">
+                    </div>
+                    <div class="option-row">
+                        <label for="acceleration-trigger">Acceleration Trigger:</label>
+                        <select id="acceleration-trigger" name="acceleration-trigger">
+                            <option value="Yes" selected>Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="acceleration-value">Acceleration Value (G):</label>
+                        <input type="number" id="acceleration-value" name="acceleration-value" min="0" max="20" step="0.1" value="7.6">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-relatch-period">Hook Re-latch Period (s):</label>
+                        <input type="number" id="hook-relatch-period" name="hook-relatch-period" min="0" max="10" step="0.1" value="1.1">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-unlatch-period">Hook Unlatch Period (s):</label>
+                        <input type="number" id="hook-unlatch-period" name="hook-unlatch-period" min="0" max="10" step="0.1" value="0.3">
+                    </div>
+                </div>
+            `;
+        } else if (hookType === 'rotary_servo') {
+            optionsDiv.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>Rotary Encoder + Servo Options</h3>
+                    <div class="option-row">
+                        <label for="rotary-pin">Rotary Encoder Pin:</label>
+                        <select id="rotary-pin" name="rotary-pin">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-pin">Servo Pin:</label>
+                        <select id="servo-pin" name="servo-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="straight-tow-angle">Straight Tow Angle:</label>
+                        <input type="number" id="straight-tow-angle" name="straight-tow-angle" min="0" max="360" value="273">
+                    </div>
+                    <div class="option-row">
+                        <label for="circle-tow-increment">Circle Tow Increment:</label>
+                        <input type="number" id="circle-tow-increment" name="circle-tow-increment" min="-20" max="20" value="5">
+                    </div>
+                    <div class="option-row">
+                        <label for="ola-increment">OLA Increment:</label>
+                        <input type="number" id="ola-increment" name="ola-increment" min="-20" max="20" value="-5">
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-open-value">Servo Open Value:</label>
+                        <input type="number" id="servo-open-value" name="servo-open-value" min="0" max="255" value="20">
+                    </div>
+                    <div class="option-row">
+                        <label for="servo-closed-value">Servo Closed Value:</label>
+                        <input type="number" id="servo-closed-value" name="servo-closed-value" min="0" max="255" value="200">
+                    </div>
+                    <div class="option-row">
+                        <label for="ola-delay-start">OLA Delay Start (mS):</label>
+                        <input type="number" id="ola-delay-start" name="ola-delay-start" min="0" max="1000" value="200">
+                    </div>
+                    <div class="option-row">
+                        <label for="ola-delay-end">OLA Delay End (mS):</label>
+                        <input type="number" id="ola-delay-end" name="ola-delay-end" min="0" max="1000" value="500">
+                    </div>
+                    <div class="option-row">
+                        <label for="gust-delay">Gust Delay (s):</label>
+                        <input type="number" id="gust-delay" name="gust-delay" min="0" max="10" step="0.1" value="0.1">
+                    </div>
+                    <div class="option-row">
+                        <label for="acceleration-trigger">Acceleration Trigger:</label>
+                        <select id="acceleration-trigger" name="acceleration-trigger">
+                            <option value="Yes" selected>Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="acceleration-value">Acceleration Value (G):</label>
+                        <input type="number" id="acceleration-value" name="acceleration-value" min="0" max="20" step="0.1" value="7.6">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-relatch-period">Hook Re-latch Period (s):</label>
+                        <input type="number" id="hook-relatch-period" name="hook-relatch-period" min="0" max="10" step="0.1" value="1.1">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-unlatch-period">Hook Unlatch Period (s):</label>
+                        <input type="number" id="hook-unlatch-period" name="hook-unlatch-period" min="0" max="10" step="0.1" value="0.3">
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Sayfa yüklendiğinde varsayılan seçeneği göster
+    document.addEventListener('DOMContentLoaded', function() {
+        updateHookOptions();
+    });
+</script>
+
+</body>
+</html>

@@ -343,6 +343,15 @@
             font-size: 14px;
             font-weight: normal;
         }
+
+        .pin-header-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -672,6 +681,95 @@
             </div>
         </div>
 
+        <!-- Pin Header Diagram -->
+        <div class="section">
+            <h2>Pin Header Layout</h2>
+            <div class="pin-header-container">
+                <svg width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Header Outline -->
+                    <rect x="20" y="20" width="260" height="110" rx="5" ry="5" fill="#333" stroke="#555" stroke-width="2"/>
+                    
+                    <!-- Top Row Pins -->
+                    <g class="pin-row">
+                        <!-- S1 -->
+                        <rect x="30" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="40" y="44" font-size="12" text-anchor="middle" fill="#000">S1</text>
+                        <!-- + -->
+                        <rect x="55" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="65" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="80" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="90" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S1 -->
+                        <text x="55" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s1-label">WW Servo</text>
+                        
+                        <!-- S2 -->
+                        <rect x="110" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="120" y="44" font-size="12" text-anchor="middle" fill="#000">S2</text>
+                        <!-- + -->
+                        <rect x="135" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="145" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="160" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="170" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S2 -->
+                        <text x="135" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s2-label">TL Servo</text>
+                        
+                        <!-- S3 -->
+                        <rect x="190" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="200" y="44" font-size="12" text-anchor="middle" fill="#000">S3</text>
+                        <!-- + -->
+                        <rect x="215" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="225" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="240" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="250" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S3 -->
+                        <text x="215" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s3-label">RU Servo</text>
+                    </g>
+                    
+                    <!-- Bottom Row Pins -->
+                    <g class="pin-row">
+                        <!-- S4 -->
+                        <rect x="30" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="40" y="94" font-size="12" text-anchor="middle" fill="#000">S4</text>
+                        <!-- + -->
+                        <rect x="55" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="65" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="80" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="90" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S4 -->
+                        <text x="55" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s4-label">Hook SW1</text>
+                        
+                        <!-- S5 -->
+                        <rect x="110" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="120" y="94" font-size="12" text-anchor="middle" fill="#000">S5</text>
+                        <!-- + -->
+                        <rect x="135" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="145" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="160" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="170" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S5 -->
+                        <text x="135" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s5-label">Hook SW2</text>
+                        
+                        <!-- S6 -->
+                        <rect x="190" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="200" y="94" font-size="12" text-anchor="middle" fill="#000">S6</text>
+                        <!-- + -->
+                        <rect x="215" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="225" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <!-- - -->
+                        <rect x="240" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="250" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <!-- Label under S6 -->
+                        <text x="215" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s6-label">Hook Servo</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
         <!-- Submit Button -->
         <input type="submit" value="SAVE">
     </form>
@@ -742,214 +840,199 @@
         });
     });
 
+    // Pin diyagramını güncelleyen fonksiyon
+    function updatePinDiagram() {
+        // Servo pinlerini al
+        const ruServoPin = document.getElementById('ru-servo-pin').value;
+        const tlServoPin = document.getElementById('tl-servo-pin').value;
+        const wwServoPin = document.getElementById('ww-servo-pin').value;
+        
+        // Hook tipini al
+        const hookType = document.getElementById('hook-type').value;
+        
+        // Etiketleri temizle
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById(`s${i}-label`).textContent = "";
+        }
+        
+        // Servo pinlerini etiketlere yerleştir
+        document.getElementById(`s${wwServoPin}-label`).textContent = "WW Servo";
+        document.getElementById(`s${tlServoPin}-label`).textContent = "TL Servo";
+        document.getElementById(`s${ruServoPin}-label`).textContent = "RU Servo";
+        
+        // Hook tipine göre diğer pinleri yerleştir
+        if (hookType === "2switch") {
+            // Hook switch pinlerini al
+            const hookSw1 = document.getElementById('hook-sw1-pin') ? 
+                            document.getElementById('hook-sw1-pin').value : "4";
+            const hookSw2 = document.getElementById('hook-sw2-pin') ? 
+                            document.getElementById('hook-sw2-pin').value : "5";
+            
+            document.getElementById(`s${hookSw1}-label`).textContent = "Hook SW1";
+            document.getElementById(`s${hookSw2}-label`).textContent = "Hook SW2";
+        } 
+        else if (hookType === "2switch_servo") {
+            // Hook switch ve servo pinlerini al
+            const hookSw1 = document.getElementById('hook-sw1-pin') ? 
+                            document.getElementById('hook-sw1-pin').value : "4";
+            const hookSw2 = document.getElementById('hook-sw2-pin') ? 
+                            document.getElementById('hook-sw2-pin').value : "5";
+            const hookServo = document.getElementById('hook-servo-pin') ? 
+                              document.getElementById('hook-servo-pin').value : "6";
+            
+            document.getElementById(`s${hookSw1}-label`).textContent = "Hook SW1";
+            document.getElementById(`s${hookSw2}-label`).textContent = "Hook SW2";
+            document.getElementById(`s${hookServo}-label`).textContent = "Hook Servo";
+        }
+        else if (hookType === "rotary_servo") {
+            // Encoder ve servo pinlerini al
+            const encoderPin = document.getElementById('encoder-pin') ? 
+                               document.getElementById('encoder-pin').value : "4";
+            const hookServo = document.getElementById('hook-servo-pin') ? 
+                              document.getElementById('hook-servo-pin').value : "5";
+            
+            document.getElementById(`s${encoderPin}-label`).textContent = "Encoder";
+            document.getElementById(`s${hookServo}-label`).textContent = "Hook Servo";
+        }
+    }
+    
+    // Sayfa yüklendiğinde çalışacak kod
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hook seçeneklerini başlangıçta güncelle
+        updateHookOptions();
+        
+        // Servo pin seçimlerini dinle
+        document.getElementById('ru-servo-pin').addEventListener('change', updatePinDiagram);
+        document.getElementById('tl-servo-pin').addEventListener('change', updatePinDiagram);
+        document.getElementById('ww-servo-pin').addEventListener('change', updatePinDiagram);
+        
+        // Hook tipi değiştiğinde diyagramı güncelle
+        document.getElementById('hook-type').addEventListener('change', function() {
+            updateHookOptions();
+            updatePinDiagram();
+        });
+        
+        // Sayfa yüklendiğinde diyagramı güncelle
+        updatePinDiagram();
+    });
+    
+    // Hook seçeneklerini güncelleyen fonksiyon
     function updateHookOptions() {
         const hookType = document.getElementById('hook-type').value;
-        const optionsDiv = document.getElementById('hook-options');
+        const hookOptionsContainer = document.getElementById('hook-options');
         
-        // Önce mevcut içeriği temizle
-        optionsDiv.innerHTML = '';
+        // Mevcut içeriği temizle
+        hookOptionsContainer.innerHTML = '';
         
-        // Seçime göre yeni içerik oluştur
+        // Hook tipine göre uygun seçenekleri ekle
         if (hookType === '2switch') {
-            optionsDiv.innerHTML = `
+            hookOptionsContainer.innerHTML = `
                 <div class="hook-options-container">
-                    <h3>2 Switch Options</h3>
+                    <h3>2 Switch Hook Options</h3>
                     <div class="option-row">
-                        <label for="switch1-pin">Switch 1 Pin:</label>
-                        <select id="switch1-pin" name="switch1-pin">
+                        <label for="hook-sw1-pin">Switch 1 Pin:</label>
+                        <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-sw2-pin">Switch 2 Pin:</label>
+                        <select id="hook-sw2-pin" name="hook-sw2-pin">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option value="5" selected>5</option>
                             <option value="6">6</option>
                         </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="switch2-pin">Switch 2 Pin:</label>
-                        <select id="switch2-pin" name="switch2-pin">
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-bounce-time">Hook Bounce Time (mS):</label>
-                        <input type="number" id="hook-bounce-time" name="hook-bounce-time" min="0" max="1000" value="12">
                     </div>
                 </div>
             `;
         } else if (hookType === '2switch_servo') {
-            optionsDiv.innerHTML = `
+            hookOptionsContainer.innerHTML = `
                 <div class="hook-options-container">
-                    <h3>2 Switch + Servo Options</h3>
+                    <h3>2 Switch + Servo Hook Options</h3>
                     <div class="option-row">
-                        <label for="switch1-pin">Switch 1 Pin:</label>
-                        <select id="switch1-pin" name="switch1-pin">
+                        <label for="hook-sw1-pin">Switch 1 Pin:</label>
+                        <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-sw2-pin">Switch 2 Pin:</label>
+                        <select id="hook-sw2-pin" name="hook-sw2-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5" selected>5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-pin">Servo Pin:</label>
+                        <select id="hook-servo-pin" name="hook-servo-pin">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
                             <option value="5">5</option>
-                            <option value="6">6</option>
+                            <option value="6" selected>6</option>
                         </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="switch2-pin">Switch 2 Pin:</label>
-                        <select id="switch2-pin" name="switch2-pin">
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-pin">Servo Pin:</label>
-                        <select id="servo-pin" name="servo-pin">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3" selected>3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-bounce-time">Hook Bounce Time (mS):</label>
-                        <input type="number" id="hook-bounce-time" name="hook-bounce-time" min="0" max="1000" value="12">
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-open-value">Servo Open Value:</label>
-                        <input type="number" id="servo-open-value" name="servo-open-value" min="0" max="255" value="20">
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-closed-value">Servo Closed Value:</label>
-                        <input type="number" id="servo-closed-value" name="servo-closed-value" min="0" max="255" value="200">
-                    </div>
-                    <div class="option-row">
-                        <label for="ola-delay-start">OLA Delay Start (mS):</label>
-                        <input type="number" id="ola-delay-start" name="ola-delay-start" min="0" max="1000" value="200">
-                    </div>
-                    <div class="option-row">
-                        <label for="ola-delay-end">OLA Delay End (mS):</label>
-                        <input type="number" id="ola-delay-end" name="ola-delay-end" min="0" max="1000" value="500">
-                    </div>
-                    <div class="option-row">
-                        <label for="gust-delay">Gust Delay (mS):</label>
-                        <input type="number" id="gust-delay" name="gust-delay" min="0" max="1000" value="100">
-                    </div>
-                    <div class="option-row">
-                        <label for="acceleration-trigger">Acceleration Trigger:</label>
-                        <select id="acceleration-trigger" name="acceleration-trigger">
-                            <option value="Yes" selected>Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="acceleration-value">Acceleration Value (G):</label>
-                        <input type="number" id="acceleration-value" name="acceleration-value" min="0" max="20" step="0.1" value="7.6">
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-relatch-period">Hook Re-latch Period (s):</label>
-                        <input type="number" id="hook-relatch-period" name="hook-relatch-period" min="0" max="10" step="0.1" value="1.1">
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-unlatch-period">Hook Unlatch Period (s):</label>
-                        <input type="number" id="hook-unlatch-period" name="hook-unlatch-period" min="0" max="10" step="0.1" value="0.3">
                     </div>
                 </div>
             `;
         } else if (hookType === 'rotary_servo') {
-            optionsDiv.innerHTML = `
+            hookOptionsContainer.innerHTML = `
                 <div class="hook-options-container">
-                    <h3>Rotary Encoder + Servo Options</h3>
+                    <h3>Rotary Encoder + Servo Hook Options</h3>
                     <div class="option-row">
-                        <label for="rotary-pin">Rotary Encoder Pin:</label>
-                        <select id="rotary-pin" name="rotary-pin">
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-pin">Servo Pin:</label>
-                        <select id="servo-pin" name="servo-pin">
+                        <label for="encoder-pin">Enc. Pin:</label>
+                        <select id="encoder-pin" name="encoder-pin">
                             <option value="1">1</option>
                             <option value="2">2</option>
-                            <option value="3" selected>3</option>
-                            <option value="4">4</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
                             <option value="5">5</option>
                             <option value="6">6</option>
                         </select>
                     </div>
                     <div class="option-row">
-                        <label for="straight-tow-angle">Straight Tow Angle:</label>
-                        <input type="number" id="straight-tow-angle" name="straight-tow-angle" min="0" max="360" value="273">
-                    </div>
-                    <div class="option-row">
-                        <label for="circle-tow-increment">Circle Tow Increment:</label>
-                        <input type="number" id="circle-tow-increment" name="circle-tow-increment" min="-20" max="20" value="5">
-                    </div>
-                    <div class="option-row">
-                        <label for="ola-increment">OLA Increment:</label>
-                        <input type="number" id="ola-increment" name="ola-increment" min="-20" max="20" value="-5">
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-open-value">Servo Open Value:</label>
-                        <input type="number" id="servo-open-value" name="servo-open-value" min="0" max="255" value="20">
-                    </div>
-                    <div class="option-row">
-                        <label for="servo-closed-value">Servo Closed Value:</label>
-                        <input type="number" id="servo-closed-value" name="servo-closed-value" min="0" max="255" value="200">
-                    </div>
-                    <div class="option-row">
-                        <label for="ola-delay-start">OLA Delay Start (mS):</label>
-                        <input type="number" id="ola-delay-start" name="ola-delay-start" min="0" max="1000" value="200">
-                    </div>
-                    <div class="option-row">
-                        <label for="ola-delay-end">OLA Delay End (mS):</label>
-                        <input type="number" id="ola-delay-end" name="ola-delay-end" min="0" max="1000" value="500">
-                    </div>
-                    <div class="option-row">
-                        <label for="gust-delay">Gust Delay (s):</label>
-                        <input type="number" id="gust-delay" name="gust-delay" min="0" max="10" step="0.1" value="0.1">
-                    </div>
-                    <div class="option-row">
-                        <label for="acceleration-trigger">Acceleration Trigger:</label>
-                        <select id="acceleration-trigger" name="acceleration-trigger">
-                            <option value="Yes" selected>Yes</option>
-                            <option value="No">No</option>
+                        <label for="hook-servo-pin">Servo Pin:</label>
+                        <select id="hook-servo-pin" name="hook-servo-pin">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5" selected>5</option>
+                            <option value="6">6</option>
                         </select>
-                    </div>
-                    <div class="option-row">
-                        <label for="acceleration-value">Acceleration Value (G):</label>
-                        <input type="number" id="acceleration-value" name="acceleration-value" min="0" max="20" step="0.1" value="7.6">
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-relatch-period">Hook Re-latch Period (s):</label>
-                        <input type="number" id="hook-relatch-period" name="hook-relatch-period" min="0" max="10" step="0.1" value="1.1">
-                    </div>
-                    <div class="option-row">
-                        <label for="hook-unlatch-period">Hook Unlatch Period (s):</label>
-                        <input type="number" id="hook-unlatch-period" name="hook-unlatch-period" min="0" max="10" step="0.1" value="0.3">
                     </div>
                 </div>
             `;
         }
+        
+        // Yeni eklenen seçeneklerdeki değişiklikleri dinle
+        const inputs = hookOptionsContainer.querySelectorAll('select, input');
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                // Pin diyagramını güncelle (eğer tanımlıysa)
+                if (typeof updatePinDiagram === 'function') {
+                    updatePinDiagram();
+                }
+            });
+        });
     }
-    
-    // Sayfa yüklendiğinde varsayılan seçeneği göster
-    document.addEventListener('DOMContentLoaded', function() {
-        updateHookOptions();
-    });
 </script>
 
 </body>

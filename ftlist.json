@@ -1,8 +1,8 @@
 {
   "firmwares": [
     {
-      "firmware_name": "F1A Firmware v001",
-      "firmware_code": "F1A_001",
+      "firmware_name": "F1A Firmware v002",
+      "firmware_code": "F1A_002",
       "firmware_link": "https://github.com/melihkarakelle/BMK_Firmware_Releases/raw/main/ThermalHunter_v1.4.zip",
       "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1a_002.html"
     },

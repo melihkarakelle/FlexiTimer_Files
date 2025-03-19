@@ -23,14 +23,14 @@
 
         .section {
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 10px 15px;
             border: 2px solid #fff;
             border-radius: 10px;
         }
 
         .section h2 {
             color: #FFD700;
-            margin-bottom: 15px;
+            margin: 0 0 10px 0;
             font-size: 20px;
             text-align: center;
         }
@@ -116,7 +116,7 @@
 
         /* Strobe pattern styling */
         .strobe-pattern {
-            margin: 10px 0;
+            margin: 5px 0;
         }
         
         .checkbox-group {
@@ -124,6 +124,7 @@
             gap: 0;
             justify-content: center;
             margin-bottom: 10px;
+            align-items: center;
         }
         
         .checkbox-group input[type="checkbox"] {
@@ -131,6 +132,15 @@
             height: 30px;
             margin: 0;
             padding: 0;
+        }
+
+        .strobe-led {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #300;
+            margin-left: 15px;
+            display: inline-block;
         }
 
         /* Mevcut stillere ekleyin */
@@ -369,6 +379,60 @@
         .toggle-button:hover {
             background-color: #FFC000;
         }
+
+        /* Preset name input için özel stil */
+        .preset-name-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .preset-name-container label {
+            margin: 0;
+        }
+
+        .preset-name-container input {
+            border: none;
+            background: none;
+            color: #fff;
+            font-size: 16px;
+            padding: 0;
+            margin: 0;
+            cursor: default;
+            width: auto;
+        }
+
+        .preset-name-container input:focus {
+            outline: none;
+        }
+
+        /* Model name container için özel stil */
+        .model-name-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .model-name-container label {
+            margin: 0;
+        }
+
+        .model-name-container input {
+            border: none;
+            background: #333;
+            color: #fff;
+            font-size: 16px;
+            padding: 5px 10px;
+            margin: 0;
+            border-radius: 3px;
+            width: 200px;
+        }
+
+        .model-name-container input:focus {
+            outline: 1px solid #FFD700;
+        }
     </style>
 </head>
 <body>
@@ -381,24 +445,31 @@
         <div class="section">
             <h2>Model Identification</h2>
             
-            <label for="model-name">Model Name:</label>
-            <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+            <div class="model-name-container">
+                <label for="model-name">Model Name:</label>
+                <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+            </div>
             
-            <label for="preset-name">Preset Name:</label>
-            <input type="text" id="preset-name" name="preset-name" placeholder="e.g., Competition Setup" readonly>
-            <input type="hidden" id="preset-index" name="preset-index" value="1">
+            <div class="preset-name-container">
+                <label for="preset-name">Preset Name:</label>
+                <input type="text" id="preset-name" name="preset-name" readonly>
+                <input type="hidden" id="preset-index" name="preset-index" value="1">
+            </div>
 
             <label for="strobe-pattern">Strobe Pattern:</label>
             <div class="strobe-pattern">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="bit7" name="strobe-bit" value="128">
-                    <input type="checkbox" id="bit6" name="strobe-bit" value="64">
-                    <input type="checkbox" id="bit5" name="strobe-bit" value="32">
-                    <input type="checkbox" id="bit4" name="strobe-bit" value="16">
-                    <input type="checkbox" id="bit3" name="strobe-bit" value="8">
-                    <input type="checkbox" id="bit2" name="strobe-bit" value="4">
-                    <input type="checkbox" id="bit1" name="strobe-bit" value="2">
-                    <input type="checkbox" id="bit0" name="strobe-bit" value="1">
+                <div style="display: flex; align-items: center; height: 30px;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="bit7" name="strobe-bit" value="128">
+                        <input type="checkbox" id="bit6" name="strobe-bit" value="64">
+                        <input type="checkbox" id="bit5" name="strobe-bit" value="32">
+                        <input type="checkbox" id="bit4" name="strobe-bit" value="16">
+                        <input type="checkbox" id="bit3" name="strobe-bit" value="8">
+                        <input type="checkbox" id="bit2" name="strobe-bit" value="4">
+                        <input type="checkbox" id="bit1" name="strobe-bit" value="2">
+                        <input type="checkbox" id="bit0" name="strobe-bit" value="1">
+                    </div>
+                    <div id="strobeLed" class="strobe-led"></div>
                 </div>
                 <input type="hidden" id="strobe-value" name="strobe-value" value="0">
             </div>
@@ -851,7 +922,47 @@
                 }
             });
             document.getElementById('strobe-value').value = value;
+            updateStrobeAnimation(); // LED animasyonunu güncelle
         });
+    });
+
+    // Strobe LED animasyonu için değişkenler
+    let strobeInterval;
+    let strobeStep = 0;
+    const STROBE_PERIOD = 125; // 1 saniye / 8 adım = 125ms
+
+    function updateStrobeAnimation() {
+        if (strobeInterval) {
+            clearInterval(strobeInterval);
+        }
+
+        const strobeValue = parseInt(document.getElementById('strobe-value').value);
+        const led = document.getElementById('strobeLed');
+        let isBreak = false;
+        let breakCounter = 0;
+
+        strobeInterval = setInterval(() => {
+            if (isBreak) {
+                led.style.backgroundColor = '#300'; // Koyu kırmızı (kapalı)
+                breakCounter++;
+                if (breakCounter >= 8) { // 1 saniye bekleme (8 * 125ms)
+                    isBreak = false;
+                    breakCounter = 0;
+                }
+            } else {
+                const bitMask = 1 << (7 - strobeStep);
+                led.style.backgroundColor = (strobeValue & bitMask) ? '#f00' : '#300';
+                strobeStep = (strobeStep + 1) % 8;
+                if (strobeStep === 0) {
+                    isBreak = true;
+                }
+            }
+        }, STROBE_PERIOD);
+    }
+
+    // Sayfa yüklendiğinde animasyonu başlat
+    document.addEventListener('DOMContentLoaded', function() {
+        updateStrobeAnimation();
     });
 
     // Time inputları için virgülden sonra iki basamak formatı

@@ -1153,6 +1153,76 @@
             });
         });
     }
+
+    // Flutter'dan gelen JSON verilerini forma yükle (F1A-specific)
+    function loadPresetDataFromJSON(jsonString) {
+        try {
+            var presetData = JSON.parse(jsonString);
+            console.log('Preset data loaded:', presetData);
+
+            // Düz alanları doldur (preset-name, preset-index, vb.)
+            for (var key in presetData) {
+                if (key === 'timers') continue; // timers'ı ayrı işle
+
+                var element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = presetData[key] === 1 || presetData[key] === '1';
+                    } else {
+                        element.value = presetData[key];
+                    }
+                }
+            }
+
+            // Strobe bits'i genişlet (8 bit)
+            if (presetData['strobe-value'] !== undefined) {
+                var strobeValue = parseInt(presetData['strobe-value']);
+                for (var i = 7; i >= 0; i--) {
+                    var bit = (strobeValue >> i) & 1;
+                    var element = document.getElementById('strobe-bit');
+                    if (element && element.options && element.options[7-i]) {
+                        element.options[7-i].selected = (bit === 1);
+                    }
+                }
+            }
+
+            // Timers nested yapısını işle
+            if (presetData.timers) {
+                for (var timerKey in presetData.timers) {
+                    var timer = presetData.timers[timerKey];
+
+                    // time değeri varsa
+                    if (timer.time !== undefined) {
+                        var timeElement = document.getElementById(timerKey + '-time');
+                        if (timeElement) timeElement.value = timer.time;
+                    }
+
+                    // ru, tl, ww pozisyonları
+                    ['ru', 'tl', 'ww'].forEach(function(servo) {
+                        if (timer[servo] !== undefined) {
+                            var servoElement = document.getElementById(timerKey + '-' + servo);
+                            if (servoElement) servoElement.value = timer[servo];
+                        }
+                    });
+                }
+            }
+
+            // Hook tipini güncelle ve seçenekleri göster
+            var hookTypeElement = document.getElementById('hook-type');
+            if (hookTypeElement && typeof updateHookOptions === 'function') {
+                updateHookOptions();
+            }
+
+            // Pin diyagramını güncelle
+            if (typeof updatePinDiagram === 'function') {
+                updatePinDiagram();
+            }
+
+            console.log('✅ Form successfully populated from JSON');
+        } catch (e) {
+            console.error('❌ Error loading preset data:', e);
+        }
+    }
 </script>
 
 </body>

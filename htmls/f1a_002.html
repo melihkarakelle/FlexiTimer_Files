@@ -1177,12 +1177,21 @@
             // Strobe bits'i genişlet (8 bit)
             if (presetData['strobe-value'] !== undefined) {
                 var strobeValue = parseInt(presetData['strobe-value']);
+                console.log('Loading strobe-value:', strobeValue);
+
+                // Her bir biti kontrol et ve checkbox'ı işaretle
                 for (var i = 7; i >= 0; i--) {
                     var bit = (strobeValue >> i) & 1;
-                    var element = document.getElementById('strobe-bit');
-                    if (element && element.options && element.options[7-i]) {
-                        element.options[7-i].selected = (bit === 1);
+                    var checkbox = document.getElementById('bit' + i);
+                    if (checkbox) {
+                        checkbox.checked = (bit === 1);
+                        console.log('Bit ' + i + ':', bit === 1 ? 'checked' : 'unchecked');
                     }
+                }
+
+                // Strobe LED animasyonunu güncelle
+                if (typeof updateStrobeAnimation === 'function') {
+                    updateStrobeAnimation();
                 }
             }
 

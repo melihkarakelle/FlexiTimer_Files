@@ -904,6 +904,34 @@
   // Global değişken - cihazdan gelen tüm JSON
   var fullDeviceJson = null;
 
+  // SAVE butonunu yeniden aktif et (Flutter'dan çağrılacak)
+  function onSaveComplete(success) {
+    var saveButton = document.querySelector('input[type="submit"]');
+    saveButton.disabled = false;
+
+    if (success) {
+      saveButton.value = 'SAVED ✓';
+      saveButton.style.backgroundColor = '#4CAF50'; // Yeşil
+      console.log('✅ Settings saved successfully');
+
+      // 2 saniye sonra butonu normal haline getir
+      setTimeout(function() {
+        saveButton.value = 'SAVE';
+        saveButton.style.backgroundColor = '#FFD700'; // Sarı
+      }, 2000);
+    } else {
+      saveButton.value = 'SAVE FAILED ✗';
+      saveButton.style.backgroundColor = '#f44336'; // Kırmızı
+      console.log('❌ Save failed');
+
+      // 3 saniye sonra butonu normal haline getir
+      setTimeout(function() {
+        saveButton.value = 'SAVE';
+        saveButton.style.backgroundColor = '#FFD700'; // Sarı
+      }, 3000);
+    }
+  }
+
   // Flutter'dan tüm JSON'u al ve preset selector'ı doldur
   function initializeWithFullJson(jsonString) {
     try {
@@ -1111,6 +1139,12 @@
       alert('Device JSON not loaded yet');
       return false;
     }
+
+    // SAVE butonunu disable et ve "SAVING..." yap
+    var saveButton = document.querySelector('input[type="submit"]');
+    saveButton.disabled = true;
+    saveButton.value = 'SAVING...';
+    saveButton.style.backgroundColor = '#CCA000'; // Koyu sarı
 
     console.log('💾 SAVE button clicked, updating current preset with form values...');
 

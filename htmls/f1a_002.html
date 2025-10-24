@@ -769,11 +769,11 @@
                     id="addPresetInput"
                     class="modal-input"
                     placeholder="Enter preset name"
-                    maxlength="8"
+                    maxlength="20"
                     onkeyup="validateAddPresetInput()"
                     onkeypress="if(event.key==='Enter'){confirmAddPreset();}"
                 >
-                <span class="modal-input-hint">Maximum 8 characters</span>
+                <span class="modal-input-hint">Maximum 20 characters</span>
             </div>
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-cancel" onclick="closeAddModal()">Cancel</button>
@@ -1431,8 +1431,8 @@
       return;
     }
 
-    // İsmi 8 karaktere kısıtla
-    presetName = presetName.substring(0, 8);
+    // İsmi 20 karaktere kısıtla
+    presetName = presetName.substring(0, 20);
 
     console.log('➕ Adding new preset:', presetName);
 

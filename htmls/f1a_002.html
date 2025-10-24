@@ -782,6 +782,24 @@
         </div>
     </div>
 
+    <!-- Preset Changed Info Modal -->
+    <div id="presetChangedModal" class="modal-overlay">
+        <div class="modal-dialog-info">
+            <div class="modal-header-info">
+                <span class="modal-icon-info">🔄</span>
+                <h3 class="modal-title-info">Preset Changed</h3>
+            </div>
+            <div class="modal-body-info">
+                You have switched to <strong id="changedPresetName"></strong> preset.
+                <br><br>
+                To upload this change to the device, please <strong>click the SAVE button</strong> below.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-ok" onclick="closePresetChangedModal()">OK, Got it!</button>
+            </div>
+        </div>
+    </div>
+
     <h1>F1A Config</h1>
 
     <form onsubmit="submitForm(event)">
@@ -1291,6 +1309,9 @@
     }
   }
 
+  // Global değişken - ilk yüklemede modal gösterme
+  var isInitialLoad = true;
+
   // Preset değiştiğinde çağrılır
   function onPresetChanged() {
     var selector = document.getElementById('preset-selector');
@@ -1320,12 +1341,33 @@
       // Mevcut loadPresetDataFromJSON fonksiyonunu kullan
       var jsonString = JSON.stringify(presetWithModel);
       loadPresetDataFromJSON(jsonString);
+
+      // İlk yüklemeden sonra preset değişikliklerinde info modal göster
+      if (!isInitialLoad) {
+        showPresetChangedModal(selectedPreset['preset-name']);
+      }
     } else {
       console.error('❌ Preset not found with index:', selectedPresetIndex);
     }
 
     // Delete butonunu güncelle (default preset korumalı)
     updateDeleteButton();
+
+    // İlk yükleme flag'ini kaldır
+    if (isInitialLoad) {
+      isInitialLoad = false;
+    }
+  }
+
+  // Preset changed modal göster
+  function showPresetChangedModal(presetName) {
+    document.getElementById('changedPresetName').textContent = '"' + presetName + '"';
+    document.getElementById('presetChangedModal').classList.add('show');
+  }
+
+  // Preset changed modal kapat
+  function closePresetChangedModal() {
+    document.getElementById('presetChangedModal').classList.remove('show');
   }
 
   // Delete butonunu güncelle

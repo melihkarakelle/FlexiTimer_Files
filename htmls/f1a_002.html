@@ -342,31 +342,85 @@
             background-color: #FFC000;
         }
 
-        /* Preset name input için özel stil */
+        /* Preset name container için özel stil */
         .preset-name-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .preset-name-container label {
-            margin: 0;
-        }
-
-        .preset-name-container input {
-            border: none;
-            background: none;
+            display: block;
+            margin-bottom: 5px;
             color: #fff;
             font-size: var(--base-font);
-            padding: 0;
-            margin: 0;
-            cursor: default;
-            width: auto;
         }
 
-        .preset-name-container input:focus {
-            outline: none;
+        /* Preset controls - selector ve butonlar için flex container */
+        .preset-controls {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .preset-controls select {
+            flex: 1;
+            min-width: 0; /* Flex shrink için gerekli */
+            padding: calc(var(--base-padding) * 0.8);
+            font-size: var(--base-font);
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: calc(var(--base-padding) * 0.5);
+        }
+
+        /* Preset butonları - + ve - */
+        .preset-btn {
+            width: 40px;
+            min-width: 40px;
+            height: auto;
+            padding: 0;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: calc(var(--base-padding) * 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+
+        .add-btn:active {
+            background-color: #3d8b40;
+            transform: scale(0.95);
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+
+        .delete-btn:active {
+            background-color: #c41409;
+            transform: scale(0.95);
+        }
+
+        .delete-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
         /* Model name container için özel stil */
@@ -422,9 +476,13 @@
             
             <div class="preset-name-container">
                 <label for="preset-selector">Select Preset:</label>
-                <select id="preset-selector" name="preset-selector" onchange="onPresetChanged()">
-                    <option value="">Loading presets...</option>
-                </select>
+                <div class="preset-controls">
+                    <select id="preset-selector" name="preset-selector" onchange="onPresetChanged()">
+                        <option value="">Loading presets...</option>
+                    </select>
+                    <button type="button" class="preset-btn add-btn" onclick="addNewPreset()" title="Add New Preset">+</button>
+                    <button type="button" class="preset-btn delete-btn" onclick="deleteCurrentPreset()" title="Delete Preset">−</button>
+                </div>
                 <input type="hidden" id="preset-name" name="preset-name">
                 <input type="hidden" id="preset-index" name="preset-index" value="1">
             </div>
@@ -872,6 +930,9 @@
 
         // İlk preset'i yükle
         onPresetChanged();
+
+        // Delete butonunu güncelle
+        updateDeleteButton();
       } else {
         console.error('❌ No presets found in JSON');
       }
@@ -913,48 +974,230 @@
     } else {
       console.error('❌ Preset not found with index:', selectedPresetIndex);
     }
+
+    // Delete butonunu güncelle (default preset korumalı)
+    updateDeleteButton();
+  }
+
+  // Delete butonunu güncelle
+  function updateDeleteButton() {
+    var selector = document.getElementById('preset-selector');
+    var deleteBtn = document.querySelector('.delete-btn');
+    var selectedIndex = parseInt(selector.value);
+
+    // Index 1 (default) veya tek preset varsa delete disable
+    if (selectedIndex === 1 || fullDeviceJson.presets.length <= 1) {
+      deleteBtn.disabled = true;
+    } else {
+      deleteBtn.disabled = false;
+    }
+  }
+
+  // Yeni preset ekle (HTML içinde, SAVE'e kadar lokal)
+  function addNewPreset() {
+    if (!fullDeviceJson) {
+      alert('Device JSON not loaded yet');
+      return;
+    }
+
+    // Preset ismi iste (maksimum 8 karakter)
+    var presetName = prompt('Enter preset name (max 8 characters):');
+
+    if (!presetName) {
+      console.log('Add preset cancelled');
+      return;
+    }
+
+    // İsmi 8 karaktere kısıtla
+    presetName = presetName.substring(0, 8).trim();
+
+    if (presetName.length === 0) {
+      alert('Preset name cannot be empty');
+      return;
+    }
+
+    // Yeni preset index'i bul (en yüksek index + 1)
+    var maxIndex = Math.max(...fullDeviceJson.presets.map(p => p['preset-index']));
+    var newIndex = maxIndex + 1;
+
+    console.log('➕ Adding new preset:', presetName, 'with index:', newIndex);
+
+    // Mevcut seçili preset'in verilerini kopyala
+    var selector = document.getElementById('preset-selector');
+    var currentIndex = parseInt(selector.value);
+    var currentPreset = fullDeviceJson.presets.find(p => p['preset-index'] === currentIndex);
+
+    // Yeni preset objesi oluştur (mevcut preset'in kopyası)
+    var newPreset = JSON.parse(JSON.stringify(currentPreset)); // Deep copy
+    newPreset['preset-name'] = presetName;
+    newPreset['preset-index'] = newIndex;
+
+    // fullDeviceJson'a ekle
+    fullDeviceJson.presets.push(newPreset);
+
+    // Selector'ı güncelle
+    var option = document.createElement('option');
+    option.value = newIndex;
+    option.text = presetName;
+    selector.appendChild(option);
+
+    // Yeni preset'i seç
+    selector.value = newIndex;
+    onPresetChanged();
+
+    console.log('✅ Preset added locally, click SAVE to apply changes');
+
+    // Delete butonunu güncelle
+    updateDeleteButton();
+  }
+
+  // Mevcut preset'i sil (HTML içinde, SAVE'e kadar lokal)
+  function deleteCurrentPreset() {
+    var selector = document.getElementById('preset-selector');
+    var selectedIndex = parseInt(selector.value);
+
+    if (!fullDeviceJson) {
+      alert('Device JSON not loaded yet');
+      return;
+    }
+
+    // Index 1 (default) korumalı
+    if (selectedIndex === 1) {
+      alert('Cannot delete default preset');
+      return;
+    }
+
+    // Tek preset kaldıysa silme
+    if (fullDeviceJson.presets.length <= 1) {
+      alert('Cannot delete the last preset');
+      return;
+    }
+
+    // Onay iste
+    var presetName = fullDeviceJson.presets.find(p => p['preset-index'] === selectedIndex)['preset-name'];
+    var confirmed = confirm('Delete preset "' + presetName + '"?');
+
+    if (!confirmed) {
+      console.log('Delete cancelled');
+      return;
+    }
+
+    console.log('🗑️ Deleting preset index:', selectedIndex);
+
+    // fullDeviceJson'dan sil
+    fullDeviceJson.presets = fullDeviceJson.presets.filter(p => p['preset-index'] !== selectedIndex);
+
+    // Selector'dan sil
+    selector.remove(selector.selectedIndex);
+
+    // İlk preset'i seç
+    if (fullDeviceJson.presets.length > 0) {
+      selector.value = fullDeviceJson.presets[0]['preset-index'];
+      onPresetChanged();
+    }
+
+    console.log('✅ Preset deleted locally, click SAVE to apply changes');
+
+    // Delete butonunu güncelle
+    updateDeleteButton();
   }
 
   // Form gönderildiğinde bu fonksiyon çalışacaktır
+  // Mevcut form değerlerini alıp selected preset'e kaydet, sonra tüm JSON'u gönder
   function submitForm(event) {
     event.preventDefault(); // Formun normal submit işlemini durdur
-    
-    // Form elementlerini topla
-    var form = event.target;
-    var elements = form.elements;
-    var formString = '';
-    
-    // Her form elementini döngüyle kontrol et
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        
-        // Sadece name özelliği olan ve submit butonu olmayan elementleri al
-        if (element.name && element.type !== 'submit') {
-            // Eğer checkbox ise, checked durumunu kontrol et
-            if (element.type === 'checkbox') {
-                formString += element.name + '=' + (element.checked ? '1' : '0') + ',';
-            }
-            // Radio butonlar için sadece seçili olanı al
-            else if (element.type === 'radio') {
-                if (element.checked) {
-                    formString += element.name + '=' + element.value + ',';
-                }
-            }
-            // Diğer tüm input tipleri için
-            else {
-                formString += element.name + '=' + element.value + ',';
-            }
-        }
-    }
-    
-    // Son virgülü kaldır
-    if (formString.endsWith(',')) {
-        formString = formString.slice(0, -1);
+
+    if (!fullDeviceJson) {
+      alert('Device JSON not loaded yet');
+      return false;
     }
 
-    // FormChannel üzerinden Flutter tarafına veriyi gönder
-    FormChannel.postMessage(formString);
-    
+    console.log('💾 SAVE button clicked, updating current preset with form values...');
+
+    // Mevcut seçili preset'i bul
+    var selector = document.getElementById('preset-selector');
+    var selectedIndex = parseInt(selector.value);
+    var currentPreset = fullDeviceJson.presets.find(p => p['preset-index'] === selectedIndex);
+
+    if (!currentPreset) {
+      alert('Current preset not found');
+      return false;
+    }
+
+    // Form değerlerini currentPreset'e kaydet
+    // Strobe value
+    currentPreset['strobe-value'] = parseInt(document.getElementById('strobe-value').value);
+
+    // Servo pins
+    currentPreset['ru-servo-pin'] = parseInt(document.getElementById('ru-servo-pin').value);
+    currentPreset['tl-servo-pin'] = parseInt(document.getElementById('tl-servo-pin').value);
+    currentPreset['ww-servo-pin'] = parseInt(document.getElementById('ww-servo-pin').value);
+
+    // Hook settings
+    currentPreset['hook-type'] = document.getElementById('hook-type').value;
+    currentPreset['hook-sw1-pin'] = parseInt(document.getElementById('hook-sw1-pin').value);
+    currentPreset['hook-sw2-pin'] = parseInt(document.getElementById('hook-sw2-pin').value);
+    currentPreset['hook-servo-pin'] = parseInt(document.getElementById('hook-servo-pin').value);
+    currentPreset['encoder-pin'] = parseInt(document.getElementById('encoder-pin').value);
+
+    // Auto DT settings
+    currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
+    currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
+    currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+
+    // Timers - nested structure
+    if (!currentPreset.timers) {
+      currentPreset.timers = {};
+    }
+
+    // Helper function to update timer
+    function updateTimer(key) {
+      if (!currentPreset.timers[key]) {
+        currentPreset.timers[key] = {};
+      }
+      var timer = currentPreset.timers[key];
+
+      // Time field (if exists)
+      var timeElem = document.getElementById(key + '-time');
+      if (timeElem) {
+        timer.time = parseFloat(timeElem.value);
+      }
+
+      // Servo positions
+      timer.ru = parseInt(document.getElementById(key + '-ru').value);
+      timer.tl = parseInt(document.getElementById(key + '-tl').value);
+      timer.ww = parseInt(document.getElementById(key + '-ww').value);
+    }
+
+    // Update all timers
+    updateTimer('on');
+    updateTimer('str');
+    updateTimer('cir');
+    updateTimer('ola');
+    updateTimer('pu1');
+    updateTimer('pu2');
+    updateTimer('cr1');
+    updateTimer('cr2');
+    updateTimer('cr3');
+    updateTimer('bu1');
+    updateTimer('bu2');
+    updateTimer('bu3');
+    updateTimer('fg');
+    updateTimer('gl');
+    updateTimer('dt');
+    updateTimer('pk');
+
+    console.log('✅ Current preset updated with form values');
+
+    // selected-preset-index'i güncelle
+    fullDeviceJson['selected-preset-index'] = selectedIndex;
+
+    // Tüm JSON'u string'e çevir ve FormChannel'a gönder
+    var jsonString = JSON.stringify(fullDeviceJson);
+
+    console.log('📤 Sending full JSON to Flutter (' + jsonString.length + ' chars)');
+    FormChannel.postMessage(jsonString);
+
     return false; // Formun normal submit işlemini engelle
 }
 

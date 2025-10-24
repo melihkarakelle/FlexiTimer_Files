@@ -421,8 +421,11 @@
             </div>
             
             <div class="preset-name-container">
-                <label for="preset-name">Preset Name:</label>
-                <input type="text" id="preset-name" name="preset-name">
+                <label for="preset-selector">Select Preset:</label>
+                <select id="preset-selector" name="preset-selector" onchange="onPresetChanged()">
+                    <option value="">Loading presets...</option>
+                </select>
+                <input type="hidden" id="preset-name" name="preset-name">
                 <input type="hidden" id="preset-index" name="preset-index" value="1">
             </div>
 
@@ -840,6 +843,78 @@
     </form>
 
    <script>
+  // Global değişken - cihazdan gelen tüm JSON
+  var fullDeviceJson = null;
+
+  // Flutter'dan tüm JSON'u al ve preset selector'ı doldur
+  function initializeWithFullJson(jsonString) {
+    try {
+      fullDeviceJson = JSON.parse(jsonString);
+      console.log('✅ Full JSON received:', fullDeviceJson);
+
+      // Preset selector'ı doldur
+      var selector = document.getElementById('preset-selector');
+      selector.innerHTML = ''; // Mevcut options'ları temizle
+
+      if (fullDeviceJson.presets && fullDeviceJson.presets.length > 0) {
+        fullDeviceJson.presets.forEach(function(preset, index) {
+          var option = document.createElement('option');
+          option.value = preset['preset-index']; // preset-index kullan
+          option.text = preset['preset-name'] || ('Preset ' + preset['preset-index']);
+          selector.appendChild(option);
+        });
+
+        // selected-preset-index değerine göre seç
+        var selectedIndex = fullDeviceJson['selected-preset-index'] || 1;
+        selector.value = selectedIndex;
+
+        console.log('📋 Preset selector dolduruldu, selected-preset-index:', selectedIndex);
+
+        // İlk preset'i yükle
+        onPresetChanged();
+      } else {
+        console.error('❌ No presets found in JSON');
+      }
+
+    } catch (e) {
+      console.error('❌ Error parsing full JSON:', e);
+    }
+  }
+
+  // Preset değiştiğinde çağrılır
+  function onPresetChanged() {
+    var selector = document.getElementById('preset-selector');
+    var selectedPresetIndex = parseInt(selector.value);
+
+    console.log('🔄 Preset changed to index:', selectedPresetIndex);
+
+    if (!fullDeviceJson || !fullDeviceJson.presets) {
+      console.error('❌ Full JSON not loaded yet');
+      return;
+    }
+
+    // Seçilen preset'i bul
+    var selectedPreset = fullDeviceJson.presets.find(function(preset) {
+      return preset['preset-index'] === selectedPresetIndex;
+    });
+
+    if (selectedPreset) {
+      // model-name'i JSON root seviyesinden ekle
+      var presetWithModel = {
+        'model-name': fullDeviceJson['model-name'] || 'Unknown',
+        ...selectedPreset
+      };
+
+      console.log('✅ Loading preset:', presetWithModel['preset-name']);
+
+      // Mevcut loadPresetDataFromJSON fonksiyonunu kullan
+      var jsonString = JSON.stringify(presetWithModel);
+      loadPresetDataFromJSON(jsonString);
+    } else {
+      console.error('❌ Preset not found with index:', selectedPresetIndex);
+    }
+  }
+
   // Form gönderildiğinde bu fonksiyon çalışacaktır
   function submitForm(event) {
     event.preventDefault(); // Formun normal submit işlemini durdur

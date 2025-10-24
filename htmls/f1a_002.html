@@ -1135,10 +1135,37 @@
 
     // Hook settings
     currentPreset['hook-type'] = document.getElementById('hook-type').value;
-    currentPreset['hook-sw1-pin'] = parseInt(document.getElementById('hook-sw1-pin').value);
-    currentPreset['hook-sw2-pin'] = parseInt(document.getElementById('hook-sw2-pin').value);
-    currentPreset['hook-servo-pin'] = parseInt(document.getElementById('hook-servo-pin').value);
-    currentPreset['encoder-pin'] = parseInt(document.getElementById('encoder-pin').value);
+
+    // Hook sw1 ve sw2 (2switch ve 2switch_servo için)
+    var hookSw1Elem = document.getElementById('hook-sw1-pin');
+    if (hookSw1Elem) {
+      currentPreset['hook-sw1-pin'] = parseInt(hookSw1Elem.value);
+    } else {
+      currentPreset['hook-sw1-pin'] = -1; // Kullanılmıyor
+    }
+
+    var hookSw2Elem = document.getElementById('hook-sw2-pin');
+    if (hookSw2Elem) {
+      currentPreset['hook-sw2-pin'] = parseInt(hookSw2Elem.value);
+    } else {
+      currentPreset['hook-sw2-pin'] = -1; // Kullanılmıyor
+    }
+
+    // Hook servo (2switch_servo ve rotary_servo için)
+    var hookServoElem = document.getElementById('hook-servo-pin');
+    if (hookServoElem) {
+      currentPreset['hook-servo-pin'] = parseInt(hookServoElem.value);
+    } else {
+      currentPreset['hook-servo-pin'] = -1; // Kullanılmıyor
+    }
+
+    // Encoder pin (rotary_servo için)
+    var encoderPinElem = document.getElementById('encoder-pin');
+    if (encoderPinElem) {
+      currentPreset['encoder-pin'] = parseInt(encoderPinElem.value);
+    } else {
+      currentPreset['encoder-pin'] = -1; // Kullanılmıyor
+    }
 
     // Auto DT settings
     currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
@@ -1188,6 +1215,12 @@
     updateTimer('pk');
 
     console.log('✅ Current preset updated with form values');
+
+    // Model name'i güncelle (JSON root seviyesinde)
+    var modelNameElem = document.getElementById('model-name');
+    if (modelNameElem && modelNameElem.value) {
+      fullDeviceJson['model-name'] = modelNameElem.value;
+    }
 
     // selected-preset-index'i güncelle
     fullDeviceJson['selected-preset-index'] = selectedIndex;

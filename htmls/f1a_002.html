@@ -168,8 +168,8 @@
         }
 
         .strobe-led {
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background-color: #300;
             display: inline-block;
@@ -439,9 +439,9 @@
         .preset-btn {
             width: 40px;
             min-width: 40px;
-            height: auto;
+            height: calc(1.6 * var(--base-padding) + var(--base-font) * 1.2);
             padding: 0;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             border: none;
             border-radius: calc(var(--base-padding) * 0.5);
@@ -450,6 +450,8 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            box-sizing: border-box;
+            line-height: 1;
         }
 
         .add-btn {

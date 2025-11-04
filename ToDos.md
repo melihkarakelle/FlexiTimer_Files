@@ -12,9 +12,8 @@
    > e.g. I call it *cruise*, but some others call it *ballistic*.”  
 5. Add **“-1”** for disabling the servo pin option — display as **“Not Connected”** in the option box.  
 6. **Chris:** Create **“Other Timers → FT JSON Converter”** web page.  
-7. *(Number skipped in original list)*  
-8. **Javier:**  
+7. **Javier:**  
    > “All program line names should be editable by the flyer.”  
-9. **Julian:**  
+8. **Julian:**  
    > “Does the interface allow for interval time settings as well as absolute settings from zero?  
    > (Not a deal-breaker at all, just a nice-to-have.)”

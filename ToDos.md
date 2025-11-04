@@ -5,7 +5,8 @@
    - 0–255  
    - 0–100  
    - 1000–2000 µs  
-3. **Chris:** For flappers, “you’ll need 4 servos (one per flap + rudder + tail)” — add **4th servo option**.  
+3. **Chris:** For flappers, add **4th servo option**. 
+   > “you’ll need 4 servos (one per flap + rudder + tail)”  
 4. **Miguel:**  
    > “Just hard-code ON, STR, CIR, OLA, DT and PK, and give the user the ability to create and name new lines that suit them better.  
    > e.g. I call it *cruise*, but some others call it *ballistic*.”  

@@ -208,11 +208,73 @@
         /* Timer grid için CSS güncellemesi */
         .timer-grid {
             display: grid;
-            grid-template-columns: 60px 80px 1fr 1fr 1fr;
+            grid-template-columns: 60px 80px repeat(4, 1fr);
             gap: 1px;
             background-color: #555; /* Grid çizgileri için arka plan rengi */
             border: 1px solid #555;
             margin-top: 10px;
+        }
+
+        /* Servo kolonlarını gizlemek için (Not Used seçildiğinde) */
+        /* display: none ile gizle, grid otomatik ayarlansın */
+        .timer-grid.hide-ru .ru-column {
+            display: none;
+        }
+
+        .timer-grid.hide-tl .tl-column {
+            display: none;
+        }
+
+        .timer-grid.hide-ww .ww-column {
+            display: none;
+        }
+
+        .timer-grid.hide-ww2 .ww2-column {
+            display: none;
+        }
+
+        /* Grid sütun sayısını dinamik ayarla */
+        .timer-grid {
+            grid-template-columns: 60px 80px repeat(4, 1fr);
+        }
+
+        .timer-grid.hide-ww2 {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-ww {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-tl {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-ru {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        /* 2 kolon gizli */
+        .timer-grid.hide-ru.hide-tl,
+        .timer-grid.hide-ru.hide-ww,
+        .timer-grid.hide-ru.hide-ww2,
+        .timer-grid.hide-tl.hide-ww,
+        .timer-grid.hide-tl.hide-ww2,
+        .timer-grid.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px repeat(2, 1fr);
+        }
+
+        /* 3 kolon gizli */
+        .timer-grid.hide-ru.hide-tl.hide-ww,
+        .timer-grid.hide-ru.hide-tl.hide-ww2,
+        .timer-grid.hide-ru.hide-ww.hide-ww2,
+        .timer-grid.hide-tl.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px 1fr;
+        }
+
+        /* 4 kolon gizli */
+        .timer-grid.hide-ru.hide-tl.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px;
         }
 
         .timer-header {
@@ -786,6 +848,100 @@
             cursor: not-allowed;
             opacity: 0.5;
         }
+
+        /* Pin Conflict Warning Modal - Kırmızı/Sarı tema */
+        .modal-dialog-conflict {
+            background-color: #1E1E1E;
+            border: 3px solid #FF9800;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .modal-header-conflict {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+
+        .modal-icon-conflict {
+            font-size: 36px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .modal-title-conflict {
+            color: #FF9800;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-body-conflict {
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .conflict-detail {
+            background-color: #2D2D2D;
+            border-left: 4px solid #f44336;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .conflict-pin {
+            color: #FF9800;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .conflict-component {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .conflict-attempted {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .conflict-reverted {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .modal-btn-conflict {
+            background: linear-gradient(135deg, #FF9800, #FF5722);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .modal-btn-conflict:hover {
+            background: linear-gradient(135deg, #FB8C00, #F4511E);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -874,6 +1030,90 @@
         </div>
     </div>
 
+    <!-- Servo Value Out of Range Modal -->
+    <div id="servoRangeModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">Value Out of Range!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div style="color: #fff; font-size: 16px; line-height: 1.8;">
+                    The value you entered is outside the valid range.
+                </div>
+
+                <div class="conflict-detail" style="margin: 15px 0;">
+                    <strong>Entered:</strong> <span class="conflict-pin" id="servoEnteredValue"></span>
+                    <br>
+                    <strong>Valid Range:</strong> <span class="conflict-component" id="servoValidRange"></span>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="servoRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closeServoRangeModal()">OK, Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Sequence Error Modal -->
+    <div id="timeSequenceModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">Invalid Time Sequence!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div style="color: #fff; font-size: 16px; line-height: 1.8;">
+                    In Absolute mode, each time value must be greater than or equal to the previous one.
+                </div>
+
+                <div class="conflict-detail" style="margin: 15px 0;">
+                    <strong>Previous:</strong> <span class="conflict-component" id="timePreviousValue"></span>
+                    <br>
+                    <strong>Entered:</strong> <span class="conflict-pin" id="timeEnteredValue"></span>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="timeRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closeTimeSequenceModal()">OK, Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pin Conflict Warning Modal -->
+    <div id="pinConflictModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">PIN CONFLICT!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div class="conflict-detail">
+                    Pin <span class="conflict-pin" id="conflictPinNumber"></span> is already in use by:
+                    <br>
+                    <span class="conflict-component" id="conflictExistingComponent"></span>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <span class="conflict-attempted" id="conflictAttemptedComponent"></span> cannot use this pin.
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="conflictRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closePinConflictModal()">OK, I Understand</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Function Info Modal -->
     <div id="functionInfoModal" class="modal-overlay">
         <div class="modal-dialog-info">
@@ -946,6 +1186,7 @@
                 <div class="option-row">
                     <label for="ru-servo-pin" class="info-label" onclick="showFunctionInfo('ru-servo')">RU Servo Pin:</label>
                     <select id="ru-servo-pin" name="ru-servo-pin">
+                        <option value="0">Not Used</option>
                         <option value="1" selected>S1</option>
                         <option value="2">S2</option>
                         <option value="3">S3</option>
@@ -960,6 +1201,7 @@
                 <div class="option-row">
                     <label for="tl-servo-pin" class="info-label" onclick="showFunctionInfo('tl-servo')">TL Servo Pin:</label>
                     <select id="tl-servo-pin" name="tl-servo-pin">
+                        <option value="0">Not Used</option>
                         <option value="1">S1</option>
                         <option value="2">S2</option>
                         <option value="3" selected>S3</option>
@@ -974,6 +1216,7 @@
                 <div class="option-row">
                     <label for="ww-servo-pin" class="info-label" onclick="showFunctionInfo('ww-servo')">WW Servo Pin:</label>
                     <select id="ww-servo-pin" name="ww-servo-pin">
+                        <option value="0">Not Used</option>
                         <option value="1">S1</option>
                         <option value="2">S2</option>
                         <option value="3">S3</option>
@@ -983,6 +1226,36 @@
                         <option value="7">S7</option>
                         <option value="8">S8</option>
                         <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="ww2-servo-pin" class="info-label" onclick="showFunctionInfo('ww2-servo')">WW2 Servo Pin:</label>
+                    <select id="ww2-servo-pin" name="ww2-servo-pin">
+                        <option value="0" selected>Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="servo-range-mode" class="info-label" onclick="showFunctionInfo('range-mode')">Range Mode:</label>
+                    <select id="servo-range-mode" name="servo-range-mode" onchange="updateRangeModeLabels()">
+                        <option value="0-100">0-100 (%)</option>
+                        <option value="0-255">0-255</option>
+                        <option value="1000-2000" selected>1000-2000 µs</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="time-mode" class="info-label" onclick="showFunctionInfo('time-mode')">Time Mode:</label>
+                    <select id="time-mode" name="time-mode" onchange="updateTimeMode()">
+                        <option value="interval" selected>Interval</option>
+                        <option value="absolute">Absolute</option>
                     </select>
                 </div>
             </div>
@@ -1205,220 +1478,269 @@
             <div class="timer-grid">
                 <div class="timer-header">Func.</div>
                 <div class="timer-header">Time</div>
-                <div class="timer-header">RU</div>
-                <div class="timer-header">TL</div>
-                <div class="timer-header">WW</div>
+                <div class="timer-header ru-column" id="header-ru">RU</div>
+                <div class="timer-header tl-column" id="header-tl">TL</div>
+                <div class="timer-header ww-column" id="header-ww">WW</div>
+                <div class="timer-header ww2-column" id="header-ww2">WW2</div>
 
                 <div class="timer-cell function-name" title="Power ON" onclick="showFunctionInfo('on')">On</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="on-ru" name="on-ru" min="0" max="255" value="45">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="on-ru" name="on-ru" min="1000" max="2000" value="1176">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="on-tl" name="on-tl" min="0" max="255" value="35">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="on-tl" name="on-tl" min="1000" max="2000" value="1137">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="on-ww" name="on-ww" min="0" max="255" value="0">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="on-ww" name="on-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="on-ww2" name="on-ww2" min="1000" max="2000" value="1000">
                 </div>
 
                 <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="str-ru" name="str-ru" min="0" max="255" value="5">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="str-ru" name="str-ru" min="1000" max="2000" value="1020">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="str-tl" name="str-tl" min="0" max="255" value="25">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="str-tl" name="str-tl" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="str-ww" name="str-ww" min="0" max="255" value="50">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="str-ww" name="str-ww" min="1000" max="2000" value="1196">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="str-ww2" name="str-ww2" min="1000" max="2000" value="1196">
                 </div>
 
                 <div class="timer-cell function-name" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="cir-ru" name="cir-ru" min="0" max="255" value="105">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cir-ru" name="cir-ru" min="1000" max="2000" value="1412">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cir-tl" name="cir-tl" min="0" max="255" value="15">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cir-tl" name="cir-tl" min="1000" max="2000" value="1059">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cir-ww" name="cir-ww" min="0" max="255" value="150">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cir-ww" name="cir-ww" min="1000" max="2000" value="1588">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cir-ww2" name="cir-ww2" min="1000" max="2000" value="1588">
                 </div>
 
                 <div class="timer-cell function-name" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="ola-ru" name="ola-ru" min="0" max="255" value="35">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="ola-ru" name="ola-ru" min="1000" max="2000" value="1137">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="ola-tl" name="ola-tl" min="0" max="255" value="5">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="ola-tl" name="ola-tl" min="1000" max="2000" value="1020">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="ola-ww" name="ola-ww" min="0" max="255" value="75">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="ola-ww" name="ola-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="ola-ww2" name="ola-ww2" min="1000" max="2000" value="1294">
                 </div>
 
                 <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
                 <div class="timer-cell">
                     <input type="number" id="pu1-time" name="pu1-time" min="0" max="10" step="0.01" value="0.03">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu1-ru" name="pu1-ru" min="0" max="255" value="35">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pu1-ru" name="pu1-ru" min="1000" max="2000" value="1137">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu1-tl" name="pu1-tl" min="0" max="255" value="0">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pu1-tl" name="pu1-tl" min="1000" max="2000" value="1000">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu1-ww" name="pu1-ww" min="0" max="255" value="75">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pu1-ww" name="pu1-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pu1-ww2" name="pu1-ww2" min="1000" max="2000" value="1294">
                 </div>
 
                 <div class="timer-cell function-name" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
                 <div class="timer-cell">
                     <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.1">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu2-ru" name="pu2-ru" min="0" max="255" value="30">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pu2-ru" name="pu2-ru" min="1000" max="2000" value="1118">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu2-tl" name="pu2-tl" min="0" max="255" value="2">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pu2-tl" name="pu2-tl" min="1000" max="2000" value="1008">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pu2-ww" name="pu2-ww" min="0" max="255" value="70">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pu2-ww" name="pu2-ww" min="1000" max="2000" value="1275">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pu2-ww2" name="pu2-ww2" min="1000" max="2000" value="1275">
                 </div>
 
                 <div class="timer-cell function-name" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
                 <div class="timer-cell">
                     <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.4">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr1-ru" name="cr1-ru" min="0" max="255" value="25">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr1-ru" name="cr1-ru" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr1-tl" name="cr1-tl" min="0" max="255" value="60">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr1-tl" name="cr1-tl" min="1000" max="2000" value="1235">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr1-ww" name="cr1-ww" min="0" max="255" value="60">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr1-ww" name="cr1-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr1-ww2" name="cr1-ww2" min="1000" max="2000" value="1235">
                 </div>
 
                 <div class="timer-cell function-name" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
                 <div class="timer-cell">
                     <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.7">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr2-ru" name="cr2-ru" min="0" max="255" value="25">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr2-ru" name="cr2-ru" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr2-tl" name="cr2-tl" min="0" max="255" value="65">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr2-tl" name="cr2-tl" min="1000" max="2000" value="1255">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr2-ww" name="cr2-ww" min="0" max="255" value="60">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr2-ww" name="cr2-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr2-ww2" name="cr2-ww2" min="1000" max="2000" value="1235">
                 </div>
 
                 <div class="timer-cell function-name" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
                 <div class="timer-cell">
                     <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr3-ru" name="cr3-ru" min="0" max="255" value="25">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr3-ru" name="cr3-ru" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr3-tl" name="cr3-tl" min="0" max="255" value="75">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr3-tl" name="cr3-tl" min="1000" max="2000" value="1294">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="cr3-ww" name="cr3-ww" min="0" max="255" value="60">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr3-ww" name="cr3-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr3-ww2" name="cr3-ww2" min="1000" max="2000" value="1235">
                 </div>
 
                 <div class="timer-cell function-name" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
                 <div class="timer-cell">
                     <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.5">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu1-ru" name="bu1-ru" min="0" max="255" value="25">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu1-ru" name="bu1-ru" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu1-tl" name="bu1-tl" min="0" max="255" value="200">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu1-tl" name="bu1-tl" min="1000" max="2000" value="1784">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu1-ww" name="bu1-ww" min="0" max="255" value="60">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu1-ww" name="bu1-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu1-ww2" name="bu1-ww2" min="1000" max="2000" value="1235">
                 </div>
 
                 <div class="timer-cell function-name" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
                 <div class="timer-cell">
                     <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="1.1">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu2-ru" name="bu2-ru" min="0" max="255" value="25">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu2-ru" name="bu2-ru" min="1000" max="2000" value="1098">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu2-tl" name="bu2-tl" min="0" max="255" value="220">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu2-tl" name="bu2-tl" min="1000" max="2000" value="1863">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu2-ww" name="bu2-ww" min="0" max="255" value="75">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu2-ww" name="bu2-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu2-ww2" name="bu2-ww2" min="1000" max="2000" value="1294">
                 </div>
 
                 <div class="timer-cell function-name" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
                 <div class="timer-cell">
                     <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.7">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu3-ru" name="bu3-ru" min="0" max="255" value="55">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu3-ru" name="bu3-ru" min="1000" max="2000" value="1216">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu3-tl" name="bu3-tl" min="0" max="255" value="240">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu3-tl" name="bu3-tl" min="1000" max="2000" value="1941">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="bu3-ww" name="bu3-ww" min="0" max="255" value="85">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu3-ww" name="bu3-ww" min="1000" max="2000" value="1333">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu3-ww2" name="bu3-ww2" min="1000" max="2000" value="1333">
                 </div>
 
                 <div class="timer-cell function-name" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
                 <div class="timer-cell">
                     <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="7.1">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="fg-ru" name="fg-ru" min="0" max="255" value="57">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="fg-ru" name="fg-ru" min="1000" max="2000" value="1224">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="fg-tl" name="fg-tl" min="0" max="255" value="35">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="fg-tl" name="fg-tl" min="1000" max="2000" value="1137">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="fg-ww" name="fg-ww" min="0" max="255" value="15">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="fg-ww" name="fg-ww" min="1000" max="2000" value="1059">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="fg-ww2" name="fg-ww2" min="1000" max="2000" value="1059">
                 </div>
 
                 <div class="timer-cell function-name" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
                 <div class="timer-cell">
                     <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="180">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="gl-ru" name="gl-ru" min="0" max="255" value="52">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="gl-ru" name="gl-ru" min="1000" max="2000" value="1204">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="gl-tl" name="gl-tl" min="0" max="255" value="32">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="gl-tl" name="gl-tl" min="1000" max="2000" value="1125">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="gl-ww" name="gl-ww" min="0" max="255" value="5">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="gl-ww" name="gl-ww" min="1000" max="2000" value="1020">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="gl-ww2" name="gl-ww2" min="1000" max="2000" value="1020">
                 </div>
 
                 <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="dt-ru" name="dt-ru" min="0" max="255" value="100">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="dt-ru" name="dt-ru" min="1000" max="2000" value="1392">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="dt-tl" name="dt-tl" min="0" max="255" value="255">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="dt-tl" name="dt-tl" min="1000" max="2000" value="2000">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="dt-ww" name="dt-ww" min="0" max="255" value="0">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="dt-ww" name="dt-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="dt-ww2" name="dt-ww2" min="1000" max="2000" value="1000">
                 </div>
 
                 <div class="timer-cell function-name" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
                 <div class="timer-cell"></div>
-                <div class="timer-cell">
-                    <input type="number" id="pk-ru" name="pk-ru" min="0" max="255" value="100">
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pk-ru" name="pk-ru" min="1000" max="2000" value="1392">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pk-tl" name="pk-tl" min="0" max="255" value="0">
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pk-tl" name="pk-tl" min="1000" max="2000" value="1000">
                 </div>
-                <div class="timer-cell">
-                    <input type="number" id="pk-ww" name="pk-ww" min="0" max="255" value="0">
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pk-ww" name="pk-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pk-ww2" name="pk-ww2" min="1000" max="2000" value="1000">
                 </div>
             </div>
         </div>
@@ -1430,6 +1752,161 @@
    <script>
   // Global değişken - cihazdan gelen tüm JSON
   var fullDeviceJson = null;
+
+  // Eski pin değerlerini sakla (çakışma durumunda geri dönmek için)
+  const previousPinValues = {};
+
+  // Time mode global değişkeni
+  window.currentTimeMode = 'interval'; // 'interval' veya 'absolute'
+
+  // Time input'ları için önceki değerleri sakla (validasyon için)
+  const previousTimeValues = {};
+
+  // Pin Conflict Validation with Revert
+  // changedElementId: Hangi select değişti
+  function validatePinAssignments(changedElementId) {
+    const usedPins = new Map(); // pin -> {name, elementId}
+
+    try {
+      // Tüm pin tanımları
+      const pinDefinitions = [
+        { id: 'ru-servo-pin', name: 'RU Servo' },
+        { id: 'tl-servo-pin', name: 'TL Servo' },
+        { id: 'ww-servo-pin', name: 'WW Servo' },
+        { id: 'ww2-servo-pin', name: 'WW2 Servo' }
+      ];
+
+      // Hook pinlerini ekle
+      const hookType = document.getElementById('hook-type')?.value;
+      if (hookType === '2switch' || hookType === '2switch_servo') {
+        pinDefinitions.push({ id: 'hook-sw1-pin', name: 'Hook SW1' });
+        pinDefinitions.push({ id: 'hook-sw2-pin', name: 'Hook SW2' });
+      }
+      if (hookType === '2switch_servo' || hookType === 'rotary_servo') {
+        pinDefinitions.push({ id: 'hook-servo-pin', name: 'Hook Servo' });
+      }
+      if (hookType === 'rotary_servo') {
+        pinDefinitions.push({ id: 'encoder-pin', name: 'Encoder' });
+      }
+
+      // 1. Önce değişmeyen pinleri topla
+      for (const def of pinDefinitions) {
+        if (def.id === changedElementId) continue; // Değişeni atla
+
+        const element = document.getElementById(def.id);
+        if (!element) continue;
+
+        const pin = parseInt(element.value);
+        if (pin === 0 || isNaN(pin)) continue; // Not Used pinleri atla
+
+        usedPins.set(pin, { name: def.name, elementId: def.id });
+      }
+
+      // 2. Şimdi değişen pin'i kontrol et
+      if (changedElementId) {
+        const changedElement = document.getElementById(changedElementId);
+        if (changedElement) {
+          const changedPin = parseInt(changedElement.value);
+
+          if (changedPin !== 0 && !isNaN(changedPin)) {
+            // Çakışma var mı?
+            if (usedPins.has(changedPin)) {
+              const existingPin = usedPins.get(changedPin);
+              const changedPinName = pinDefinitions.find(d => d.id === changedElementId)?.name || 'Unknown';
+
+              // ESKİ DEĞERE GERİ DÖN
+              const oldValue = previousPinValues[changedElementId] || '0';
+              changedElement.value = oldValue;
+
+              // Güzel modal ile kullanıcıya bildir
+              showPinConflictModal(changedPin, existingPin.name, changedPinName, oldValue);
+
+              console.warn(`⚠️ Pin conflict: ${changedPinName} tried Pin ${changedPin}, already used by ${existingPin.name}. Reverted to ${oldValue}`);
+
+              // Diyagramı güncelle (eski değerle)
+              updatePinDiagram();
+              return;
+            }
+          }
+
+          // Çakışma yok, yeni değeri kaydet
+          previousPinValues[changedElementId] = changedElement.value;
+        }
+      }
+
+    } catch (error) {
+      console.error('❌ Error validating pins:', error);
+    }
+
+    return [];
+  }
+
+  // JSON Schema Validation
+  function validateDeviceJson(json) {
+    try {
+      // Temel yapı kontrolü
+      if (!json || typeof json !== 'object') {
+        console.error('❌ Invalid JSON: not an object');
+        return false;
+      }
+
+      // Zorunlu alanlar
+      if (!json['model-class'] || typeof json['model-class'] !== 'string') {
+        console.error('❌ Invalid JSON: missing or invalid model-class');
+        return false;
+      }
+
+      if (typeof json['selected-preset-index'] !== 'number') {
+        console.error('❌ Invalid JSON: missing or invalid selected-preset-index');
+        return false;
+      }
+
+      // Presets array kontrolü
+      if (!Array.isArray(json.presets) || json.presets.length === 0) {
+        console.error('❌ Invalid JSON: presets must be a non-empty array');
+        return false;
+      }
+
+      // Her preset'i doğrula
+      for (let i = 0; i < json.presets.length; i++) {
+        const preset = json.presets[i];
+
+        if (!preset['preset-name'] || typeof preset['preset-name'] !== 'string') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid preset-name`);
+          return false;
+        }
+
+        if (typeof preset['preset-index'] !== 'number') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid preset-index`);
+          return false;
+        }
+
+        // Timers objesi kontrolü
+        if (!preset.timers || typeof preset.timers !== 'object') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid timers object`);
+          return false;
+        }
+
+        // Pin değerleri kontrolü (0-9 arası olmalı, 0 = Not Used)
+        const pinFields = ['ru-servo-pin', 'tl-servo-pin', 'ww-servo-pin'];
+        for (const field of pinFields) {
+          if (preset[field] !== undefined) {
+            const val = preset[field];
+            if (typeof val !== 'number' || val < 0 || val > 9) {
+              console.error(`❌ Invalid preset ${i}: ${field} must be between 0-9 (0 = Not Used)`);
+              return false;
+            }
+          }
+        }
+      }
+
+      console.log('✅ JSON validation passed');
+      return true;
+    } catch (error) {
+      console.error('❌ JSON validation error:', error);
+      return false;
+    }
+  }
 
   // SAVE butonunu yeniden aktif et (Flutter'dan çağrılacak)
   function onSaveComplete(success) {
@@ -1462,8 +1939,17 @@
   // Flutter'dan tüm JSON'u al ve preset selector'ı doldur
   function initializeWithFullJson(jsonString) {
     try {
-      fullDeviceJson = JSON.parse(jsonString);
-      console.log('✅ Full JSON received:', fullDeviceJson);
+      const parsedJson = JSON.parse(jsonString);
+
+      // JSON şemasını doğrula
+      if (!validateDeviceJson(parsedJson)) {
+        alert('Invalid device configuration received. Please reconnect to device.');
+        console.error('❌ JSON validation failed');
+        return;
+      }
+
+      fullDeviceJson = parsedJson;
+      console.log('✅ Full JSON received and validated:', fullDeviceJson);
 
       // Preset selector'ı doldur
       var selector = document.getElementById('preset-selector');
@@ -1696,6 +2182,51 @@
     document.getElementById('infoModal').classList.remove('show');
   }
 
+  // Servo Range Modal fonksiyonları
+  function showServoRangeModal(enteredValue, validRange, revertedValue) {
+    document.getElementById('servoEnteredValue').textContent = enteredValue;
+    document.getElementById('servoValidRange').textContent = validRange;
+    document.getElementById('servoRevertedValue').textContent = revertedValue;
+    document.getElementById('servoRangeModal').classList.add('show');
+  }
+
+  function closeServoRangeModal() {
+    document.getElementById('servoRangeModal').classList.remove('show');
+  }
+
+  // Time Sequence Modal fonksiyonları
+  function showTimeSequenceModal(previousValue, enteredValue, revertedValue) {
+    // Modal içeriğini güncelle
+    document.getElementById('timePreviousValue').textContent = previousValue + ' s';
+    document.getElementById('timeEnteredValue').textContent = enteredValue + ' s';
+    document.getElementById('timeRevertedValue').textContent = revertedValue + ' s';
+
+    // Modal'ı göster
+    document.getElementById('timeSequenceModal').classList.add('show');
+  }
+
+  function closeTimeSequenceModal() {
+    document.getElementById('timeSequenceModal').classList.remove('show');
+  }
+
+  // Pin Conflict Modal fonksiyonları
+  function showPinConflictModal(pinNumber, existingComponent, attemptedComponent, revertedValue) {
+    // Modal içeriğini güncelle
+    document.getElementById('conflictPinNumber').textContent = `S${pinNumber}`;
+    document.getElementById('conflictExistingComponent').textContent = existingComponent;
+    document.getElementById('conflictAttemptedComponent').textContent = attemptedComponent;
+
+    const revertedLabel = revertedValue === '0' ? 'Not Used' : `S${revertedValue}`;
+    document.getElementById('conflictRevertedValue').textContent = revertedLabel;
+
+    // Modal'ı göster
+    document.getElementById('pinConflictModal').classList.add('show');
+  }
+
+  function closePinConflictModal() {
+    document.getElementById('pinConflictModal').classList.remove('show');
+  }
+
   // Gerçek silme işlemi
   function performDelete(selectedIndex) {
     var selector = document.getElementById('preset-selector');
@@ -1752,18 +2283,25 @@
   function submitForm(event) {
     event.preventDefault(); // Formun normal submit işlemini durdur
 
-    if (!fullDeviceJson) {
-      alert('Device JSON not loaded yet');
-      return false;
-    }
+    try {
+      if (!fullDeviceJson) {
+        alert('Device JSON not loaded yet');
+        return false;
+      }
 
-    // SAVE butonunu disable et ve "SAVING..." yap
-    var saveButton = document.querySelector('input[type="submit"]');
-    saveButton.disabled = true;
-    saveButton.value = 'SAVING...';
-    saveButton.style.backgroundColor = '#CCA000'; // Koyu sarı
+      // Eğer absolute mode'daysa, önce interval'e dönüştür (JSON'a kaydetmek için)
+      const currentTimeMode = window.currentTimeMode || 'interval';
+      if (currentTimeMode === 'absolute') {
+        convertAllTimeInputs('interval');
+      }
 
-    console.log('💾 SAVE button clicked, updating current preset with form values...');
+      // SAVE butonunu disable et ve "SAVING..." yap
+      var saveButton = document.querySelector('input[type="submit"]');
+      saveButton.disabled = true;
+      saveButton.value = 'SAVING...';
+      saveButton.style.backgroundColor = '#CCA000'; // Koyu sarı
+
+      console.log('💾 SAVE button clicked, updating current preset with form values...');
 
     // Mevcut seçili preset'i bul
     var selector = document.getElementById('preset-selector');
@@ -1783,6 +2321,7 @@
     currentPreset['ru-servo-pin'] = parseInt(document.getElementById('ru-servo-pin').value);
     currentPreset['tl-servo-pin'] = parseInt(document.getElementById('tl-servo-pin').value);
     currentPreset['ww-servo-pin'] = parseInt(document.getElementById('ww-servo-pin').value);
+    currentPreset['ww2-servo-pin'] = parseInt(document.getElementById('ww2-servo-pin').value);
 
     // Hook settings
     currentPreset['hook-type'] = document.getElementById('hook-type').value;
@@ -1841,10 +2380,19 @@
         timer.time = parseFloat(timeElem.value);
       }
 
-      // Servo positions
-      timer.ru = parseInt(document.getElementById(key + '-ru').value);
-      timer.tl = parseInt(document.getElementById(key + '-tl').value);
-      timer.ww = parseInt(document.getElementById(key + '-ww').value);
+      // Servo positions - UI formatından PWM'e dönüştür
+      const currentMode = window.currentServoRangeMode || '1000-2000';
+
+      const ruUiValue = parseInt(document.getElementById(key + '-ru').value);
+      const tlUiValue = parseInt(document.getElementById(key + '-tl').value);
+      const wwUiValue = parseInt(document.getElementById(key + '-ww').value);
+      const ww2UiValue = parseInt(document.getElementById(key + '-ww2').value);
+
+      // UI değerlerini PWM'e dönüştür (JSON'da her zaman PWM olarak saklanır)
+      timer.ru = uiValueToPwm(ruUiValue, currentMode);
+      timer.tl = uiValueToPwm(tlUiValue, currentMode);
+      timer.ww = uiValueToPwm(wwUiValue, currentMode);
+      timer.ww2 = uiValueToPwm(ww2UiValue, currentMode);
     }
 
     // Update all timers
@@ -1876,14 +2424,26 @@
     // selected-preset-index'i güncelle
     fullDeviceJson['selected-preset-index'] = selectedIndex;
 
-    // Tüm JSON'u string'e çevir ve FormChannel'a gönder
-    var jsonString = JSON.stringify(fullDeviceJson);
+      // Tüm JSON'u string'e çevir ve FormChannel'a gönder
+      var jsonString = JSON.stringify(fullDeviceJson);
 
-    console.log('📤 Sending full JSON to Flutter (' + jsonString.length + ' chars)');
-    FormChannel.postMessage(jsonString);
+      // FormChannel kontrolü
+      if (typeof FormChannel === 'undefined' || !FormChannel.postMessage) {
+        throw new Error('FormChannel not available. Not running in WebView?');
+      }
 
-    return false; // Formun normal submit işlemini engelle
-}
+      console.log('📤 Sending full JSON to Flutter (' + jsonString.length + ' chars)');
+      FormChannel.postMessage(jsonString);
+
+      return false; // Formun normal submit işlemini engelle
+
+    } catch (error) {
+      console.error('❌ Error in submitForm:', error);
+      alert('Failed to save configuration: ' + error.message);
+      onSaveComplete(false);
+      return false;
+    }
+  }
 
     document.querySelectorAll('input[name="strobe-bit"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
@@ -1939,41 +2499,425 @@
     // Sayfa yüklendiğinde animasyonu başlat
     document.addEventListener('DOMContentLoaded', function() {
         updateStrobeAnimation();
+
+        // Range mode header'larını başlangıç mode'una göre güncelle
+        const initialMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+        let suffix = '';
+        switch(initialMode) {
+            case '0-100':
+                suffix = ' (%)';
+                break;
+            case '0-255':
+                suffix = '';
+                break;
+            case '1000-2000':
+                suffix = ' (µs)';
+                break;
+        }
+        document.getElementById('header-ru').textContent = 'RU' + suffix;
+        document.getElementById('header-tl').textContent = 'TL' + suffix;
+        document.getElementById('header-ww').textContent = 'WW' + suffix;
+        document.getElementById('header-ww2').textContent = 'WW2' + suffix;
     });
 
-    // Time inputları için virgülden sonra iki basamak formatı
+    // Sayfa kapanmadan önce interval'i temizle (memory leak önleme)
+    window.addEventListener('beforeunload', function() {
+        if (strobeInterval) {
+            clearInterval(strobeInterval);
+            console.log('🧹 Strobe interval cleared on page unload');
+        }
+    });
+
+    // WebView kapandığında veya sayfa gizlendiğinde temizle
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && strobeInterval) {
+            clearInterval(strobeInterval);
+            console.log('🧹 Strobe interval cleared (page hidden)');
+        } else if (!document.hidden) {
+            // Sayfa tekrar görünür olduğunda yeniden başlat
+            updateStrobeAnimation();
+        }
+    });
+
+    // Time inputları için virgülden sonra iki basamak formatı + time mode validation
     document.querySelectorAll('input[id$="-time"]').forEach(input => {
+        // Focus - önceki değeri kaydet
+        input.addEventListener('focus', function() {
+            previousTimeValues[this.id] = this.value;
+        });
+
+        // Blur - format + validation
+        input.addEventListener('blur', function() {
+            const formattedValue = parseFloat(this.value).toFixed(2);
+            this.value = formattedValue;
+
+            // Absolute mode'da sıra kontrolü
+            validateTimeSequence(this);
+
+            // Yeni değeri kaydet
+            previousTimeValues[this.id] = this.value;
+        });
+
+        // Change - format
         input.addEventListener('change', function() {
             this.value = parseFloat(this.value).toFixed(2);
         });
-        input.addEventListener('blur', function() {
-            this.value = parseFloat(this.value).toFixed(2);
-        });
+
+        // Başlangıç değerini kaydet
+        previousTimeValues[input.id] = input.value;
     });
 
-    // RU, TL, WW inputları için 0-255 sınırı
-    document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"]').forEach(input => {
+    // ========== SERVO RANGE MODE FUNCTIONS ==========
+
+    // Range mode'a göre input limitlerini al
+    function getRangeLimits() {
+        const mode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+        switch(mode) {
+            case '0-100':
+                return { min: 0, max: 100 };
+            case '0-255':
+                return { min: 0, max: 255 };
+            case '1000-2000':
+                return { min: 1000, max: 2000 };
+            default:
+                return { min: 1000, max: 2000 };
+        }
+    }
+
+    // UI değerini PWM değerine (1000-2000µs) dönüştür
+    function uiValueToPwm(uiValue, mode) {
+        const value = parseInt(uiValue);
+        if (isNaN(value)) return 1500; // Default center
+
+        switch(mode) {
+            case '0-100':
+                // 0-100 → 1000-2000
+                return Math.round(1000 + (value * 10));
+            case '0-255':
+                // 0-255 → 1000-2000
+                return Math.round(1000 + (value * (1000 / 255)));
+            case '1000-2000':
+                // Zaten PWM değeri
+                return value;
+            default:
+                return value;
+        }
+    }
+
+    // PWM değerini (1000-2000µs) UI değerine dönüştür
+    function pwmToUiValue(pwmValue, mode) {
+        const value = parseInt(pwmValue);
+        if (isNaN(value)) return mode === '0-100' ? 50 : mode === '0-255' ? 127 : 1500;
+
+        switch(mode) {
+            case '0-100':
+                // 1000-2000 → 0-100
+                return Math.round((value - 1000) / 10);
+            case '0-255':
+                // 1000-2000 → 0-255
+                return Math.round((value - 1000) * (255 / 1000));
+            case '1000-2000':
+                // Zaten PWM değeri
+                return value;
+            default:
+                return value;
+        }
+    }
+
+    // Range mode değiştiğinde header'ları ve input değerlerini güncelle
+    function updateRangeModeLabels() {
+        const mode = document.getElementById('servo-range-mode').value;
+        let suffix = '';
+
+        switch(mode) {
+            case '0-100':
+                suffix = ' (%)';
+                break;
+            case '0-255':
+                suffix = '';
+                break;
+            case '1000-2000':
+                suffix = ' (µs)';
+                break;
+        }
+
+        // Header'ları güncelle
+        document.getElementById('header-ru').textContent = 'RU' + suffix;
+        document.getElementById('header-tl').textContent = 'TL' + suffix;
+        document.getElementById('header-ww').textContent = 'WW' + suffix;
+        document.getElementById('header-ww2').textContent = 'WW2' + suffix;
+
+        // Tüm servo input değerlerini yeni range'e dönüştür
+        convertAllServoInputs(mode);
+    }
+
+    // Tüm servo input'larını yeni range'e dönüştür
+    function convertAllServoInputs(newMode) {
+        const oldMode = window.currentServoRangeMode || '1000-2000';
+
+        document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+            const currentValue = parseInt(input.value);
+            if (isNaN(currentValue)) return;
+
+            // Önce PWM'e dönüştür (eski mode'dan)
+            const pwmValue = uiValueToPwm(currentValue, oldMode);
+
+            // Sonra yeni mode'a dönüştür
+            const newValue = pwmToUiValue(pwmValue, newMode);
+
+            input.value = newValue;
+            previousServoValues[input.id] = newValue.toString();
+        });
+
+        // Mevcut mode'u kaydet
+        window.currentServoRangeMode = newMode;
+    }
+
+    // ========== TIME MODE FUNCTIONS ==========
+
+    // Timer phase sırası (PU1'den GL'ye kadar)
+    const timerPhaseOrder = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+
+    // Interval değerlerini Absolute'e dönüştür
+    function intervalToAbsolute(intervalValue, phaseKey) {
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+        if (phaseIndex === -1) return intervalValue; // Bilinmeyen phase
+
+        let cumulativeTime = 0;
+
+        // Bu phase'e kadar olan tüm interval'leri topla
+        for (let i = 0; i <= phaseIndex; i++) {
+            const phaseId = timerPhaseOrder[i];
+            const timeInput = document.getElementById(phaseId + '-time');
+            if (timeInput) {
+                const value = parseFloat(timeInput.value) || 0;
+
+                // Son phase ise (yani güncellediğimiz), yeni değeri kullan
+                if (i === phaseIndex) {
+                    cumulativeTime += intervalValue;
+                } else {
+                    cumulativeTime += value;
+                }
+            }
+        }
+
+        return cumulativeTime;
+    }
+
+    // Absolute değeri Interval'e dönüştür
+    function absoluteToInterval(absoluteValue, phaseKey) {
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+        if (phaseIndex === -1) return absoluteValue; // Bilinmeyen phase
+
+        // Bir önceki phase'in absolute değerini bul
+        let previousAbsolute = 0;
+
+        if (phaseIndex > 0) {
+            // Önceki tüm interval'leri topla
+            for (let i = 0; i < phaseIndex; i++) {
+                const phaseId = timerPhaseOrder[i];
+                const timeInput = document.getElementById(phaseId + '-time');
+                if (timeInput) {
+                    previousAbsolute += parseFloat(timeInput.value) || 0;
+                }
+            }
+        }
+
+        // Interval = Absolute - Önceki Absolute
+        return absoluteValue - previousAbsolute;
+    }
+
+    // Tüm time input'ları yeni mode'a dönüştür
+    function convertAllTimeInputs(newMode) {
+        const oldMode = window.currentTimeMode || 'interval';
+
+        if (oldMode === newMode) return; // Aynı mode, hiçbir şey yapma
+
+        // Önce tüm mevcut değerleri oku (dönüşüm sırasında değişmesinler diye)
+        const currentValues = {};
+        timerPhaseOrder.forEach(phaseKey => {
+            const timeInput = document.getElementById(phaseKey + '-time');
+            if (timeInput) {
+                currentValues[phaseKey] = parseFloat(timeInput.value) || 0;
+            }
+        });
+
+        // Şimdi dönüşümü yap
+        if (newMode === 'absolute') {
+            // Interval → Absolute
+            let cumulativeTime = 0;
+            timerPhaseOrder.forEach(phaseKey => {
+                const timeInput = document.getElementById(phaseKey + '-time');
+                if (!timeInput) return;
+
+                const intervalValue = currentValues[phaseKey] || 0;
+                cumulativeTime += intervalValue;
+
+                timeInput.value = cumulativeTime.toFixed(2);
+                previousTimeValues[timeInput.id] = timeInput.value;
+            });
+        } else {
+            // Absolute → Interval
+            let previousAbsolute = 0;
+            timerPhaseOrder.forEach(phaseKey => {
+                const timeInput = document.getElementById(phaseKey + '-time');
+                if (!timeInput) return;
+
+                const absoluteValue = currentValues[phaseKey] || 0;
+                const intervalValue = absoluteValue - previousAbsolute;
+
+                timeInput.value = intervalValue.toFixed(2);
+                previousTimeValues[timeInput.id] = timeInput.value;
+
+                previousAbsolute = absoluteValue;
+            });
+        }
+
+        // Mevcut mode'u kaydet
+        window.currentTimeMode = newMode;
+    }
+
+    // Time mode değiştiğinde
+    function updateTimeMode() {
+        const newMode = document.getElementById('time-mode').value;
+        convertAllTimeInputs(newMode);
+    }
+
+    // Absolute mode'da time input validation
+    function validateTimeSequence(inputElement) {
+        const currentMode = window.currentTimeMode || 'interval';
+
+        // Sadece absolute mode'da kontrol et
+        if (currentMode !== 'absolute') return true;
+
+        const phaseKey = inputElement.id.replace('-time', '');
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+
+        if (phaseIndex === -1) return true; // Bilinmeyen phase
+        if (phaseIndex === 0) return true; // İlk phase, kontrol gereksiz
+
+        const currentValue = parseFloat(inputElement.value) || 0;
+
+        // Bir önceki phase'in değerini al
+        const previousPhase = timerPhaseOrder[phaseIndex - 1];
+        const previousInput = document.getElementById(previousPhase + '-time');
+
+        if (!previousInput) return true;
+
+        const previousValue = parseFloat(previousInput.value) || 0;
+
+        // Absolute mode'da her değer bir öncekinden büyük veya eşit olmalı
+        if (currentValue < previousValue) {
+            // Hata! Eski değere geri dön
+            const oldValue = previousTimeValues[inputElement.id] || previousValue;
+            inputElement.value = oldValue;
+
+            // Modal göster
+            showTimeSequenceModal(previousValue, currentValue, oldValue);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // RU, TL, WW, WW2 inputları için dinamik sınır kontrolü
+    // Önceki değerleri sakla (geçersiz girişlerde geri almak için)
+    const previousServoValues = {};
+
+    // Başlangıç mode'unu kaydet
+    window.currentServoRangeMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+
+    document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+        // Başlangıç değerini kaydet
+        previousServoValues[input.id] = input.value;
+
+        // Focus event - değeri geçici olarak sakla
+        input.addEventListener('focus', function() {
+            // Focus alındığında mevcut geçerli değeri kaydet
+            if (this.value !== '' && this.value !== '-') {
+                const value = parseInt(this.value);
+                if (!isNaN(value)) {
+                    previousServoValues[this.id] = this.value;
+                }
+            }
+        });
+
+        // Input event - sadece başındaki sıfırları temizle, range kontrolü yapma
         input.addEventListener('input', function() {
             let value = parseInt(this.value);
-            if (isNaN(value) || value < 0) {
-                this.value = 0;
-            } else if (value > 255) {
-                this.value = 255;
-            } else {
-                // Başındaki sıfırları temizle (0123 → 123)
+
+            // Boş veya geçersiz giriş - izin ver (kullanıcı yazıyor olabilir)
+            if (this.value === '' || this.value === '-') {
+                return;
+            }
+
+            // Sadece başındaki sıfırları temizle, range kontrolü yapma
+            if (!isNaN(value)) {
                 this.value = value.toString();
             }
         });
-        input.addEventListener('change', function() {
-            let value = parseInt(this.value);
-            if (isNaN(value) || value < 0) {
-                this.value = 0;
-            } else if (value > 255) {
-                this.value = 255;
-            } else {
-                // Başındaki sıfırları temizle
-                this.value = value.toString();
+
+        // Blur event - Range kontrolü burada yap
+        input.addEventListener('blur', function() {
+            const limits = getRangeLimits();
+            const currentMode = window.currentServoRangeMode || '1000-2000';
+
+            // Boş ise minimum değere set et
+            if (this.value === '' || this.value === '-') {
+                this.value = limits.min.toString();
+                previousServoValues[this.id] = this.value;
+                return;
             }
+
+            let value = parseInt(this.value);
+
+            // Geçersiz sayı kontrolü
+            if (isNaN(value)) {
+                const oldValue = previousServoValues[this.id] || limits.min.toString();
+                this.value = oldValue;
+
+                // Modal göster
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = '0-100 %';
+                        break;
+                    case '0-255':
+                        rangeText = '0-255';
+                        break;
+                    case '1000-2000':
+                        rangeText = '1000-2000 µs';
+                        break;
+                }
+                showServoRangeModal('Invalid', rangeText, oldValue);
+                return;
+            }
+
+            // Range kontrolü
+            if (value < limits.min || value > limits.max) {
+                const oldValue = previousServoValues[this.id] || limits.min.toString();
+                this.value = oldValue;
+
+                // Modal göster
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = '0-100 %';
+                        break;
+                    case '0-255':
+                        rangeText = '0-255';
+                        break;
+                    case '1000-2000':
+                        rangeText = '1000-2000 µs';
+                        break;
+                }
+                showServoRangeModal(value, rangeText, oldValue);
+                return;
+            }
+
+            // Geçerli değer - kaydet
+            previousServoValues[this.id] = this.value;
         });
     });
 
@@ -2003,6 +2947,9 @@
 
         // Fonksiyon: Pin label'ını güncelle (hem Pin Header hem Side Socket için)
         function setPinLabel(pinNumber, labelText) {
+            // Pin 0 (Not Used) ise gösterme
+            if (pinNumber === 0 || isNaN(pinNumber)) return;
+
             if (pinNumber >= 1 && pinNumber <= 6) {
                 // Pin Header Layout (1-6)
                 const label = document.getElementById(`s${pinNumber}-label`);
@@ -2081,7 +3028,24 @@
             setPinLabel(hookServo, "Hook Servo");
         }
     }
-    
+
+    // Time Settings kolonlarının görünürlüğünü güncelle (Not Used pinler için)
+    function updateColumnVisibility() {
+        const timerGrid = document.querySelector('.timer-grid');
+        if (!timerGrid) return;
+
+        const ruPin = document.getElementById('ru-servo-pin').value;
+        const tlPin = document.getElementById('tl-servo-pin').value;
+        const wwPin = document.getElementById('ww-servo-pin').value;
+        const ww2Pin = document.getElementById('ww2-servo-pin').value;
+
+        // Not Used (value="0") ise kolonları gizle
+        timerGrid.classList.toggle('hide-ru', ruPin === '0');
+        timerGrid.classList.toggle('hide-tl', tlPin === '0');
+        timerGrid.classList.toggle('hide-ww', wwPin === '0');
+        timerGrid.classList.toggle('hide-ww2', ww2Pin === '0');
+    }
+
     // Sayfa yüklendiğinde çalışacak kod
     document.addEventListener('DOMContentLoaded', function() {
         // Toggle butonu için olay dinleyicisi ekle
@@ -2102,19 +3066,47 @@
         // Hook seçeneklerini başlangıçta güncelle
         updateHookOptions();
         
-        // Servo pin seçimlerini dinle
-        document.getElementById('ru-servo-pin').addEventListener('change', updatePinDiagram);
-        document.getElementById('tl-servo-pin').addEventListener('change', updatePinDiagram);
-        document.getElementById('ww-servo-pin').addEventListener('change', updatePinDiagram);
-        
-        // Hook tipi değiştiğinde diyagramı güncelle
+        // Servo pin seçimlerini dinle - çakışma kontrolü + diyagram güncelle + kolon gizleme
+        document.getElementById('ru-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('tl-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('ww-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('ww2-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+
+        // Hook tipi değiştiğinde diyagramı güncelle (çakışma kontrolü yok, sadece güncelleme)
         document.getElementById('hook-type').addEventListener('change', function() {
             updateHookOptions();
             updatePinDiagram();
         });
-        
-        // Sayfa yüklendiğinde diyagramı güncelle
+
+        // Event delegation: Hook options container değişikliklerini dinle
+        // innerHTML ile içerik değişse bile tek listener yeterli (memory leak yok)
+        const hookOptionsContainer = document.getElementById('hook-options');
+        hookOptionsContainer.addEventListener('change', function(e) {
+            if (e.target.matches('select, input')) {
+                validatePinAssignments(e.target.id);
+                updatePinDiagram();
+            }
+        });
+
+        // Sayfa yüklendiğinde diyagramı ve kolon görünürlüğünü güncelle
         updatePinDiagram();
+        updateColumnVisibility();
     });
     
     // Hook seçeneklerini güncelleyen fonksiyon
@@ -2133,6 +3125,7 @@
                     <div class="option-row">
                         <label for="hook-sw1-pin">Switch 1 Pin:</label>
                         <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2" selected>S2</option>
                             <option value="3">S3</option>
@@ -2147,6 +3140,7 @@
                     <div class="option-row">
                         <label for="hook-sw2-pin">Switch 2 Pin:</label>
                         <select id="hook-sw2-pin" name="hook-sw2-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2">S2</option>
                             <option value="3">S3</option>
@@ -2167,6 +3161,7 @@
                     <div class="option-row">
                         <label for="hook-sw1-pin">Switch 1 Pin:</label>
                         <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2" selected>S2</option>
                             <option value="3">S3</option>
@@ -2181,6 +3176,7 @@
                     <div class="option-row">
                         <label for="hook-sw2-pin">Switch 2 Pin:</label>
                         <select id="hook-sw2-pin" name="hook-sw2-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2">S2</option>
                             <option value="3">S3</option>
@@ -2195,6 +3191,7 @@
                     <div class="option-row">
                         <label for="hook-servo-pin">Servo Pin:</label>
                         <select id="hook-servo-pin" name="hook-servo-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2">S2</option>
                             <option value="3">S3</option>
@@ -2215,6 +3212,7 @@
                     <div class="option-row">
                         <label for="encoder-pin">Enc. Pin:</label>
                         <select id="encoder-pin" name="encoder-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2" selected>S2</option>
                             <option value="3">S3</option>
@@ -2229,6 +3227,7 @@
                     <div class="option-row">
                         <label for="hook-servo-pin">Servo Pin:</label>
                         <select id="hook-servo-pin" name="hook-servo-pin">
+                            <option value="0">Not Used</option>
                             <option value="1">S1</option>
                             <option value="2">S2</option>
                             <option value="3">S3</option>
@@ -2243,22 +3242,20 @@
                 </div>
             `;
         }
-        
-        // Yeni eklenen seçeneklerdeki değişiklikleri dinle
-        const inputs = hookOptionsContainer.querySelectorAll('select, input');
-        inputs.forEach(input => {
-            input.addEventListener('change', function() {
-                // Pin diyagramını güncelle (eğer tanımlıysa)
-                if (typeof updatePinDiagram === 'function') {
-                    updatePinDiagram();
-                }
-            });
-        });
+
+        // Pin diyagramını güncelle (yeni hook options yüklendikten sonra)
+        if (typeof updatePinDiagram === 'function') {
+            updatePinDiagram();
+        }
     }
 
     // Flutter'dan gelen JSON verilerini forma yükle (F1A-specific)
     function loadPresetDataFromJSON(jsonString) {
         try {
+            if (!jsonString || typeof jsonString !== 'string') {
+                throw new Error('Invalid JSON string provided');
+            }
+
             var presetData = JSON.parse(jsonString);
             console.log('Preset data loaded:', presetData);
 
@@ -2308,11 +3305,22 @@
                         if (timeElement) timeElement.value = timer.time;
                     }
 
-                    // ru, tl, ww pozisyonları
-                    ['ru', 'tl', 'ww'].forEach(function(servo) {
+                    // ru, tl, ww, ww2 pozisyonları (PWM → UI formatına dönüştür)
+                    ['ru', 'tl', 'ww', 'ww2'].forEach(function(servo) {
                         if (timer[servo] !== undefined) {
                             var servoElement = document.getElementById(timerKey + '-' + servo);
-                            if (servoElement) servoElement.value = timer[servo];
+                            if (servoElement) {
+                                // JSON'daki değer her zaman PWM (1000-2000µs)
+                                const pwmValue = timer[servo];
+                                const currentMode = window.currentServoRangeMode || '1000-2000';
+
+                                // PWM'i UI formatına dönüştür
+                                const uiValue = pwmToUiValue(pwmValue, currentMode);
+                                servoElement.value = uiValue;
+
+                                // Önceki değer olarak kaydet
+                                previousServoValues[servoElement.id] = uiValue.toString();
+                            }
                         }
                     });
                 }
@@ -2324,14 +3332,37 @@
                 updateHookOptions();
             }
 
-            // Pin diyagramını güncelle
+            // Pin değerlerini başlangıç değeri olarak kaydet (çakışma kontrolü için)
+            previousPinValues['ru-servo-pin'] = document.getElementById('ru-servo-pin')?.value || '0';
+            previousPinValues['tl-servo-pin'] = document.getElementById('tl-servo-pin')?.value || '0';
+            previousPinValues['ww-servo-pin'] = document.getElementById('ww-servo-pin')?.value || '0';
+
+            // Hook pinlerini de kaydet (varsa)
+            if (document.getElementById('hook-sw1-pin')) {
+                previousPinValues['hook-sw1-pin'] = document.getElementById('hook-sw1-pin').value;
+            }
+            if (document.getElementById('hook-sw2-pin')) {
+                previousPinValues['hook-sw2-pin'] = document.getElementById('hook-sw2-pin').value;
+            }
+            if (document.getElementById('hook-servo-pin')) {
+                previousPinValues['hook-servo-pin'] = document.getElementById('hook-servo-pin').value;
+            }
+            if (document.getElementById('encoder-pin')) {
+                previousPinValues['encoder-pin'] = document.getElementById('encoder-pin').value;
+            }
+
+            // Pin diyagramını ve kolon görünürlüğünü güncelle
             if (typeof updatePinDiagram === 'function') {
                 updatePinDiagram();
+            }
+            if (typeof updateColumnVisibility === 'function') {
+                updateColumnVisibility();
             }
 
             console.log('✅ Form successfully populated from JSON');
         } catch (e) {
             console.error('❌ Error loading preset data:', e);
+            alert('Failed to load preset data: ' + e.message);
         }
     }
 
@@ -2351,6 +3382,21 @@
             icon: '🎚️',
             title: 'WW Servo (Wing)',
             description: 'Wing servo controls wing warping or wing flaps for additional lift/drag control.\n\nThis servo helps optimize the model\'s flight characteristics during different phases.\n\nPin assignment determines which hardware output channel controls this servo. Select a unique pin for this servo.'
+        },
+        'ww2-servo': {
+            icon: '🎚️',
+            title: 'WW2 Servo (Wing 2)',
+            description: 'Second wing servo for F1A Flapper models with dual wing control.\n\nFlapper models use two wing servos to control independent wing surfaces for enhanced flight control and stability.\n\nThis servo typically mirrors or complements WW servo movements for coordinated wing control.\n\nPin assignment determines which hardware output channel controls this servo. Required for Flapper configurations.'
+        },
+        'range-mode': {
+            icon: '📊',
+            title: 'Range Mode',
+            description: 'Selects the input format for servo position values in the Time Settings table.\n\nOptions:\n\n• 0-100 (%): Percentage format (0% = minimum, 100% = maximum)\n• 0-255: 8-bit integer format (classic RC systems)\n• 1000-2000 µs: PWM microsecond format (standard for modern servos)\n\nAll values are internally stored as 1000-2000 µs in the JSON configuration, regardless of the selected display format.\n\nChanging this mode will automatically convert all existing values to the new format.'
+        },
+        'time-mode': {
+            icon: '⏱️',
+            title: 'Time Mode',
+            description: 'Controls how time values are displayed and entered in the Time Settings table.\n\n• Interval: Each phase shows its duration (e.g., PU1: 0.03s, PU2: 0.10s)\n• Absolute: Each phase shows cumulative time from start (e.g., PU1: 0.03s, PU2: 0.13s)\n\nAll values are internally stored as intervals in the JSON configuration.\n\nIn Absolute mode, validation ensures each time value is greater than or equal to the previous phase to maintain chronological order.\n\nUse Interval mode for setting individual phase durations, or Absolute mode for planning total flight timeline.'
         },
         'hook-type': {
             icon: '🪝',
@@ -2451,6 +3497,11 @@
             icon: '🅿️',
             title: 'Park',
             description: 'Final parking position.\n\nAll servos return to safe storage positions.\n\nThis is the configuration for after landing, during storage, and transport.\n\nPrevents servo and linkage damage.'
+        },
+        'range-mode': {
+            icon: '📊',
+            title: 'Range Mode',
+            description: 'Selects the input format for RU/TL/WW servo values in the Time Settings table.\n\nOptions:\n\n• 0-100 (%): Enter values as percentages (0% = 1000µs, 100% = 2000µs)\n  - Easy to understand\n  - Good for beginners\n\n• 0-255: Traditional 8-bit range (0 = 1000µs, 255 = 2000µs)\n  - Compatible with legacy systems\n  - Fine control with 256 steps\n\n• 1000-2000 µs: Direct PWM microseconds (default)\n  - Precise servo positioning\n  - Standard RC servo control range\n  - 1500µs is center position\n\nIMPORTANT: Regardless of which mode you choose, the device always stores and uses the actual PWM values (1000-2000µs). The range mode only affects how YOU enter the values in this form.\n\nWhen you change the range mode, all existing values are automatically converted to the new format.'
         }
     };
 

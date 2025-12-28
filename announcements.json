@@ -1,0 +1,131 @@
+{
+  "announcements": [
+    {
+      "id": "2025-001",
+      "type": "app_update",
+      "priority": "high",
+      "title": {
+        "en": "New App Version Available",
+        "tr": "Yeni Uygulama Sürümü Mevcut"
+      },
+      "message": {
+        "en": "Version 1.1.0 is now available with improved BLE stability and new features. Update recommended.",
+        "tr": "Geliştirilmiş BLE kararlılığı ve yeni özelliklerle 1.1.0 sürümü kullanıma sunuldu. Güncelleme önerilir."
+      },
+      "filters": {
+        "app_version_min": "1.0.0",
+        "app_version_max": "1.0.7",
+        "platforms": ["android", "ios"]
+      },
+      "action": {
+        "type": "url",
+        "label": {
+          "en": "Update Now",
+          "tr": "Şimdi Güncelle"
+        },
+        "url": "https://example.com/update"
+      },
+      "dismissible": true,
+      "created": "2025-12-28T10:00:00Z",
+      "expires": "2026-01-28T23:59:59Z"
+    },
+    {
+      "id": "2025-002",
+      "type": "firmware_update",
+      "priority": "medium",
+      "title": {
+        "en": "F1A Firmware Update Available",
+        "tr": "F1A Yazılım Güncellemesi Mevcut"
+      },
+      "message": {
+        "en": "Firmware v2.5.0 for F1A models includes improved Auto-DT detection and battery life optimization. Update via BLE recommended.",
+        "tr": "F1A modelleri için v2.5.0 yazılımı geliştirilmiş Otomatik DT algılama ve pil ömrü optimizasyonu içeriyor. BLE üzerinden güncelleme önerilir."
+      },
+      "filters": {
+        "firmware_model_class": ["F1A"],
+        "firmware_version_min": "1.0.0",
+        "firmware_version_max": "2.4.9",
+        "show_on_connect": true
+      },
+      "action": {
+        "type": "update",
+        "label": {
+          "en": "Update Firmware",
+          "tr": "Yazılımı Güncelle"
+        }
+      },
+      "dismissible": true,
+      "created": "2025-12-27T15:30:00Z",
+      "expires": "2026-06-01T23:59:59Z"
+    },
+    {
+      "id": "2025-003",
+      "type": "feature",
+      "priority": "low",
+      "title": {
+        "en": "New Feature: GPS Integration",
+        "tr": "Yeni Özellik: GPS Entegrasyonu"
+      },
+      "message": {
+        "en": "FlexiTimer now supports GPS telemetry! View real-time position, altitude, and speed data on the sensor screen.",
+        "tr": "FlexiTimer artık GPS telemetrisini destekliyor! Sensör ekranında gerçek zamanlı konum, irtifa ve hız verilerini görüntüleyin."
+      },
+      "filters": {
+        "app_version_min": "1.0.7",
+        "firmware_model_class": ["F1A", "F1B", "F1C"]
+      },
+      "dismissible": true,
+      "created": "2025-12-26T08:00:00Z",
+      "expires": null
+    },
+    {
+      "id": "2025-004",
+      "type": "warning",
+      "priority": "high",
+      "title": {
+        "en": "Critical Battery Warning",
+        "tr": "Kritik Pil Uyarısı"
+      },
+      "message": {
+        "en": "Some F1A devices with firmware v2.3.x may experience battery drain issues. Please update to v2.4.0 or later immediately.",
+        "tr": "v2.3.x yazılımına sahip bazı F1A cihazlarda pil tükenme sorunları yaşanabilir. Lütfen derhal v2.4.0 veya üstüne güncelleyin."
+      },
+      "filters": {
+        "firmware_model_class": ["F1A"],
+        "firmware_version_min": "2.3.0",
+        "firmware_version_max": "2.3.9",
+        "show_on_connect": true
+      },
+      "action": {
+        "type": "update",
+        "label": {
+          "en": "Update Now",
+          "tr": "Hemen Güncelle"
+        }
+      },
+      "dismissible": false,
+      "created": "2025-12-20T12:00:00Z",
+      "expires": "2026-03-01T23:59:59Z"
+    },
+    {
+      "id": "2025-005",
+      "type": "info",
+      "priority": "low",
+      "title": {
+        "en": "Competition Mode Coming Soon",
+        "tr": "Yarışma Modu Yakında Geliyor"
+      },
+      "message": {
+        "en": "We're working on a dedicated competition mode with enhanced telemetry logging and flight analysis. Stay tuned!",
+        "tr": "Gelişmiş telemetri kaydı ve uçuş analizi içeren özel bir yarışma modu üzerinde çalışıyoruz. Takipte kalın!"
+      },
+      "filters": {
+        "app_version_min": "1.0.0"
+      },
+      "dismissible": true,
+      "created": "2025-12-15T10:00:00Z",
+      "expires": "2026-02-15T23:59:59Z"
+    }
+  ],
+  "schema_version": "1.0"
+}

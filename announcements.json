@@ -1,11 +1,12 @@
 {
   "announcements": [
     {
-      "id": "2025-006",
+      "id": "2025-001",
       "type": "app_update",
-      "priority": "high",
       "title": "New App Version Available",
       "message": "Version 1.1.0 is now available with improved BLE stability and new features. Update recommended.",
+      "icon": "0xe923",
+      "color": "0xFFFF5252",
       "filters": {
         "app_version_min": "1.0.0",
         "app_version_max": "1.0.7",
@@ -21,11 +22,12 @@
       "expires": "2026-01-28T23:59:59Z"
     },
     {
-      "id": "2025-007",
+      "id": "2025-002",
       "type": "firmware_update",
-      "priority": "medium",
       "title": "F1A Firmware Update Available",
       "message": "Firmware v2.5.0 for F1A models includes improved Auto-DT detection and battery life optimization. Update via BLE recommended.",
+      "icon": "0xe2c3",
+      "color": "0xFFFF9800",
       "filters": {
         "firmware_model_class": ["F1A"],
         "firmware_version_min": "1.0.0",
@@ -41,11 +43,12 @@
       "expires": "2026-06-01T23:59:59Z"
     },
     {
-      "id": "2025-008",
+      "id": "2025-003",
       "type": "feature",
-      "priority": "low",
       "title": "New Feature: GPS Integration",
       "message": "FlexiTimer now supports GPS telemetry! View real-time position, altitude, and speed data on the sensor screen.",
+      "icon": "0xe566",
+      "color": "0xFF4CAF50",
       "filters": {
         "app_version_min": "1.0.7",
         "firmware_model_class": ["F1A", "F1B", "F1C"]
@@ -55,11 +58,12 @@
       "expires": null
     },
     {
-      "id": "2025-009",
+      "id": "2025-004",
       "type": "warning",
-      "priority": "high",
       "title": "Critical Battery Warning",
       "message": "Some F1A devices with firmware v2.3.x may experience battery drain issues. Please update to v2.4.0 or later immediately.",
+      "icon": "0xe002",
+      "color": "0xFFF44336",
       "filters": {
         "firmware_model_class": ["F1A"],
         "firmware_version_min": "2.3.0",
@@ -75,11 +79,12 @@
       "expires": "2026-03-01T23:59:59Z"
     },
     {
-      "id": "2025-010",
+      "id": "2025-005",
       "type": "info",
-      "priority": "low",
       "title": "Competition Mode Coming Soon",
       "message": "We're working on a dedicated competition mode with enhanced telemetry logging and flight analysis. Stay tuned!",
+      "icon": "0xe88e",
+      "color": "0xFF2196F3",
       "filters": {
         "app_version_min": "1.0.0"
       },

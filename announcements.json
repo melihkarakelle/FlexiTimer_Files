@@ -1,7 +1,7 @@
 {
   "announcements": [
     {
-      "id": "2025-001",
+      "id": "2025-006",
       "type": "app_update",
       "priority": "high",
       "title": "New App Version Available",
@@ -21,7 +21,7 @@
       "expires": "2026-01-28T23:59:59Z"
     },
     {
-      "id": "2025-002",
+      "id": "2025-007",
       "type": "firmware_update",
       "priority": "medium",
       "title": "F1A Firmware Update Available",
@@ -41,7 +41,7 @@
       "expires": "2026-06-01T23:59:59Z"
     },
     {
-      "id": "2025-003",
+      "id": "2025-008",
       "type": "feature",
       "priority": "low",
       "title": "New Feature: GPS Integration",
@@ -55,7 +55,7 @@
       "expires": null
     },
     {
-      "id": "2025-004",
+      "id": "2025-009",
       "type": "warning",
       "priority": "high",
       "title": "Critical Battery Warning",
@@ -75,7 +75,7 @@
       "expires": "2026-03-01T23:59:59Z"
     },
     {
-      "id": "2025-005",
+      "id": "2025-010",
       "type": "info",
       "priority": "low",
       "title": "Competition Mode Coming Soon",

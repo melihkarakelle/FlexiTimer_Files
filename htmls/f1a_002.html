@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>BMK FlexiTimer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Leaflet.js for mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <style>
         :root {
             --base-font: 3.8vw;
@@ -382,6 +387,66 @@
             margin-left: 20px;
             padding-left: 15px;
             border-left: 2px solid #ccc;
+        }
+
+        /* Geofencing Styles */
+        #geofencing-map-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(30, 30, 60, 0.5);
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+        }
+
+        .geofence-instructions {
+            color: #FFD700;
+            font-size: var(--small-font);
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        #geofence-map {
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .geofence-coords-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: var(--small-font);
+        }
+
+        .coord-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            color: #FFD700;
+            font-family: monospace;
+        }
+
+        .clear-geofence-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: var(--base-font);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-geofence-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .clear-geofence-btn:active {
+            background-color: #7f0000;
         }
 
         .advanced-settings-container {
@@ -1510,6 +1575,25 @@
                         <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
                         <label for="flip-loop-detection" class="info-label" onclick="showFunctionInfo('flip-loop-detection')">Flip & Loop Detection</label>
                     </div>
+                    <div class="checkbox-label">
+                        <input type="checkbox" id="geofencing-enabled" name="geofencing-enabled" onchange="toggleGeofencingMap()">
+                        <label for="geofencing-enabled" class="info-label" onclick="showFunctionInfo('geofencing')">Geofencing DT</label>
+                    </div>
+
+                    <!-- Geofencing Map Container (hidden by default) -->
+                    <div id="geofencing-map-container" style="display: none;">
+                        <div class="geofence-instructions">
+                            Tap 4 corners on the map to define the boundary. Exit this area triggers DT.
+                        </div>
+                        <div id="geofence-map" style="height: 400px; width: 100%; border-radius: 8px; margin-top: 10px;"></div>
+                        <div class="geofence-coords-display">
+                            <div class="coord-item">P1: <span id="coord-p1">---, ---</span></div>
+                            <div class="coord-item">P2: <span id="coord-p2">---, ---</span></div>
+                            <div class="coord-item">P3: <span id="coord-p3">---, ---</span></div>
+                            <div class="coord-item">P4: <span id="coord-p4">---, ---</span></div>
+                        </div>
+                        <button type="button" class="clear-geofence-btn" onclick="clearGeofencePoints()">Clear Points</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2407,6 +2491,10 @@
     currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
     currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
     currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+
+    // Geofencing DT settings
+    const geofenceData = getGeofenceData();
+    currentPreset['geofencing'] = geofenceData;
 
     // UI Preferences - Range Mode and Time Mode
     currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
@@ -3450,6 +3538,12 @@
                 }
             }
 
+            // Load Geofencing data
+            if (presetData['geofencing']) {
+                loadGeofenceData(presetData['geofencing']);
+                console.log('✅ Geofencing data loaded:', presetData['geofencing']);
+            }
+
             console.log('✅ Form successfully populated from JSON');
         } catch (e) {
             console.error('❌ Error loading preset data:', e);
@@ -3513,6 +3607,11 @@
             icon: '🔄',
             title: 'Flip & Loop Detection',
             description: 'Enables automatic DT trigger when aerobatic maneuvers (flips or loops) are detected using gyroscope data.\n\nThis safety feature prevents the model from entering uncontrolled aerobatic flight that could lead to structural damage or loss of control.\n\nDetection thresholds:\n• 2.5G for flips\n• 45° for loops\n• 180°/s for spins\n\nUseful for preventing thermal-induced unusual attitudes.'
+        },
+        'geofencing': {
+            icon: '🗺️',
+            title: 'Geofencing DT',
+            description: 'Enables automatic DT trigger when the model exits a defined geographic boundary.\n\nWhen enabled, you can define a 4-point boundary on the map by tapping 4 corners. The system continuously monitors GPS position during flight.\n\nIf the model crosses outside this boundary, DT is automatically triggered to bring the model down within the allowed area.\n\nThis is especially useful for:\n• Competition fly zones with strict boundaries\n• Preventing fly-aways over restricted areas\n• Keeping the model within visual range\n• Complying with local aviation regulations\n\nRequires GPS lock before flight. The boundary is checked at 1Hz during flight.\n\nMarkers are draggable - adjust the boundary anytime before saving.'
         },
         'on': {
             icon: '⚡',
@@ -3627,6 +3726,215 @@
             closeFunctionInfoModal();
         }
     });
+
+    // ==================== GEOFENCING FEATURE ====================
+    let geofenceMap = null;
+    let geofenceMarkers = [];
+    let geofencePolygon = null;
+    const maxGeofencePoints = 4;
+
+    // Toggle geofencing map visibility
+    function toggleGeofencingMap() {
+        const enabled = document.getElementById('geofencing-enabled').checked;
+        const container = document.getElementById('geofencing-map-container');
+
+        if (enabled) {
+            container.style.display = 'block';
+            // Initialize map if not already initialized
+            if (!geofenceMap) {
+                initializeGeofenceMap();
+            }
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    // Initialize Leaflet map
+    function initializeGeofenceMap() {
+        // Default center (Istanbul - can be changed based on GPS or user location)
+        const defaultLat = 41.0082;
+        const defaultLng = 28.9784;
+
+        // Create map
+        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 13);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(geofenceMap);
+
+        // Add click handler to place markers
+        geofenceMap.on('click', function(e) {
+            addGeofencePoint(e.latlng);
+        });
+
+        console.log('📍 Geofence map initialized');
+    }
+
+    // Add a geofence point
+    function addGeofencePoint(latlng) {
+        // Check if we already have 4 points
+        if (geofenceMarkers.length >= maxGeofencePoints) {
+            alert('Maximum 4 points allowed. Clear points to start over.');
+            return;
+        }
+
+        // Create marker with custom numbering
+        const markerNumber = geofenceMarkers.length + 1;
+        const marker = L.marker(latlng, {
+            draggable: true,
+            icon: L.divIcon({
+                className: 'geofence-marker',
+                html: `<div style="background-color: #FFD700; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; font-size: 16px;">${markerNumber}</div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        }).addTo(geofenceMap);
+
+        // Store marker with its index
+        marker.pointIndex = markerNumber - 1;
+
+        // Add drag event to update polygon and coordinates
+        marker.on('dragend', function() {
+            updateGeofencePolygon();
+            updateCoordinateDisplay();
+        });
+
+        // Add marker to array
+        geofenceMarkers.push(marker);
+
+        // Update polygon and display
+        updateGeofencePolygon();
+        updateCoordinateDisplay();
+
+        console.log(`📍 Added geofence point ${markerNumber}: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
+    }
+
+    // Update the polygon connecting the points
+    function updateGeofencePolygon() {
+        // Remove existing polygon
+        if (geofencePolygon) {
+            geofenceMap.removeLayer(geofencePolygon);
+        }
+
+        // Only draw polygon if we have at least 3 points
+        if (geofenceMarkers.length >= 3) {
+            const points = geofenceMarkers.map(m => m.getLatLng());
+
+            geofencePolygon = L.polygon(points, {
+                color: '#FFD700',
+                fillColor: '#FFD700',
+                fillOpacity: 0.2,
+                weight: 2
+            }).addTo(geofenceMap);
+
+            console.log('🔷 Geofence polygon updated');
+        }
+    }
+
+    // Update coordinate display
+    function updateCoordinateDisplay() {
+        for (let i = 0; i < maxGeofencePoints; i++) {
+            const coordSpan = document.getElementById(`coord-p${i + 1}`);
+            if (i < geofenceMarkers.length) {
+                const latlng = geofenceMarkers[i].getLatLng();
+                coordSpan.textContent = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
+                coordSpan.style.color = '#00FF00';
+            } else {
+                coordSpan.textContent = '----, ----';
+                coordSpan.style.color = '#FFD700';
+            }
+        }
+    }
+
+    // Clear all geofence points
+    function clearGeofencePoints() {
+        // Remove all markers
+        geofenceMarkers.forEach(marker => {
+            geofenceMap.removeLayer(marker);
+        });
+        geofenceMarkers = [];
+
+        // Remove polygon
+        if (geofencePolygon) {
+            geofenceMap.removeLayer(geofencePolygon);
+            geofencePolygon = null;
+        }
+
+        // Reset coordinate display
+        updateCoordinateDisplay();
+
+        console.log('🧹 Geofence points cleared');
+    }
+
+    // Get geofence data for JSON storage
+    function getGeofenceData() {
+        if (!document.getElementById('geofencing-enabled').checked) {
+            return {
+                enabled: 0,
+                points: []
+            };
+        }
+
+        const points = geofenceMarkers.map(marker => {
+            const latlng = marker.getLatLng();
+            return {
+                lat: parseFloat(latlng.lat.toFixed(6)),
+                lng: parseFloat(latlng.lng.toFixed(6))
+            };
+        });
+
+        return {
+            enabled: 1,
+            points: points
+        };
+    }
+
+    // Load geofence data from JSON
+    function loadGeofenceData(data) {
+        if (!data) return;
+
+        // Set enabled state
+        const enabled = data.enabled === 1 || data.enabled === true;
+        document.getElementById('geofencing-enabled').checked = enabled;
+
+        if (enabled) {
+            // Show map container
+            document.getElementById('geofencing-map-container').style.display = 'block';
+
+            // Initialize map if needed
+            if (!geofenceMap) {
+                initializeGeofenceMap();
+            }
+
+            // Wait for map to be ready, then load points
+            setTimeout(() => {
+                // Clear existing points
+                clearGeofencePoints();
+
+                // Add points from data
+                if (data.points && Array.isArray(data.points)) {
+                    data.points.forEach(point => {
+                        if (point.lat !== undefined && point.lng !== undefined) {
+                            addGeofencePoint(L.latLng(point.lat, point.lng));
+                        }
+                    });
+
+                    // If we have at least one point, center map on first point
+                    if (data.points.length > 0) {
+                        geofenceMap.setView([data.points[0].lat, data.points[0].lng], 15);
+                    }
+                }
+
+                console.log('📍 Geofence data loaded:', data.points?.length || 0, 'points');
+            }, 500);
+        } else {
+            document.getElementById('geofencing-map-container').style.display = 'none';
+        }
+    }
+
+    // ==================== END GEOFENCING FEATURE ====================
 </script>
 
 </body>

@@ -408,8 +408,22 @@
         }
 
         #geofence-map {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; /* 1:1 aspect ratio trick */
+            position: relative;
             border: 2px solid #FFD700;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        #geofence-map .leaflet-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         .geofence-coords-display {
@@ -1035,6 +1049,218 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
         }
+
+        /* Custom Number Input Modal */
+        .modal-dialog-number {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #FFD700;
+        }
+
+        .modal-header-number {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            padding: 15px;
+            border-radius: 18px 18px 0 0;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header-number h3 {
+            margin: 0;
+            flex: 1;
+            text-align: center;
+            font-size: var(--base-font);
+        }
+
+        .modal-close-btn {
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            color: #000;
+            font-size: 24px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-body-number {
+            padding: 20px;
+        }
+
+        .number-display-area {
+            background-color: #222;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .previous-value-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #444;
+        }
+
+        .previous-value-label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .previous-value-display {
+            color: #888;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 3px 10px;
+            border-radius: 5px;
+        }
+
+        .number-display-value-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .number-display-value {
+            color: #fff;
+            font-size: 36px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .number-display-unit {
+            color: #FFD700;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .number-controls {
+            display: grid;
+            gap: 10px;
+        }
+
+        .increment-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .number-btn-increment {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-color: #4CAF50;
+            font-size: 32px;
+        }
+
+        .number-btn-increment:active {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+        }
+
+        .number-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .number-btn {
+            background: linear-gradient(135deg, #333 0%, #444 100%);
+            border: 2px solid #666;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            min-height: 50px;
+        }
+
+        .number-btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, #222 0%, #333 100%);
+        }
+
+        .number-btn-special {
+            background: linear-gradient(135deg, #555 0%, #666 100%);
+            font-size: 20px;
+        }
+
+        .number-btn-special:active {
+            background: linear-gradient(135deg, #444 0%, #555 100%);
+        }
+
+        .number-btn-action {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            border-color: #FFD700;
+            font-size: 22px;
+        }
+
+        .number-btn-action:active {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+        }
+
+        .number-btn-clear {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            border-color: #f44336;
+            font-size: 20px;
+        }
+
+        .number-btn-clear:active {
+            background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .number-error-message {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 11px;
+            text-align: center;
+            border: 2px solid #f44336;
+            display: none;
+            animation: shake 0.5s;
+            line-height: 1.3;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -1219,6 +1445,63 @@
             </div>
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-ok" onclick="closeFunctionInfoModal()">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Number Input Modal -->
+    <div id="numberInputModal" class="modal-overlay">
+        <div class="modal-dialog-number">
+            <div class="modal-header-number">
+                <h3 id="numberInputTitle">Enter Time Value</h3>
+                <button class="modal-close-btn" onclick="closeNumberInputModal()">&times;</button>
+            </div>
+            <div class="modal-body-number">
+                <div class="number-display-area">
+                    <div class="previous-value-row">
+                        <span class="previous-value-label">Current:</span>
+                        <span class="previous-value-display" id="previousValueDisplay">0.00</span>
+                    </div>
+                    <div class="number-display-value-container">
+                        <span class="number-display-value" id="numberDisplayValue">_</span>
+                        <span class="number-display-unit" id="numberDisplayUnit">s</span>
+                    </div>
+                </div>
+                <div class="number-controls">
+                    <!-- Increment/Decrement buttons -->
+                    <div class="increment-buttons">
+                        <button class="number-btn number-btn-increment" onclick="decrementValue()">−</button>
+                        <button class="number-btn number-btn-increment" onclick="incrementValue()">+</button>
+                    </div>
+
+                    <!-- Number keypad (1-9, 0, .) -->
+                    <div class="number-keypad">
+                        <button class="number-btn" onclick="inputDigit('7')">7</button>
+                        <button class="number-btn" onclick="inputDigit('8')">8</button>
+                        <button class="number-btn" onclick="inputDigit('9')">9</button>
+
+                        <button class="number-btn" onclick="inputDigit('4')">4</button>
+                        <button class="number-btn" onclick="inputDigit('5')">5</button>
+                        <button class="number-btn" onclick="inputDigit('6')">6</button>
+
+                        <button class="number-btn" onclick="inputDigit('1')">1</button>
+                        <button class="number-btn" onclick="inputDigit('2')">2</button>
+                        <button class="number-btn" onclick="inputDigit('3')">3</button>
+
+                        <button class="number-btn number-btn-special" onclick="inputDigit('.')">.</button>
+                        <button class="number-btn" onclick="inputDigit('0')">0</button>
+                        <button class="number-btn number-btn-clear" onclick="deleteDigit()">⌫</button>
+                    </div>
+
+                    <!-- Error message -->
+                    <div id="numberErrorMessage" class="number-error-message"></div>
+
+                    <!-- Action buttons -->
+                    <div class="action-buttons">
+                        <button class="number-btn number-btn-clear" onclick="closeNumberInputModal()">Cancel</button>
+                        <button class="number-btn number-btn-action" onclick="confirmNumberValue()">✓ OK</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1590,7 +1873,7 @@
                         <div class="geofence-instructions">
                             Tap 4 corners on the map to define the boundary. Exit this area triggers DT.
                         </div>
-                        <div id="geofence-map" style="height: 400px; width: 100%; border-radius: 8px; margin-top: 10px;"></div>
+                        <div id="geofence-map"></div>
                         <div class="geofence-coords-display">
                             <div class="coord-item">P1: <span id="coord-p1">---, ---</span></div>
                             <div class="coord-item">P2: <span id="coord-p2">---, ---</span></div>
@@ -2682,33 +2965,352 @@
         }
     });
 
-    // Time inputları için virgülden sonra iki basamak formatı + time mode validation
+    // ========== NUMBER INPUT MODAL FUNCTIONS ==========
+    let currentEditingInput = null;
+    let currentInputString = '';
+    let previousValue = '0.00';
+    let isServoInput = false;
+
+    // Servo değerleri için önceki değerleri sakla
+    const previousServoValues = {};
+
+    // Time input'larına tıklandığında özel modal aç
     document.querySelectorAll('input[id$="-time"]').forEach(input => {
-        // Focus - önceki değeri kaydet
-        input.addEventListener('focus', function() {
-            previousTimeValues[this.id] = this.value;
-        });
+        // Mobil klavyeyi engelle - read-only yap
+        input.setAttribute('readonly', 'readonly');
+        input.style.cursor = 'pointer';
 
-        // Blur - format + validation
-        input.addEventListener('blur', function() {
-            const formattedValue = parseFloat(this.value).toFixed(2);
-            this.value = formattedValue;
-
-            // Absolute mode'da sıra kontrolü
-            validateTimeSequence(this);
-
-            // Yeni değeri kaydet
-            previousTimeValues[this.id] = this.value;
-        });
-
-        // Change - format
-        input.addEventListener('change', function() {
-            this.value = parseFloat(this.value).toFixed(2);
+        // Click event - modal aç
+        input.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNumberInputModal(this, 'time');
         });
 
         // Başlangıç değerini kaydet
         previousTimeValues[input.id] = input.value;
     });
+
+    // Servo input'larına tıklandığında özel modal aç (RU, TL, WW, WW2)
+    document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+        // Mobil klavyeyi engelle - read-only yap
+        input.setAttribute('readonly', 'readonly');
+        input.style.cursor = 'pointer';
+
+        // Click event - modal aç
+        input.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNumberInputModal(this, 'servo');
+        });
+
+        // Başlangıç değerini kaydet (eğer yoksa)
+        if (!previousServoValues[input.id]) {
+            previousServoValues[input.id] = input.value;
+        }
+    });
+
+    // Number input modal aç
+    function openNumberInputModal(inputElement, inputType) {
+        currentEditingInput = inputElement;
+        previousValue = inputElement.value;
+        currentInputString = inputElement.value; // Mevcut değeri başlat
+        isServoInput = (inputType === 'servo');
+
+        // Modal başlığını ayarla
+        if (inputType === 'time') {
+            const phaseKey = inputElement.id.replace('-time', '').toUpperCase();
+            document.getElementById('numberInputTitle').textContent = `${phaseKey} Time`;
+            document.getElementById('numberDisplayUnit').textContent = 's';
+            document.getElementById('previousValueDisplay').textContent = previousValue + 's';
+        } else {
+            // Servo input
+            const parts = inputElement.id.split('-');
+            const phaseKey = parts[0].toUpperCase();
+            const servoKey = parts[1].toUpperCase();
+            document.getElementById('numberInputTitle').textContent = `${phaseKey} ${servoKey}`;
+
+            // Birim - range mode'a göre
+            const currentMode = window.currentServoRangeMode || '1000-2000';
+            let unit = '';
+            switch(currentMode) {
+                case '0-100':
+                    unit = '%';
+                    break;
+                case '0-255':
+                    unit = '';
+                    break;
+                case '1000-2000':
+                    unit = 'µs';
+                    break;
+            }
+            document.getElementById('numberDisplayUnit').textContent = unit;
+            document.getElementById('previousValueDisplay').textContent = previousValue + unit;
+        }
+
+        // Mevcut değeri göster (başlangıçta boş)
+        updateNumberDisplay();
+
+        // Error mesajını gizle
+        hideNumberError();
+
+        // Modal'ı göster
+        document.getElementById('numberInputModal').classList.add('show');
+    }
+
+    // Number input modal kapat
+    function closeNumberInputModal() {
+        document.getElementById('numberInputModal').classList.remove('show');
+        currentEditingInput = null;
+        currentInputString = '';
+        hideNumberError();
+    }
+
+    // Error message göster
+    function showNumberError(message) {
+        const errorDiv = document.getElementById('numberErrorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+
+        // Shake animasyonunu yeniden tetikle
+        errorDiv.style.animation = 'none';
+        setTimeout(() => {
+            errorDiv.style.animation = 'shake 0.5s';
+        }, 10);
+    }
+
+    // Error message gizle
+    function hideNumberError() {
+        document.getElementById('numberErrorMessage').style.display = 'none';
+    }
+
+    // Rakam gir
+    function inputDigit(digit) {
+        // Error mesajını gizle (kullanıcı tekrar giriş yapıyor)
+        hideNumberError();
+
+        // Nokta kontrolü - sadece bir tane olabilir
+        if (digit === '.' && currentInputString.includes('.')) {
+            return;
+        }
+
+        // İlk karakter nokta ise başa 0 ekle
+        if (digit === '.' && currentInputString === '') {
+            currentInputString = '0.';
+        } else {
+            currentInputString += digit;
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Son rakamı sil (backspace)
+    function deleteDigit() {
+        // Error mesajını gizle (kullanıcı tekrar giriş yapıyor)
+        hideNumberError();
+
+        if (currentInputString.length > 0) {
+            currentInputString = currentInputString.slice(0, -1);
+            updateNumberDisplay();
+        }
+    }
+
+    // Display güncelle
+    function updateNumberDisplay() {
+        if (currentInputString === '') {
+            document.getElementById('numberDisplayValue').textContent = '_';
+        } else {
+            document.getElementById('numberDisplayValue').textContent = currentInputString;
+        }
+    }
+
+    // Gereksiz sıfırları kaldır
+    function formatNumber(value) {
+        // 2 ondalık basamağa yuvarla, sonra gereksiz sıfırları kaldır
+        const rounded = Math.round(value * 100) / 100;
+        return rounded.toString();
+    }
+
+    // Son basamağa göre step hesapla (maksimum 2 ondalık basamak)
+    function getSmartStep() {
+        if (currentInputString === '' || currentInputString === '_') {
+            return 1;
+        }
+
+        const str = currentInputString;
+
+        // Nokta var mı?
+        if (str.includes('.')) {
+            const parts = str.split('.');
+            const decimalPart = parts[1] || '';
+            const decimalPlaces = decimalPart.length;
+
+            if (decimalPlaces === 0) {
+                return 1; // "5." → +1
+            } else if (decimalPlaces === 1) {
+                return 0.1; // "5.2" → +0.1
+            } else {
+                // 2 veya daha fazla basamak → maksimum 2 basamak
+                return 0.01; // "5.25" → +0.01
+            }
+        } else {
+            // Tam sayı
+            return 1; // "1234" → +1
+        }
+    }
+
+    // Değer artır
+    function incrementValue() {
+        hideNumberError();
+
+        const step = getSmartStep();
+        const hadDecimal = currentInputString.includes('.');
+        let currentValue = parseFloat(currentInputString) || 0;
+        currentValue += step;
+
+        // Floating point hatası düzelt - maksimum 2 ondalık basamak
+        currentValue = Math.round(currentValue * 100) / 100;
+
+        // Format: eğer önceden nokta varsa, basamak sayısını koru
+        if (hadDecimal) {
+            const parts = currentInputString.split('.');
+            const decimalPlaces = parts[1] ? parts[1].length : 1;
+
+            if (decimalPlaces === 1) {
+                currentInputString = currentValue.toFixed(1);
+            } else {
+                currentInputString = currentValue.toFixed(2);
+            }
+        } else {
+            // Nokta yoksa normal string
+            currentInputString = currentValue.toString();
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Değer azalt
+    function decrementValue() {
+        hideNumberError();
+
+        const step = getSmartStep();
+        const hadDecimal = currentInputString.includes('.');
+        let currentValue = parseFloat(currentInputString) || 0;
+        currentValue -= step;
+
+        // Negatif olmasını engelle
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+
+        // Floating point hatası düzelt - maksimum 2 ondalık basamak
+        currentValue = Math.round(currentValue * 100) / 100;
+
+        // Format: eğer önceden nokta varsa, basamak sayısını koru
+        if (hadDecimal) {
+            const parts = currentInputString.split('.');
+            const decimalPlaces = parts[1] ? parts[1].length : 1;
+
+            if (decimalPlaces === 1) {
+                currentInputString = currentValue.toFixed(1);
+            } else {
+                currentInputString = currentValue.toFixed(2);
+            }
+        } else {
+            // Nokta yoksa normal string
+            currentInputString = currentValue.toString();
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Değeri onayla ve input'a kaydet
+    function confirmNumberValue() {
+        if (!currentEditingInput) return;
+
+        // Boş ise önceki değeri koru
+        if (currentInputString === '') {
+            closeNumberInputModal();
+            return;
+        }
+
+        // Sayıya dönüştür
+        let numValue = parseFloat(currentInputString);
+
+        // Geçersiz sayı kontrolü
+        if (isNaN(numValue)) {
+            showNumberError('⚠️ Invalid number!');
+            return;
+        }
+
+        // Negatif değerleri kontrol et
+        if (numValue < 0) {
+            showNumberError('⚠️ Negative values not allowed!');
+            return;
+        }
+
+        if (isServoInput) {
+            // SERVO INPUT - Range kontrolü ve blur validation
+            const oldValue = currentEditingInput.value;
+            previousServoValues[currentEditingInput.id] = oldValue;
+
+            // Tam sayı formatı (servo için ondalık yok)
+            currentEditingInput.value = Math.round(numValue).toString();
+
+            // Servo validation
+            const isValid = validateServoRange(currentEditingInput);
+
+            if (!isValid) {
+                // Validation başarısız - modal açık kalsın, uyarı göster
+                const currentMode = window.currentServoRangeMode || '1000-2000';
+                const limits = getRangeLimits();
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = `${limits.min}% - ${limits.max}%`;
+                        break;
+                    case '0-255':
+                        rangeText = `${limits.min} - ${limits.max}`;
+                        break;
+                    case '1000-2000':
+                        rangeText = `${limits.min}µs - ${limits.max}µs`;
+                        break;
+                }
+                showNumberError(`⚠️ Out of range! Valid: ${rangeText}`);
+                // Input değerini önceki haline döndür
+                currentEditingInput.value = oldValue;
+                // Modal'ı kapatma
+                return;
+            }
+
+            // Başarılıysa önceki değeri güncelle
+            previousServoValues[currentEditingInput.id] = currentEditingInput.value;
+        } else {
+            // TIME INPUT - 2 ondalık basamak
+            const oldValue = currentEditingInput.value;
+            previousTimeValues[currentEditingInput.id] = oldValue;
+
+            currentEditingInput.value = numValue.toFixed(2);
+
+            // Absolute mode'da sıra kontrolü
+            const isValid = validateTimeSequence(currentEditingInput);
+
+            if (!isValid) {
+                // Validation başarısız - modal açık kalsın, uyarı göster
+                showNumberError('⚠️ Time must be ≥ previous phase (Absolute mode)');
+                // Input değerini önceki haline döndür
+                currentEditingInput.value = oldValue;
+                // Modal'ı kapatma
+                return;
+            }
+
+            // Başarılıysa önceki değeri güncelle
+            previousTimeValues[currentEditingInput.id] = currentEditingInput.value;
+        }
+
+        // Modal'ı kapat (sadece validation başarılıysa buraya gelir)
+        closeNumberInputModal();
+    }
+
+    // ========== END NUMBER INPUT MODAL FUNCTIONS ==========
 
     // ========== SERVO RANGE MODE FUNCTIONS ==========
 
@@ -2965,103 +3567,41 @@
     }
 
     // RU, TL, WW, WW2 inputları için dinamik sınır kontrolü
-    // Önceki değerleri sakla (geçersiz girişlerde geri almak için)
-    const previousServoValues = {};
+    // NOT: previousServoValues zaten NUMBER INPUT MODAL FUNCTIONS bölümünde tanımlı (line 2931)
 
     // Başlangıç mode'unu kaydet
     window.currentServoRangeMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
 
+    // Servo range validation fonksiyonu (sadece number input modal için)
+    function validateServoRange(input) {
+        const limits = getRangeLimits();
+
+        // Boş ise geçerli kabul et
+        if (input.value === '' || input.value === '-') {
+            return true;
+        }
+
+        let value = parseInt(input.value);
+
+        // Geçersiz sayı kontrolü
+        if (isNaN(value)) {
+            return false;
+        }
+
+        // Range kontrolü
+        if (value < limits.min || value > limits.max) {
+            return false;
+        }
+
+        // Geçerli değer
+        return true;
+    }
+
+    // Tüm servo input'ların başlangıç değerlerini kaydet
     document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
-        // Başlangıç değerini kaydet
-        previousServoValues[input.id] = input.value;
-
-        // Focus event - değeri geçici olarak sakla
-        input.addEventListener('focus', function() {
-            // Focus alındığında mevcut geçerli değeri kaydet
-            if (this.value !== '' && this.value !== '-') {
-                const value = parseInt(this.value);
-                if (!isNaN(value)) {
-                    previousServoValues[this.id] = this.value;
-                }
-            }
-        });
-
-        // Input event - sadece başındaki sıfırları temizle, range kontrolü yapma
-        input.addEventListener('input', function() {
-            let value = parseInt(this.value);
-
-            // Boş veya geçersiz giriş - izin ver (kullanıcı yazıyor olabilir)
-            if (this.value === '' || this.value === '-') {
-                return;
-            }
-
-            // Sadece başındaki sıfırları temizle, range kontrolü yapma
-            if (!isNaN(value)) {
-                this.value = value.toString();
-            }
-        });
-
-        // Blur event - Range kontrolü burada yap
-        input.addEventListener('blur', function() {
-            const limits = getRangeLimits();
-            const currentMode = window.currentServoRangeMode || '1000-2000';
-
-            // Boş ise minimum değere set et
-            if (this.value === '' || this.value === '-') {
-                this.value = limits.min.toString();
-                previousServoValues[this.id] = this.value;
-                return;
-            }
-
-            let value = parseInt(this.value);
-
-            // Geçersiz sayı kontrolü
-            if (isNaN(value)) {
-                const oldValue = previousServoValues[this.id] || limits.min.toString();
-                this.value = oldValue;
-
-                // Modal göster
-                let rangeText = '';
-                switch(currentMode) {
-                    case '0-100':
-                        rangeText = '0-100 %';
-                        break;
-                    case '0-255':
-                        rangeText = '0-255';
-                        break;
-                    case '1000-2000':
-                        rangeText = '1000-2000 µs';
-                        break;
-                }
-                showServoRangeModal('Invalid', rangeText, oldValue);
-                return;
-            }
-
-            // Range kontrolü
-            if (value < limits.min || value > limits.max) {
-                const oldValue = previousServoValues[this.id] || limits.min.toString();
-                this.value = oldValue;
-
-                // Modal göster
-                let rangeText = '';
-                switch(currentMode) {
-                    case '0-100':
-                        rangeText = '0-100 %';
-                        break;
-                    case '0-255':
-                        rangeText = '0-255';
-                        break;
-                    case '1000-2000':
-                        rangeText = '1000-2000 µs';
-                        break;
-                }
-                showServoRangeModal(value, rangeText, oldValue);
-                return;
-            }
-
-            // Geçerli değer - kaydet
-            previousServoValues[this.id] = this.value;
-        });
+        if (!previousServoValues[input.id]) {
+            previousServoValues[input.id] = input.value;
+        }
     });
 
     // Pin diyagramını güncelleyen fonksiyon
@@ -3732,6 +4272,13 @@
         }
     });
 
+    // Close number input modal when clicking outside
+    document.getElementById('numberInputModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeNumberInputModal();
+        }
+    });
+
     // ==================== GEOFENCING FEATURE ====================
     let geofenceMap = null;
     let geofenceMarkers = [];
@@ -3756,18 +4303,61 @@
 
     // Initialize Leaflet map
     function initializeGeofenceMap() {
-        // Default center (Istanbul - can be changed based on GPS or user location)
-        const defaultLat = 41.0082;
-        const defaultLng = 28.9784;
+        // Default center (fallback if geolocation fails)
+        const defaultLat = 51.09853337025952;
+        const defaultLng = 1.2059596354190565;
 
-        // Create map
-        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 13);
+        // Create map with default location first (zoom 18 = ~100m view)
+        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 18);
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             maxZoom: 19
         }).addTo(geofenceMap);
+
+        // Try to get user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success - center map on user's location
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    geofenceMap.setView([userLat, userLng], 13);
+                    console.log('📍 Map centered on user location:', userLat, userLng);
+                },
+                function(error) {
+                    // Error or denied - check if we have saved geofence points
+                    console.log('⚠️ Geolocation failed:', error.message);
+
+                    // If we have saved geofence markers, fit map to show them all
+                    if (geofenceMarkers.length > 0) {
+                        const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
+                        geofenceMap.fitBounds(bounds, { padding: [50, 50] });
+                        console.log('📍 Map centered on saved geofence points');
+                    } else {
+                        // No saved points, stay with default Istanbul location
+                        console.log('📍 Using default Istanbul location');
+                    }
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            // Geolocation not supported - check for saved points
+            console.log('⚠️ Geolocation not supported by browser');
+
+            if (geofenceMarkers.length > 0) {
+                const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
+                geofenceMap.fitBounds(bounds, { padding: [50, 50] });
+                console.log('📍 Map centered on saved geofence points');
+            } else {
+                console.log('📍 Using default Istanbul location');
+            }
+        }
 
         // Add click handler to place markers
         geofenceMap.on('click', function(e) {

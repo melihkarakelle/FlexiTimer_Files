@@ -371,22 +371,30 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 15px;
         }
 
         .dt-input-row label {
             margin: 0;
             flex: 1;
+            padding-right: 20px;
         }
 
         .dt-input-row input {
             width: 120px;
-            margin: 0 0 0 10px;
+            margin: 0 15px 0 10px;
         }
 
         .auto-dt-container {
             margin-left: 20px;
             padding-left: 15px;
             border-left: 2px solid #ccc;
+        }
+
+        .section h3 {
+            padding-left: 15px;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
 
         /* Geofencing Styles */
@@ -530,19 +538,20 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            padding: 0 15px;
         }
-        
+
         .option-row label {
             flex: 1;
             margin: 0;
-            padding-right: 10px;
+            padding-right: 20px;
         }
-        
+
         .option-row select,
         .option-row input {
             flex: 1;
             width: auto;
-            margin: 0;
+            margin: 0 15px 0 0;
         }
 
         .pin-diagram-svg {
@@ -1103,7 +1112,7 @@
         }
 
         .previous-value-display {
-            color: #888;
+            color: #FFD700;
             font-size: 13px;
             font-family: 'Courier New', monospace;
             background-color: rgba(255, 255, 255, 0.05);
@@ -1765,45 +1774,51 @@
                         <text x="218" y="154" font-size="9" text-anchor="start" fill="#FFD700">RX</text>
                     </g>
 
-                    <!-- Sol taraf - Pin numaraları ve fonksiyon labels -->
+                    <!-- Sol taraf - Kablo görünümlü renkli kutular ve pin numaraları -->
                     <g id="socket-functions-left">
-                        <!-- Pin 1 numarası -->
-                        <text x="110" y="28" font-size="9" text-anchor="end" fill="#FFF">1</text>
-                        <!-- Fonksiyon label (sarı kutu + text) - Pin 1 için boş -->
+                        <!-- Tek birleşik gri kablo soketi (tüm pinleri kapsayan) -->
+                        <rect x="100" y="20" width="20" height="138" rx="2" ry="2" fill="#CCC" stroke="#999" stroke-width="1.5"/>
 
-                        <!-- Pin 2 numarası -->
-                        <text x="110" y="46" font-size="9" text-anchor="end" fill="#FFF">2</text>
-                        <!-- Fonksiyon label - Pin 2 için boş -->
+                        <!-- Pin 1 - GND (Siyah kablo) -->
+                        <rect x="40" y="20" width="60" height="12" fill="#000000" stroke="#FFD700" stroke-width="1"/>
+                        <text x="128" y="28" font-size="9" text-anchor="start" fill="#333">1</text>
 
-                        <!-- Pin 3 numarası -->
-                        <text x="110" y="64" font-size="9" text-anchor="end" fill="#FFF">3</text>
-                        <!-- Fonksiyon label - Pin 3 için boş -->
+                        <!-- Pin 2 - V_BAT (Kırmızı kablo) -->
+                        <rect x="40" y="38" width="60" height="12" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="46" font-size="9" text-anchor="start" fill="#333">2</text>
 
-                        <!-- Pin 4 numarası -->
-                        <text x="110" y="82" font-size="9" text-anchor="end" fill="#FFF">4</text>
+                        <!-- Pin 3 - GND (Kahverengi kablo) -->
+                        <rect x="40" y="56" width="60" height="12" fill="#8B4513" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="64" font-size="9" text-anchor="start" fill="#333">3</text>
+
+                        <!-- Pin 4 - S9 (Mavi kablo) -->
+                        <rect x="40" y="74" width="60" height="12" fill="#2196F3" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="82" font-size="9" text-anchor="start" fill="#333">4</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="75" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-4"/>
-                        <text x="50" y="83" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-4"></text>
+                        <rect x="5" y="75" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-4"/>
+                        <text x="15" y="83" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-4"></text>
 
-                        <!-- Pin 5 numarası -->
-                        <text x="110" y="100" font-size="9" text-anchor="end" fill="#FFF">5</text>
+                        <!-- Pin 5 - S8 (Yeşil kablo) -->
+                        <rect x="40" y="92" width="60" height="12" fill="#00FF00" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="100" font-size="9" text-anchor="start" fill="#333">5</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="93" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-5"/>
-                        <text x="50" y="101" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-5"></text>
+                        <rect x="5" y="93" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-5"/>
+                        <text x="15" y="101" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-5"></text>
 
-                        <!-- Pin 6 numarası -->
-                        <text x="110" y="118" font-size="9" text-anchor="end" fill="#FFF">6</text>
+                        <!-- Pin 6 - S7 (Sarı kablo) -->
+                        <rect x="40" y="110" width="60" height="12" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="118" font-size="9" text-anchor="start" fill="#333">6</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="111" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-6"/>
-                        <text x="50" y="119" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-6"></text>
+                        <rect x="5" y="111" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-6"/>
+                        <text x="15" y="119" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-6"></text>
 
-                        <!-- Pin 7 numarası -->
-                        <text x="110" y="136" font-size="9" text-anchor="end" fill="#FFF">7</text>
-                        <!-- Fonksiyon label - TX için boş -->
+                        <!-- Pin 7 - TX (Turuncu kablo) -->
+                        <rect x="40" y="128" width="60" height="12" fill="#FF8C00" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="136" font-size="9" text-anchor="start" fill="#333">7</text>
 
-                        <!-- Pin 8 numarası -->
-                        <text x="110" y="154" font-size="9" text-anchor="end" fill="#FFF">8</text>
-                        <!-- Fonksiyon label - RX için boş -->
+                        <!-- Pin 8 - RX (Beyaz kablo) -->
+                        <rect x="40" y="146" width="60" height="12" fill="#FFFFFF" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="154" font-size="9" text-anchor="start" fill="#333">8</text>
                     </g>
                 </svg>
             </div>

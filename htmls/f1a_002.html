@@ -393,6 +393,7 @@
         .dt-input-row input {
             width: 120px;
             margin: 0 15px 0 10px;
+            cursor: pointer;
         }
 
         .auto-dt-container {
@@ -1004,6 +1005,7 @@
             max-width: 400px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             border: 2px solid #FFD700;
+            pointer-events: auto;
         }
 
         .modal-header-number {
@@ -1124,6 +1126,9 @@
             justify-content: center;
             user-select: none;
             min-height: 35px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
         }
 
         .number-btn:active {
@@ -1394,27 +1399,27 @@
                 <div class="number-controls">
                     <!-- Increment/Decrement buttons -->
                     <div class="increment-buttons">
-                        <button class="number-btn number-btn-increment" onclick="decrementValue()">−</button>
-                        <button class="number-btn number-btn-increment" onclick="incrementValue()">+</button>
+                        <button type="button" class="number-btn number-btn-increment" onclick="decrementValue()">−</button>
+                        <button type="button" class="number-btn number-btn-increment" onclick="incrementValue()">+</button>
                     </div>
 
                     <!-- Number keypad (1-9, 0, .) -->
                     <div class="number-keypad">
-                        <button class="number-btn" onclick="inputDigit('7')">7</button>
-                        <button class="number-btn" onclick="inputDigit('8')">8</button>
-                        <button class="number-btn" onclick="inputDigit('9')">9</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('7')">7</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('8')">8</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('9')">9</button>
 
-                        <button class="number-btn" onclick="inputDigit('4')">4</button>
-                        <button class="number-btn" onclick="inputDigit('5')">5</button>
-                        <button class="number-btn" onclick="inputDigit('6')">6</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('4')">4</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('5')">5</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('6')">6</button>
 
-                        <button class="number-btn" onclick="inputDigit('1')">1</button>
-                        <button class="number-btn" onclick="inputDigit('2')">2</button>
-                        <button class="number-btn" onclick="inputDigit('3')">3</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('1')">1</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('2')">2</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('3')">3</button>
 
-                        <button class="number-btn number-btn-special" onclick="inputDigit('.')">.</button>
-                        <button class="number-btn" onclick="inputDigit('0')">0</button>
-                        <button class="number-btn number-btn-clear" onclick="deleteDigit()">⌫</button>
+                        <button type="button" class="number-btn number-btn-special" onclick="inputDigit('.')">.</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('0')">0</button>
+                        <button type="button" class="number-btn number-btn-clear" onclick="deleteDigit()">⌫</button>
                     </div>
 
                     <!-- Error message -->
@@ -1422,8 +1427,8 @@
 
                     <!-- Action buttons -->
                     <div class="action-buttons">
-                        <button class="number-btn number-btn-clear" onclick="closeNumberInputModal()">Cancel</button>
-                        <button class="number-btn number-btn-action" onclick="confirmNumberValue()">✓ OK</button>
+                        <button type="button" class="number-btn number-btn-clear" onclick="closeNumberInputModal()">Cancel</button>
+                        <button type="button" class="number-btn number-btn-action" onclick="confirmNumberValue()">✓ OK</button>
                     </div>
                 </div>
             </div>
@@ -1783,15 +1788,15 @@
                 <div class="auto-dt-container">
                     <div class="dt-input-row">
                         <label for="max-sink" class="info-label" onclick="showFunctionInfo('max-sink')">Max Sink (m/s):</label>
-                        <input type="number" id="max-sink-value" name="max-sink-value" min="0" max="10" step="0.1" value="2">
+                        <input type="text" id="max-sink-value" name="max-sink-value" value="2" readonly onclick="openNumberInputModal(this, 'autodt-sink')">
                     </div>
                     <div class="dt-input-row">
                         <label for="max-altitude" class="info-label" onclick="showFunctionInfo('max-altitude')">Max Altitude (m):</label>
-                        <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="500">
+                        <input type="text" id="max-altitude-value" name="max-altitude-value" value="500" readonly onclick="openNumberInputModal(this, 'autodt-altitude')">
                     </div>
                     <div class="dt-input-row">
                         <label for="max-distance" class="info-label" onclick="showFunctionInfo('max-distance')">Max Distance (m):</label>
-                        <input type="number" id="max-distance-value" name="max-distance-value" min="0" max="10000" step="100" value="1000">
+                        <input type="text" id="max-distance-value" name="max-distance-value" value="1000" readonly onclick="openNumberInputModal(this, 'autodt-distance')">
                     </div>
                     <div class="checkbox-label">
                         <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
@@ -2931,6 +2936,7 @@
     let currentInputString = '';
     let previousValue = '0.00';
     let isServoInput = false;
+    let currentInputType = '';
 
     // Servo değerleri için önceki değerleri sakla
     const previousServoValues = {};
@@ -2974,6 +2980,7 @@
         currentEditingInput = inputElement;
         previousValue = inputElement.value;
         currentInputString = inputElement.value; // Mevcut değeri başlat
+        currentInputType = inputType;
         isServoInput = (inputType === 'servo');
 
         // Modal başlığını ayarla
@@ -2982,6 +2989,18 @@
             document.getElementById('numberInputTitle').textContent = `${phaseKey} Time`;
             document.getElementById('numberDisplayUnit').textContent = 's';
             document.getElementById('previousValueDisplay').textContent = previousValue + 's';
+        } else if (inputType === 'autodt-sink') {
+            document.getElementById('numberInputTitle').textContent = 'Max Sink Rate';
+            document.getElementById('numberDisplayUnit').textContent = 'm/s';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m/s';
+        } else if (inputType === 'autodt-altitude') {
+            document.getElementById('numberInputTitle').textContent = 'Max Altitude';
+            document.getElementById('numberDisplayUnit').textContent = 'm';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m';
+        } else if (inputType === 'autodt-distance') {
+            document.getElementById('numberInputTitle').textContent = 'Max Distance';
+            document.getElementById('numberDisplayUnit').textContent = 'm';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m';
         } else {
             // Servo input
             const parts = inputElement.id.split('-');
@@ -3208,7 +3227,28 @@
             return;
         }
 
-        if (isServoInput) {
+        if (currentInputType === 'autodt-sink') {
+            // MAX SINK RATE - 0 to 10 m/s, 1 decimal
+            if (numValue < 0 || numValue > 10) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 10 m/s');
+                return;
+            }
+            currentEditingInput.value = parseFloat(numValue.toFixed(1)).toString();
+        } else if (currentInputType === 'autodt-altitude') {
+            // MAX ALTITUDE - 0 to 1000 m, integer
+            if (numValue < 0 || numValue > 1000) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 1000 m');
+                return;
+            }
+            currentEditingInput.value = Math.round(numValue).toString();
+        } else if (currentInputType === 'autodt-distance') {
+            // MAX DISTANCE - 0 to 10000 m, integer
+            if (numValue < 0 || numValue > 10000) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 10000 m');
+                return;
+            }
+            currentEditingInput.value = Math.round(numValue).toString();
+        } else if (isServoInput) {
             // SERVO INPUT - Range kontrolü ve blur validation
             const oldValue = currentEditingInput.value;
             previousServoValues[currentEditingInput.id] = oldValue;

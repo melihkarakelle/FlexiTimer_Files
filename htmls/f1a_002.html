@@ -407,80 +407,7 @@
             margin-bottom: 10px;
         }
 
-        /* Geofencing Styles */
-        #geofencing-map-container {
-            margin-top: 15px;
-            margin-left: -35px; /* Auto DT container'ın margin+padding'ini geri al (20+15=35px) */
-            padding: 15px;
-            background-color: rgba(30, 30, 60, 0.5);
-            border-radius: 8px;
-            border: 1px solid #FFD700;
-        }
-
-        .geofence-instructions {
-            color: #FFD700;
-            font-size: var(--small-font);
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        #geofence-map {
-            width: 100%;
-            height: 0;
-            padding-bottom: 100%; /* 1:1 aspect ratio trick */
-            position: relative;
-            border: 2px solid #FFD700;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        #geofence-map .leaflet-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .geofence-coords-display {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-            font-size: var(--small-font);
-        }
-
-        .coord-item {
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            color: #FFD700;
-            font-family: monospace;
-        }
-
-        .clear-geofence-btn {
-            width: 100%;
-            padding: 10px;
-            margin-top: 12px;
-            background-color: #d32f2f;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: var(--base-font);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .clear-geofence-btn:hover {
-            background-color: #b71c1c;
-        }
-
-        .clear-geofence-btn:active {
-            background-color: #7f0000;
-        }
+        /* Geofencing Styles - REMOVED - Now in separate Flutter screen */
 
         .advanced-settings-container {
             background-color: rgba(70, 130, 180, 0.15);
@@ -1862,29 +1789,15 @@
                         <label for="max-altitude" class="info-label" onclick="showFunctionInfo('max-altitude')">Max Altitude (m):</label>
                         <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="500">
                     </div>
+                    <div class="dt-input-row">
+                        <label for="max-distance" class="info-label" onclick="showFunctionInfo('max-distance')">Max Distance (m):</label>
+                        <input type="number" id="max-distance-value" name="max-distance-value" min="0" max="10000" step="100" value="1000">
+                    </div>
                     <div class="checkbox-label">
                         <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
                         <label for="flip-loop-detection" class="info-label" onclick="showFunctionInfo('flip-loop-detection')">Flip & Loop Detection</label>
                     </div>
-                    <div class="checkbox-label">
-                        <input type="checkbox" id="geofencing-enabled" name="geofencing-enabled" onchange="toggleGeofencingMap()">
-                        <label for="geofencing-enabled" class="info-label" onclick="showFunctionInfo('geofencing')">Geofencing DT</label>
-                    </div>
-
-                    <!-- Geofencing Map Container (hidden by default) -->
-                    <div id="geofencing-map-container" style="display: none;">
-                        <div class="geofence-instructions">
-                            Tap 4 corners on the map to define the boundary. Exit this area triggers DT.
-                        </div>
-                        <div id="geofence-map"></div>
-                        <div class="geofence-coords-display">
-                            <div class="coord-item">P1: <span id="coord-p1">---, ---</span></div>
-                            <div class="coord-item">P2: <span id="coord-p2">---, ---</span></div>
-                            <div class="coord-item">P3: <span id="coord-p3">---, ---</span></div>
-                            <div class="coord-item">P4: <span id="coord-p4">---, ---</span></div>
-                        </div>
-                        <button type="button" class="clear-geofence-btn" onclick="clearGeofencePoints()">Clear Points</button>
-                    </div>
+                    <!-- Geofencing DT moved to separate screen in Flutter app (main menu > Geofencing) -->
                 </div>
             </div>
         </div>
@@ -2827,11 +2740,10 @@
     // Auto DT settings
     currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
     currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
+    currentPreset['max-distance-value'] = parseFloat(document.getElementById('max-distance-value').value);
     currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
 
-    // Geofencing DT settings
-    const geofenceData = getGeofenceData();
-    currentPreset['geofencing'] = geofenceData;
+    // Geofencing DT settings - REMOVED - Now managed separately via app's Geofencing screen
 
     // UI Preferences - Range Mode and Time Mode
     currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
@@ -4158,11 +4070,7 @@
                 }
             }
 
-            // Load Geofencing data
-            if (presetData['geofencing']) {
-                loadGeofenceData(presetData['geofencing']);
-                console.log('✅ Geofencing data loaded:', presetData['geofencing']);
-            }
+            // Geofencing data - REMOVED - Now managed separately via app's Geofencing screen
 
             // Update timer row disabled states based on time values
             if (typeof updateAllTimerRowsDisabledState === 'function') {
@@ -4228,16 +4136,17 @@
             title: 'Max Altitude',
             description: 'Maximum altitude limit (in meters) before automatic DT activation.\n\nIf the model climbs above this altitude, the timer will automatically trigger de-thermalization to comply with competition rules or prevent fly-aways.\n\nThis is critical for F1A competitions where altitude limits are strictly enforced.\n\nTypical values: 200-500m depending on competition rules.'
         },
+        'max-distance': {
+            icon: '📏',
+            title: 'Max Distance',
+            description: 'Maximum distance from the GPS home coordinate (in meters) before automatic DT activation.\n\nThe home coordinate is set at the first GPS fix after the timer is powered on. If the model flies beyond this distance from the home position, the timer will automatically trigger de-thermalization.\n\nThis is a radius-based geofencing feature that helps:\n• Prevent fly-aways\n• Keep the model within competition boundaries\n• Ensure the model stays within visual range\n• Comply with local airspace regulations\n\nDefault value: 1000 meters\n\nNote: Requires GPS fix at startup to establish home coordinate. If no GPS fix is available, this feature is disabled.'
+        },
         'flip-loop-detection': {
             icon: '🔄',
             title: 'Flip & Loop Detection',
             description: 'Enables automatic DT trigger when aerobatic maneuvers (flips or loops) are detected using gyroscope data.\n\nThis safety feature prevents the model from entering uncontrolled aerobatic flight that could lead to structural damage or loss of control.\n\nDetection thresholds:\n• 2.5G for flips\n• 45° for loops\n• 180°/s for spins\n\nUseful for preventing thermal-induced unusual attitudes.'
         },
-        'geofencing': {
-            icon: '🗺️',
-            title: 'Geofencing DT',
-            description: 'Enables automatic DT trigger when the model exits a defined geographic boundary.\n\nWhen enabled, you can define a 4-point boundary on the map by tapping 4 corners. The system continuously monitors GPS position during flight.\n\nIf the model crosses outside this boundary, DT is automatically triggered to bring the model down within the allowed area.\n\nThis is especially useful for:\n• Competition fly zones with strict boundaries\n• Preventing fly-aways over restricted areas\n• Keeping the model within visual range\n• Complying with local aviation regulations\n\nRequires GPS lock before flight. The boundary is checked at 1Hz during flight.\n\nMarkers are draggable - adjust the boundary anytime before saving.'
-        },
+        // 'geofencing' info removed - feature moved to separate Flutter screen
         'on': {
             icon: '⚡',
             title: 'Power ON',
@@ -4359,257 +4268,11 @@
         }
     });
 
-    // ==================== GEOFENCING FEATURE ====================
-    let geofenceMap = null;
-    let geofenceMarkers = [];
-    let geofencePolygon = null;
-    const maxGeofencePoints = 4;
-
-    // Toggle geofencing map visibility
-    function toggleGeofencingMap() {
-        const enabled = document.getElementById('geofencing-enabled').checked;
-        const container = document.getElementById('geofencing-map-container');
-
-        if (enabled) {
-            container.style.display = 'block';
-            // Initialize map if not already initialized
-            if (!geofenceMap) {
-                initializeGeofenceMap();
-            }
-        } else {
-            container.style.display = 'none';
-        }
-    }
-
-    // Initialize Leaflet map
-    function initializeGeofenceMap() {
-        // Default center (fallback if geolocation fails)
-        const defaultLat = 51.09853337025952;
-        const defaultLng = 1.2059596354190565;
-
-        // Create map with default location first (zoom 18 = ~100m view)
-        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 18);
-
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(geofenceMap);
-
-        // Try to get user's current location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Success - center map on user's location
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    geofenceMap.setView([userLat, userLng], 13);
-                    console.log('📍 Map centered on user location:', userLat, userLng);
-                },
-                function(error) {
-                    // Error or denied - check if we have saved geofence points
-                    console.log('⚠️ Geolocation failed:', error.message);
-
-                    // If we have saved geofence markers, fit map to show them all
-                    if (geofenceMarkers.length > 0) {
-                        const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
-                        geofenceMap.fitBounds(bounds, { padding: [50, 50] });
-                        console.log('📍 Map centered on saved geofence points');
-                    } else {
-                        // No saved points, stay with default Istanbul location
-                        console.log('📍 Using default Istanbul location');
-                    }
-                },
-                {
-                    enableHighAccuracy: false,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
-            );
-        } else {
-            // Geolocation not supported - check for saved points
-            console.log('⚠️ Geolocation not supported by browser');
-
-            if (geofenceMarkers.length > 0) {
-                const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
-                geofenceMap.fitBounds(bounds, { padding: [50, 50] });
-                console.log('📍 Map centered on saved geofence points');
-            } else {
-                console.log('📍 Using default Istanbul location');
-            }
-        }
-
-        // Add click handler to place markers
-        geofenceMap.on('click', function(e) {
-            addGeofencePoint(e.latlng);
-        });
-
-        console.log('📍 Geofence map initialized');
-    }
-
-    // Add a geofence point
-    function addGeofencePoint(latlng) {
-        // Check if we already have 4 points
-        if (geofenceMarkers.length >= maxGeofencePoints) {
-            alert('Maximum 4 points allowed. Clear points to start over.');
-            return;
-        }
-
-        // Create marker with custom numbering
-        const markerNumber = geofenceMarkers.length + 1;
-        const marker = L.marker(latlng, {
-            draggable: true,
-            icon: L.divIcon({
-                className: 'geofence-marker',
-                html: `<div style="background-color: #FFD700; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; font-size: 16px;">${markerNumber}</div>`,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
-            })
-        }).addTo(geofenceMap);
-
-        // Store marker with its index
-        marker.pointIndex = markerNumber - 1;
-
-        // Add drag event to update polygon and coordinates
-        marker.on('dragend', function() {
-            updateGeofencePolygon();
-            updateCoordinateDisplay();
-        });
-
-        // Add marker to array
-        geofenceMarkers.push(marker);
-
-        // Update polygon and display
-        updateGeofencePolygon();
-        updateCoordinateDisplay();
-
-        console.log(`📍 Added geofence point ${markerNumber}: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
-    }
-
-    // Update the polygon connecting the points
-    function updateGeofencePolygon() {
-        // Remove existing polygon
-        if (geofencePolygon) {
-            geofenceMap.removeLayer(geofencePolygon);
-        }
-
-        // Only draw polygon if we have at least 3 points
-        if (geofenceMarkers.length >= 3) {
-            const points = geofenceMarkers.map(m => m.getLatLng());
-
-            geofencePolygon = L.polygon(points, {
-                color: '#FFD700',
-                fillColor: '#FFD700',
-                fillOpacity: 0.2,
-                weight: 2
-            }).addTo(geofenceMap);
-
-            console.log('🔷 Geofence polygon updated');
-        }
-    }
-
-    // Update coordinate display
-    function updateCoordinateDisplay() {
-        for (let i = 0; i < maxGeofencePoints; i++) {
-            const coordSpan = document.getElementById(`coord-p${i + 1}`);
-            if (i < geofenceMarkers.length) {
-                const latlng = geofenceMarkers[i].getLatLng();
-                coordSpan.textContent = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
-                coordSpan.style.color = '#00FF00';
-            } else {
-                coordSpan.textContent = '----, ----';
-                coordSpan.style.color = '#FFD700';
-            }
-        }
-    }
-
-    // Clear all geofence points
-    function clearGeofencePoints() {
-        // Remove all markers
-        geofenceMarkers.forEach(marker => {
-            geofenceMap.removeLayer(marker);
-        });
-        geofenceMarkers = [];
-
-        // Remove polygon
-        if (geofencePolygon) {
-            geofenceMap.removeLayer(geofencePolygon);
-            geofencePolygon = null;
-        }
-
-        // Reset coordinate display
-        updateCoordinateDisplay();
-
-        console.log('🧹 Geofence points cleared');
-    }
-
-    // Get geofence data for JSON storage
-    function getGeofenceData() {
-        if (!document.getElementById('geofencing-enabled').checked) {
-            return {
-                enabled: 0,
-                points: []
-            };
-        }
-
-        const points = geofenceMarkers.map(marker => {
-            const latlng = marker.getLatLng();
-            return {
-                lat: parseFloat(latlng.lat.toFixed(6)),
-                lng: parseFloat(latlng.lng.toFixed(6))
-            };
-        });
-
-        return {
-            enabled: 1,
-            points: points
-        };
-    }
-
-    // Load geofence data from JSON
-    function loadGeofenceData(data) {
-        if (!data) return;
-
-        // Set enabled state
-        const enabled = data.enabled === 1 || data.enabled === true;
-        document.getElementById('geofencing-enabled').checked = enabled;
-
-        if (enabled) {
-            // Show map container
-            document.getElementById('geofencing-map-container').style.display = 'block';
-
-            // Initialize map if needed
-            if (!geofenceMap) {
-                initializeGeofenceMap();
-            }
-
-            // Wait for map to be ready, then load points
-            setTimeout(() => {
-                // Clear existing points
-                clearGeofencePoints();
-
-                // Add points from data
-                if (data.points && Array.isArray(data.points)) {
-                    data.points.forEach(point => {
-                        if (point.lat !== undefined && point.lng !== undefined) {
-                            addGeofencePoint(L.latLng(point.lat, point.lng));
-                        }
-                    });
-
-                    // If we have at least one point, center map on first point
-                    if (data.points.length > 0) {
-                        geofenceMap.setView([data.points[0].lat, data.points[0].lng], 15);
-                    }
-                }
-
-                console.log('📍 Geofence data loaded:', data.points?.length || 0, 'points');
-            }, 500);
-        } else {
-            document.getElementById('geofencing-map-container').style.display = 'none';
-        }
-    }
-
-    // ==================== END GEOFENCING FEATURE ====================
+    // ==================== GEOFENCING FEATURE REMOVED ====================
+    // Geofencing DT is now managed via separate Flutter screen (main menu > Geofencing)
+    // All map functionality, coordinate selection, and data management moved to geofencing_screen.dart
+    // BLE command: SET_GEOFENCING:{"enabled":1,"points":[{"lat":X,"lng":Y},...]}
+    // ==================== END GEOFENCING ====================
 </script>
 
 </body>

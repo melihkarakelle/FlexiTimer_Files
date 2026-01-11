@@ -366,6 +366,16 @@
             appearance: textfield;
         }
 
+        /* Disabled row styling - gray text when time is zero */
+        .timer-cell.disabled,
+        .timer-cell.disabled input {
+            color: #666 !important;
+        }
+
+        .timer-cell.function-name.disabled {
+            color: #666 !important;
+        }
+
         .dt-input-row {
             margin: 15px 0;
             display: flex;
@@ -2249,6 +2259,52 @@
     return [];
   }
 
+  // Update timer row disabled state based on time value
+  function updateTimerRowDisabledState(phaseId) {
+    const timeInput = document.getElementById(`${phaseId}-time`);
+    if (!timeInput) return; // On, Str, Cir, OLA, DT, PK gibi zaman inputu olmayan fazlar
+
+    const timeValue = parseFloat(timeInput.value) || 0;
+    const isDisabled = timeValue === 0;
+
+    console.log(`🔄 ${phaseId}: value="${timeInput.value}", parsed=${timeValue}, disabled=${isDisabled}`);
+
+    // Find all elements for this phase by ID
+    const elementsToUpdate = [
+      // Function name cell - find by onclick attribute
+      ...document.querySelectorAll('.timer-cell.function-name')
+    ].find(cell => {
+      const onclick = cell.getAttribute('onclick');
+      return onclick && onclick.includes(`'${phaseId}'`);
+    });
+
+    // Time input's parent cell
+    const timeCell = timeInput.parentElement;
+
+    // Servo input cells
+    const ruCell = document.getElementById(`${phaseId}-ru`)?.parentElement;
+    const tlCell = document.getElementById(`${phaseId}-tl`)?.parentElement;
+    const wwCell = document.getElementById(`${phaseId}-ww`)?.parentElement;
+    const ww2Cell = document.getElementById(`${phaseId}-ww2`)?.parentElement;
+
+    // Apply or remove disabled class to all cells
+    const cells = [elementsToUpdate, timeCell, ruCell, tlCell, wwCell, ww2Cell].filter(c => c);
+
+    cells.forEach(cell => {
+      if (isDisabled) {
+        cell.classList.add('disabled');
+      } else {
+        cell.classList.remove('disabled');
+      }
+    });
+  }
+
+  // Update all timer rows on page load or data change
+  function updateAllTimerRowsDisabledState() {
+    const phases = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+    phases.forEach(phase => updateTimerRowDisabledState(phase));
+  }
+
   // JSON Schema Validation
   function validateDeviceJson(json) {
     try {
@@ -3281,7 +3337,8 @@
             const oldValue = currentEditingInput.value;
             previousTimeValues[currentEditingInput.id] = oldValue;
 
-            currentEditingInput.value = numValue.toFixed(2);
+            // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+            currentEditingInput.value = parseFloat(numValue.toFixed(2)).toString();
 
             // Absolute mode'da sıra kontrolü
             const isValid = validateTimeSequence(currentEditingInput);
@@ -3297,6 +3354,12 @@
 
             // Başarılıysa önceki değeri güncelle
             previousTimeValues[currentEditingInput.id] = currentEditingInput.value;
+
+            // Update disabled state for time inputs (grey color when time is 0)
+            const phaseId = currentEditingInput.id.replace('-time', '');
+            if (typeof updateTimerRowDisabledState === 'function') {
+                updateTimerRowDisabledState(phaseId);
+            }
         }
 
         // Modal'ı kapat (sadece validation başarılıysa buraya gelir)
@@ -3491,7 +3554,8 @@
                 const intervalValue = currentValues[phaseKey] || 0;
                 cumulativeTime += intervalValue;
 
-                timeInput.value = cumulativeTime.toFixed(2);
+                // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+                timeInput.value = parseFloat(cumulativeTime.toFixed(2)).toString();
                 previousTimeValues[timeInput.id] = timeInput.value;
             });
         } else {
@@ -3504,7 +3568,8 @@
                 const absoluteValue = currentValues[phaseKey] || 0;
                 const intervalValue = absoluteValue - previousAbsolute;
 
-                timeInput.value = intervalValue.toFixed(2);
+                // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+                timeInput.value = parseFloat(intervalValue.toFixed(2)).toString();
                 previousTimeValues[timeInput.id] = timeInput.value;
 
                 previousAbsolute = absoluteValue;
@@ -3513,6 +3578,11 @@
 
         // Mevcut mode'u kaydet
         window.currentTimeMode = newMode;
+
+        // Update disabled states after time conversion
+        if (typeof updateAllTimerRowsDisabledState === 'function') {
+            updateAllTimerRowsDisabledState();
+        }
     }
 
     // Time mode değiştiğinde
@@ -3792,9 +3862,21 @@
             }
         });
 
+        // Timer input değişikliklerini dinle - disabled state güncellemesi
+        const phases = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+        phases.forEach(phase => {
+            const timeInput = document.getElementById(`${phase}-time`);
+            if (timeInput) {
+                timeInput.addEventListener('input', function() {
+                    updateTimerRowDisabledState(phase);
+                });
+            }
+        });
+
         // Sayfa yüklendiğinde diyagramı ve kolon görünürlüğünü güncelle
         updatePinDiagram();
         updateColumnVisibility();
+        updateAllTimerRowsDisabledState();
     });
     
     // Hook seçeneklerini güncelleyen fonksiyon
@@ -4080,6 +4162,11 @@
             if (presetData['geofencing']) {
                 loadGeofenceData(presetData['geofencing']);
                 console.log('✅ Geofencing data loaded:', presetData['geofencing']);
+            }
+
+            // Update timer row disabled states based on time values
+            if (typeof updateAllTimerRowsDisabledState === 'function') {
+                updateAllTimerRowsDisabledState();
             }
 
             console.log('✅ Form successfully populated from JSON');

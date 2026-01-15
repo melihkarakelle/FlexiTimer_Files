@@ -1485,9 +1485,9 @@
 
         <!-- Gizlenecek bölümler -->
         <div id="advancedSettings" class="advanced-settings-container" style="display: none;">
-            <!-- Servo Configuration bölümü -->
+            <!-- Servo & Button Configuration bölümü -->
             <div class="section">
-                <h2>Servo Configuration</h2>
+                <h2>Servo & Button Conf.</h2>
                 <div class="option-row">
                     <label for="ru-servo-pin" class="info-label" onclick="showFunctionInfo('ru-servo')">RU Servo Pin:</label>
                     <select id="ru-servo-pin" name="ru-servo-pin">
@@ -1561,6 +1561,24 @@
                     <select id="time-mode" name="time-mode" onchange="updateTimeMode()">
                         <option value="interval" selected>Interval</option>
                         <option value="absolute">Absolute</option>
+                    </select>
+                </div>
+
+                <!-- Start Button Pin seçici -->
+                <hr style="border: 1px solid #555; margin: 20px 0;">
+                <div class="option-row">
+                    <label for="start-button-pin" class="info-label" onclick="showFunctionInfo('start-button')">Start Button Pin:</label>
+                    <select id="start-button-pin" name="start-button-pin" onchange="updatePinDiagram()">
+                        <option value="0">Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6" selected>S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
                     </select>
                 </div>
             </div>
@@ -2109,7 +2127,8 @@
         { id: 'tl-servo-pin', name: 'TL Servo' },
         { id: 'ww-servo-pin', name: 'WW Servo' },
         { id: 'ww2-servo-pin', name: 'WW2 Servo' },
-        { id: 'rdt-rx-pin', name: 'RDT Rx' }
+        { id: 'rdt-rx-pin', name: 'RDT Rx' },
+        { id: 'start-button-pin', name: 'Start Button' }
       ];
 
       // Hook pinlerini ekle
@@ -2707,6 +2726,9 @@
 
     // RDT Rx pin
     currentPreset['rdt-rx-pin'] = parseInt(document.getElementById('rdt-rx-pin').value);
+
+    // Start Button pin
+    currentPreset['start-button-pin'] = parseInt(document.getElementById('start-button-pin').value);
 
     // Hook settings
     currentPreset['hook-type'] = document.getElementById('hook-type').value;
@@ -3699,6 +3721,10 @@
         // RDT Rx pinini etiketlere yerleştir
         setPinLabel(rdtRxPin, "RDT Rx");
 
+        // Start Button pinini al ve etiketlere yerleştir
+        const startButtonPin = parseInt(document.getElementById('start-button-pin').value);
+        setPinLabel(startButtonPin, "Start Button");
+
         // Hook tipine göre diğer pinleri yerleştir
         if (hookType === "2switch") {
             // Hook switch pinlerini al
@@ -3794,6 +3820,10 @@
             updateColumnVisibility();
         });
         document.getElementById('rdt-rx-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+        });
+        document.getElementById('start-button-pin').addEventListener('change', function(e) {
             validatePinAssignments(e.target.id);
             updatePinDiagram();
         });
@@ -4060,6 +4090,7 @@
             previousPinValues['ww-servo-pin'] = document.getElementById('ww-servo-pin')?.value || '0';
             previousPinValues['ww2-servo-pin'] = document.getElementById('ww2-servo-pin')?.value || '0';
             previousPinValues['rdt-rx-pin'] = document.getElementById('rdt-rx-pin')?.value || '0';
+            previousPinValues['start-button-pin'] = document.getElementById('start-button-pin')?.value || '0';
 
             // Hook pinlerini de kaydet (varsa)
             if (document.getElementById('hook-sw1-pin')) {
@@ -4150,6 +4181,11 @@
             icon: '📡',
             title: 'RDT Rx Pin (Radio DT Receiver)',
             description: 'Pin assignment for the Radio De-Thermalization receiver input.\n\nRDT allows remote triggering of the DT phase via radio command from the ground, providing manual override control.\n\nThis is useful when:\n• The model needs to land immediately\n• Auto DT features are not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nThe receiver connects to this pin and triggers DT when a signal is received from the transmitter.\n\nSelect "Not Used" if you don\'t have an RDT receiver installed. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
+        },
+        'start-button': {
+            icon: '🔘',
+            title: 'Start Button Pin',
+            description: 'Pin assignment for the Start button with multi-function timing control.\n\nButton Functions:\n\n• Press < 3 seconds: No action (ignored)\n• Hold 3-5 seconds, then release: System restart\n  - Buzzer and LED indicate restart sequence\n  - Timer returns to initial startup state\n  - All settings preserved in memory\n\n• Hold 5+ seconds: System sleep mode\n  - Buzzer and LED signal sleep activation\n  - Ultra-low power consumption\n  - Press button again to wake the device\n\nThe button uses an internal pull-up resistor, so external resistor is not required. Simply connect the button between the selected pin and ground (GND).\n\nDefault: S6 (Pin 6)\n\nSelect a pin that doesn\'t conflict with servo, RDT, or hook switch assignments.'
         },
         'range-mode': {
             icon: '📊',

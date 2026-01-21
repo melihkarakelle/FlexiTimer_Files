@@ -1,28 +1,16 @@
 {
   "firmwares": [
     {
-      "firmware_name": "F1A Firmware v002",
+      "firmware_name": "F1A Firmware v003",
       "firmware_code": "F1A_002",
-      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/f1a_002.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1a_002.html"
+      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/flexitimer_F1A_firmware.zip",
+      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1a_003.html"
     },
     {
-      "firmware_name": "F1B Firmware v001",
-      "firmware_code": "F1B_001",
-      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/f1a_002.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1b_001.html"
-    },
-    {
-      "firmware_name": "F1C Firmware v001",
-      "firmware_code": "F1C_001",
-      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/f1a_002.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1c_001.html"
-    },
-    {
-      "firmware_name": "F1D Firmware v001",
-      "firmware_code": "F1D_001",
-      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/f1a_002.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1d_001.html"
+      "firmware_name": "SkyLink2.4G Firmware v1",
+      "firmware_code": "SkyLink24",
+      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/SkyLink24_v1.zip",
+      "html_link": ""
     }
     
   ]

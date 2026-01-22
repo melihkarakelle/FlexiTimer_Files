@@ -2,14 +2,14 @@
   "announcements": [
     {
       "id": "2025-001",
-      "title": "New App Version Available",
-      "message": "Version 1.1.0 is now available with improved BLE stability and new features. Update recommended.",
+      "title": "New Product Available",
+      "message": "Visit our web site for the details.",
       "icon": "0xe923",
       "color": "0xFFFF5252",
       "action": {
         "type": "url",
-        "label": "Update Now",
-        "url": "https://example.com/update"
+        "label": "Visit Site",
+        "url": "https://bmks.co.uk"
       },
       "created": "2025-12-28T10:00:00Z",
       "expires": "2026-01-28T23:59:59Z"

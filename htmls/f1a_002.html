@@ -1,0 +1,4003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMK FlexiTimer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Leaflet.js for mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        :root {
+            --base-font: 3.8vw;
+            --small-font: 3.4vw;
+            --title-font: 5vw;
+            --base-padding: 2vw;
+            --base-margin: 2vw;
+        }
+
+        @media screen and (min-width: 768px) {
+            :root {
+                --base-font: 16px;
+                --small-font: 14px;
+                --title-font: 24px;
+                --base-padding: 10px;
+                --base-margin: 10px;
+            }
+        }
+
+        body {
+            background-color: #004;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0 var(--base-padding) var(--base-padding) var(--base-padding);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-size: var(--base-font);
+        }
+
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            font-size: var(--title-font);
+            margin-bottom: var(--base-margin);
+            margin-top: 0;
+        }
+
+        .section {
+            margin-bottom: var(--base-margin);
+            padding: var(--base-padding);
+            border: 2px solid #fff;
+            border-radius: calc(var(--base-padding) * 0.8);
+        }
+
+        .section-before-toggle {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            color: #FFD700;
+            margin: 0 0 var(--base-margin) 0;
+            font-size: calc(var(--base-font) * 1.2);
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-size: var(--base-font);
+            margin-bottom: calc(var(--base-margin) * 0.5);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: calc(var(--base-padding) * 0.8);
+            font-size: var(--base-font);
+            margin-bottom: var(--base-margin);
+            border: none;
+            border-radius: calc(var(--base-padding) * 0.5);
+            background-color: #333;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .preset-buttons button {
+            width: 23%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .timer-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .timer-row > div {
+            flex: 0 0 48%;
+        }
+
+        .timer-row > div label {
+            margin-bottom: 5px;
+        }
+
+        .timer-row > div input {
+            width: 100%;
+        }
+
+        input[type="submit"] {
+            background-color: #FFD700;
+            color: #000;
+            font-size: 18px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Strobe pattern styling */
+        .strobe-pattern {
+            margin: 5px 0;
+        }
+
+        .strobe-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: calc(var(--base-font) * 1.8);
+            height: calc(var(--base-font) * 1.8);
+            margin: 0;
+            padding: 0;
+        }
+
+        .strobe-led {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #300;
+            display: inline-block;
+            position: relative;
+            box-shadow:
+                inset 0 -3px 8px rgba(0,0,0,0.5),
+                inset 0 3px 8px rgba(255,255,255,0.1),
+                0 2px 4px rgba(0,0,0,0.3);
+            border: 2px solid #555;
+            transition: all 0.05s ease;
+        }
+
+        .strobe-led::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 35%;
+            height: 25%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent);
+            opacity: 0.6;
+        }
+
+        .strobe-led.active {
+            background-color: #ff0000;
+            box-shadow:
+                inset 0 -3px 8px rgba(0,0,0,0.3),
+                inset 0 3px 8px rgba(255,100,100,0.3),
+                0 0 15px rgba(255,0,0,0.8),
+                0 0 30px rgba(255,0,0,0.5),
+                0 0 45px rgba(255,0,0,0.3);
+            border-color: #ff4444;
+        }
+
+        /* Timer grid için CSS güncellemesi */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: 60px 80px repeat(4, 1fr);
+            gap: 1px;
+            background-color: #555; /* Grid çizgileri için arka plan rengi */
+            border: 1px solid #555;
+            margin-top: 10px;
+        }
+
+        /* Servo kolonlarını gizlemek için (Not Used seçildiğinde) */
+        /* display: none ile gizle, grid otomatik ayarlansın */
+        .timer-grid.hide-ru .ru-column {
+            display: none;
+        }
+
+        .timer-grid.hide-tl .tl-column {
+            display: none;
+        }
+
+        .timer-grid.hide-ww .ww-column {
+            display: none;
+        }
+
+        .timer-grid.hide-ww2 .ww2-column {
+            display: none;
+        }
+
+        /* Grid sütun sayısını dinamik ayarla */
+        .timer-grid {
+            grid-template-columns: 60px 80px repeat(4, 1fr);
+        }
+
+        .timer-grid.hide-ww2 {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-ww {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-tl {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        .timer-grid.hide-ru {
+            grid-template-columns: 60px 80px repeat(3, 1fr);
+        }
+
+        /* 2 kolon gizli */
+        .timer-grid.hide-ru.hide-tl,
+        .timer-grid.hide-ru.hide-ww,
+        .timer-grid.hide-ru.hide-ww2,
+        .timer-grid.hide-tl.hide-ww,
+        .timer-grid.hide-tl.hide-ww2,
+        .timer-grid.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px repeat(2, 1fr);
+        }
+
+        /* 3 kolon gizli */
+        .timer-grid.hide-ru.hide-tl.hide-ww,
+        .timer-grid.hide-ru.hide-tl.hide-ww2,
+        .timer-grid.hide-ru.hide-ww.hide-ww2,
+        .timer-grid.hide-tl.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px 1fr;
+        }
+
+        /* 4 kolon gizli */
+        .timer-grid.hide-ru.hide-tl.hide-ww.hide-ww2 {
+            grid-template-columns: 60px 80px;
+        }
+
+        .timer-header {
+            background-color: #FFD700;
+            color: #000;
+            padding: 4px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: var(--small-font);
+            border: none;
+        }
+
+        .timer-cell {
+            background-color: #333;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        .timer-cell input {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 4px;
+            background-color: #222;
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+            font-size: var(--small-font);
+            box-sizing: border-box;
+        }
+
+        .timer-cell.function-name {
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background-color: #333;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .timer-cell.function-name:hover {
+            background-color: rgba(255, 215, 0, 0.3);
+        }
+
+        /* Info Label - Clickable labels with hover effect */
+        .info-label {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .info-label:hover {
+            color: #FFD700;
+            text-decoration: underline;
+        }
+
+        /* Time inputları için sağa yasla */
+        .timer-cell input[id$="-time"] {
+            text-align: right;
+            padding-right: 4px;
+        }
+
+        /* Tüm number input'ları için spinbutton'ları kaldır */
+        .timer-cell input[type="number"]::-webkit-inner-spin-button,
+        .timer-cell input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        .timer-cell input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .dt-input-row {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dt-input-row label {
+            margin: 0;
+            flex: 1;
+        }
+
+        .dt-input-row input {
+            width: 120px;
+            margin: 0 0 0 10px;
+        }
+
+        .auto-dt-container {
+            margin-left: 20px;
+            padding-left: 15px;
+            border-left: 2px solid #ccc;
+        }
+
+        /* Geofencing Styles */
+        #geofencing-map-container {
+            margin-top: 15px;
+            margin-left: -35px; /* Auto DT container'ın margin+padding'ini geri al (20+15=35px) */
+            padding: 15px;
+            background-color: rgba(30, 30, 60, 0.5);
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+        }
+
+        .geofence-instructions {
+            color: #FFD700;
+            font-size: var(--small-font);
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        #geofence-map {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; /* 1:1 aspect ratio trick */
+            position: relative;
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        #geofence-map .leaflet-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .geofence-coords-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: var(--small-font);
+        }
+
+        .coord-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            color: #FFD700;
+            font-family: monospace;
+        }
+
+        .clear-geofence-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: var(--base-font);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-geofence-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .clear-geofence-btn:active {
+            background-color: #7f0000;
+        }
+
+        .advanced-settings-container {
+            background-color: rgba(70, 130, 180, 0.15);
+            padding: 2px;
+            border-radius: 12px;
+            border: 2px solid rgba(70, 130, 180, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .advanced-settings-container .section {
+            padding: 2px;
+        }
+
+        /* Pin diagram label styling for better fit */
+        #s1-label, #s2-label, #s3-label, #s4-label, #s5-label, #s6-label {
+            font-size: 10px !important;
+        }
+
+        #side-func-label-4, #side-func-label-5, #side-func-label-6 {
+            font-size: 8px !important;
+        }
+
+        .checkbox-label {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-row {
+            margin-top: 15px;
+        }
+        
+        .option-row label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .option-row select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .hook-options-container {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+        }
+        
+        .hook-options-container h3 {
+            color: #FFD700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .option-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .option-row label {
+            flex: 1;
+            margin: 0;
+            padding-right: 10px;
+        }
+        
+        .option-row select,
+        .option-row input {
+            flex: 1;
+            width: auto;
+            margin: 0;
+        }
+
+        .pin-diagram-svg {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            display: block;
+            margin: 0;
+        }
+
+        .section:has(.pin-diagram-svg) {
+            padding: var(--base-padding) calc(var(--base-padding) * 0.3) calc(var(--base-padding) * 0.3) calc(var(--base-padding) * 0.3);
+        }
+
+        .toggle-button {
+            background-color: #FFD700;
+            color: #000;
+            font-size: calc(var(--base-font) * 1.1);
+            padding: var(--base-padding);
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .toggle-button:hover {
+            background-color: #FFC000;
+        }
+
+        /* Preset name container için özel stil */
+        .preset-name-container {
+            margin-bottom: 15px;
+        }
+
+        .preset-name-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;
+            font-size: var(--base-font);
+        }
+
+        /* Preset controls - selector ve butonlar için flex container */
+        .preset-controls {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .preset-controls select {
+            flex: 1;
+            min-width: 0; /* Flex shrink için gerekli */
+            padding: calc(var(--base-padding) * 0.8);
+            font-size: var(--base-font);
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: calc(var(--base-padding) * 0.5);
+        }
+
+        /* Preset butonları - + ve - */
+        .preset-btn {
+            width: 40px;
+            min-width: 40px;
+            height: calc(1.6 * var(--base-padding) + var(--base-font) * 1.2);
+            padding: 0;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: calc(var(--base-padding) * 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            line-height: 1;
+        }
+
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+
+        .add-btn:active {
+            background-color: #3d8b40;
+            transform: scale(0.95);
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+
+        .delete-btn:active {
+            background-color: #c41409;
+            transform: scale(0.95);
+        }
+
+        .delete-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Model name container için özel stil */
+        .model-name-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .model-name-container label {
+            margin: 0;
+        }
+
+        .model-name-container input {
+            border: none;
+            background: #333;
+            color: #fff;
+            font-size: var(--base-font);
+            padding: calc(var(--base-padding) * 0.5);
+            margin: 0;
+            border-radius: 3px;
+            width: 50vw;
+            max-width: 200px;
+        }
+
+        .model-name-container input:focus {
+            outline: 1px solid #FFD700;
+        }
+
+        input, select, button {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Modal Dialog Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-in;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-dialog {
+            background-color: #1E1E1E;
+            border: 2px solid #f44336;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .modal-icon {
+            font-size: 32px;
+        }
+
+        .modal-title {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .modal-body {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .modal-preset-name {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-cancel {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .modal-btn-cancel:hover {
+            background-color: #666;
+        }
+
+        .modal-btn-delete {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        .modal-btn-delete:hover {
+            background-color: #d32f2f;
+        }
+
+        .modal-btn-delete:active {
+            transform: scale(0.95);
+        }
+
+        /* Info Modal - Mavi tema */
+        .modal-dialog-info {
+            background-color: #1E1E1E;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 15px;
+            max-width: 400px;
+            width: calc(100% - 40px);
+            max-height: 75vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+        }
+
+        .modal-header-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .modal-icon-info {
+            font-size: 32px;
+        }
+
+        .modal-title-info {
+            color: #2196F3;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .modal-body-info {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 5px;
+            flex-shrink: 1;
+            white-space: pre-line;
+        }
+
+        .modal-body-info strong {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .modal-btn-ok {
+            background-color: #2196F3;
+            color: #fff;
+            width: 100%;
+        }
+
+        .modal-btn-ok:hover {
+            background-color: #1976D2;
+        }
+
+        /* Add Preset Modal - Yeşil tema */
+        .modal-dialog-add {
+            background-color: #1E1E1E;
+            border: 2px solid #4CAF50;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .modal-header-add {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .modal-icon-add {
+            font-size: 32px;
+        }
+
+        .modal-title-add {
+            color: #4CAF50;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .modal-body-add {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-input-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-input-label {
+            display: block;
+            color: #4CAF50;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #2D2D2D;
+            color: #fff;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #66BB6A;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .modal-input-hint {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .modal-btn-add {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .modal-btn-add:hover {
+            background-color: #45a049;
+        }
+
+        .modal-btn-add:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Pin Conflict Warning Modal - Kırmızı/Sarı tema */
+        .modal-dialog-conflict {
+            background-color: #1E1E1E;
+            border: 3px solid #FF9800;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .modal-header-conflict {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+
+        .modal-icon-conflict {
+            font-size: 36px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .modal-title-conflict {
+            color: #FF9800;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-body-conflict {
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .conflict-detail {
+            background-color: #2D2D2D;
+            border-left: 4px solid #f44336;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .conflict-pin {
+            color: #FF9800;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .conflict-component {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .conflict-attempted {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .conflict-reverted {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .modal-btn-conflict {
+            background: linear-gradient(135deg, #FF9800, #FF5722);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .modal-btn-conflict:hover {
+            background: linear-gradient(135deg, #FB8C00, #F4511E);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span class="modal-icon">⚠️</span>
+                <h3 class="modal-title">Delete Preset?</h3>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <span id="modalPresetName" class="modal-preset-name"></span>?
+                <br><br>
+                This action cannot be undone.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="modal-btn modal-btn-delete" onclick="closeConfirmModal(true)">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal-overlay">
+        <div class="modal-dialog-info">
+            <div class="modal-header-info">
+                <span class="modal-icon-info">ℹ️</span>
+                <h3 class="modal-title-info">Preset Deleted</h3>
+            </div>
+            <div class="modal-body-info">
+                The preset has been removed from the local configuration.
+                <br><br>
+                To make this change permanent, please <strong>click the SAVE button</strong> below to update the device.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-ok" onclick="closeInfoModal()">OK, Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Preset Modal -->
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-dialog-add">
+            <div class="modal-header-add">
+                <span class="modal-icon-add">➕</span>
+                <h3 class="modal-title-add">Add New Preset</h3>
+            </div>
+            <div class="modal-body-add">
+                Create a new preset based on the current configuration.
+            </div>
+            <div class="modal-input-group">
+                <label class="modal-input-label" for="addPresetInput">Preset Name</label>
+                <input
+                    type="text"
+                    id="addPresetInput"
+                    class="modal-input"
+                    placeholder="Enter preset name"
+                    maxlength="20"
+                    onkeyup="validateAddPresetInput()"
+                    onkeypress="if(event.key==='Enter'){confirmAddPreset();}"
+                >
+                <span class="modal-input-hint">Maximum 20 characters</span>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeAddModal()">Cancel</button>
+                <button id="addPresetConfirmBtn" class="modal-btn modal-btn-add" onclick="confirmAddPreset()" disabled>Add Preset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preset Changed Info Modal -->
+    <div id="presetChangedModal" class="modal-overlay">
+        <div class="modal-dialog-info">
+            <div class="modal-header-info">
+                <span class="modal-icon-info">🔄</span>
+                <h3 class="modal-title-info">Preset Changed</h3>
+            </div>
+            <div class="modal-body-info">
+                You have switched to <strong id="changedPresetName"></strong> preset.
+                <br><br>
+                To upload this change to the device, please <strong>click the SAVE button</strong> below.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-ok" onclick="closePresetChangedModal()">OK, Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servo Value Out of Range Modal -->
+    <div id="servoRangeModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">Value Out of Range!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div style="color: #fff; font-size: 16px; line-height: 1.8;">
+                    The value you entered is outside the valid range.
+                </div>
+
+                <div class="conflict-detail" style="margin: 15px 0;">
+                    <strong>Entered:</strong> <span class="conflict-pin" id="servoEnteredValue"></span>
+                    <br>
+                    <strong>Valid Range:</strong> <span class="conflict-component" id="servoValidRange"></span>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="servoRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closeServoRangeModal()">OK, Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Sequence Error Modal -->
+    <div id="timeSequenceModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">Invalid Time Sequence!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div style="color: #fff; font-size: 16px; line-height: 1.8;">
+                    In Absolute mode, each time value must be greater than or equal to the previous one.
+                </div>
+
+                <div class="conflict-detail" style="margin: 15px 0;">
+                    <strong>Previous:</strong> <span class="conflict-component" id="timePreviousValue"></span>
+                    <br>
+                    <strong>Entered:</strong> <span class="conflict-pin" id="timeEnteredValue"></span>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="timeRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closeTimeSequenceModal()">OK, Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pin Conflict Warning Modal -->
+    <div id="pinConflictModal" class="modal-overlay">
+        <div class="modal-dialog-conflict">
+            <div class="modal-header-conflict">
+                <span class="modal-icon-conflict">⚠️</span>
+                <h3 class="modal-title-conflict">PIN CONFLICT!</h3>
+            </div>
+            <div class="modal-body-conflict">
+                <div class="conflict-detail">
+                    Pin <span class="conflict-pin" id="conflictPinNumber"></span> is already in use by:
+                    <br>
+                    <span class="conflict-component" id="conflictExistingComponent"></span>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <span class="conflict-attempted" id="conflictAttemptedComponent"></span> cannot use this pin.
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    ✓ Reverted to: <span class="conflict-reverted" id="conflictRevertedValue"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-conflict" onclick="closePinConflictModal()">OK, I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Function Info Modal -->
+    <div id="functionInfoModal" class="modal-overlay">
+        <div class="modal-dialog-info">
+            <div class="modal-header-info">
+                <span class="modal-icon-info" id="functionInfoIcon">ℹ️</span>
+                <h3 class="modal-title-info" id="functionInfoTitle">Function Info</h3>
+            </div>
+            <div class="modal-body-info" id="functionInfoBody">
+                <!-- Content will be dynamically populated -->
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-ok" onclick="closeFunctionInfoModal()">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <h1>F1A Model Configuration</h1>
+
+    <form onsubmit="submitForm(event)">
+
+        <!-- Model Identification -->
+        <div class="section section-before-toggle">
+            <h2>Model Identification</h2>
+            
+            <div class="model-name-container">
+                <label for="model-name">Model Name:</label>
+                <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+            </div>
+            
+            <div class="preset-name-container">
+                <label for="preset-selector">Select Preset:</label>
+                <div class="preset-controls">
+                    <select id="preset-selector" name="preset-selector" onchange="onPresetChanged()">
+                        <option value="">Loading presets...</option>
+                    </select>
+                    <button type="button" class="preset-btn add-btn" onclick="addNewPreset()" title="Add New Preset">+</button>
+                    <button type="button" class="preset-btn delete-btn" onclick="deleteCurrentPreset()" title="Delete Preset">−</button>
+                </div>
+                <input type="hidden" id="preset-name" name="preset-name">
+                <input type="hidden" id="preset-index" name="preset-index" value="1">
+            </div>
+
+            <label for="strobe-pattern">Strobe Pattern:</label>
+            <div class="strobe-pattern">
+                <div class="strobe-container">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="bit7" name="strobe-bit" value="128">
+                        <input type="checkbox" id="bit6" name="strobe-bit" value="64" checked>
+                        <input type="checkbox" id="bit5" name="strobe-bit" value="32">
+                        <input type="checkbox" id="bit4" name="strobe-bit" value="16" checked>
+                        <input type="checkbox" id="bit3" name="strobe-bit" value="8">
+                        <input type="checkbox" id="bit2" name="strobe-bit" value="4">
+                        <input type="checkbox" id="bit1" name="strobe-bit" value="2">
+                        <input type="checkbox" id="bit0" name="strobe-bit" value="1" checked>
+                    </div>
+                    <div id="strobeLed" class="strobe-led"></div>
+                </div>
+                <input type="hidden" id="strobe-value" name="strobe-value" value="81">
+            </div>
+        </div>
+
+        <!-- Servo Configuration'dan Auto DT Features'a kadar olan bölümleri gizleyecek buton -->
+        <button id="toggleSettingsBtn" class="toggle-button">Show Settings</button>
+
+        <!-- Gizlenecek bölümler -->
+        <div id="advancedSettings" class="advanced-settings-container" style="display: none;">
+            <!-- Servo Configuration bölümü -->
+            <div class="section">
+                <h2>Servo Configuration</h2>
+                <div class="option-row">
+                    <label for="ru-servo-pin" class="info-label" onclick="showFunctionInfo('ru-servo')">RU Servo Pin:</label>
+                    <select id="ru-servo-pin" name="ru-servo-pin">
+                        <option value="0">Not Used</option>
+                        <option value="1" selected>S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="tl-servo-pin" class="info-label" onclick="showFunctionInfo('tl-servo')">TL Servo Pin:</label>
+                    <select id="tl-servo-pin" name="tl-servo-pin">
+                        <option value="0">Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3" selected>S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="ww-servo-pin" class="info-label" onclick="showFunctionInfo('ww-servo')">WW Servo Pin:</label>
+                    <select id="ww-servo-pin" name="ww-servo-pin">
+                        <option value="0">Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5" selected>S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="ww2-servo-pin" class="info-label" onclick="showFunctionInfo('ww2-servo')">WW2 Servo Pin:</label>
+                    <select id="ww2-servo-pin" name="ww2-servo-pin">
+                        <option value="0" selected>Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="servo-range-mode" class="info-label" onclick="showFunctionInfo('range-mode')">Range Mode:</label>
+                    <select id="servo-range-mode" name="servo-range-mode" onchange="updateRangeModeLabels()">
+                        <option value="0-100">0-100 (%)</option>
+                        <option value="0-255">0-255</option>
+                        <option value="1000-2000" selected>1000-2000 µs</option>
+                    </select>
+                </div>
+                <div class="option-row">
+                    <label for="time-mode" class="info-label" onclick="showFunctionInfo('time-mode')">Time Mode:</label>
+                    <select id="time-mode" name="time-mode" onchange="updateTimeMode()">
+                        <option value="interval" selected>Interval</option>
+                        <option value="absolute">Absolute</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Hook Configuration bölümü -->
+            <div class="section">
+                <h2>Hook Configuration</h2>
+
+                <label for="hook-type" class="info-label" onclick="showFunctionInfo('hook-type')">Hook Type:</label>
+                <select id="hook-type" name="hook-type" onchange="updateHookOptions()">
+                    <option value="2switch">2 Switch</option>
+                    <option value="2switch_servo">2 Switch + Servo</option>
+                    <option value="rotary_servo">Rotary Enc. + Servo</option>
+                </select>
+                
+                <div id="hook-options">
+                    <!-- Bu alan dinamik olarak doldurulacak -->
+                </div>
+            </div>
+
+            <!-- Pin Header Layout bölümü -->
+            <div class="section">
+                <h2>Pin Header Layout</h2>
+                <svg class="pin-diagram-svg" viewBox="15 15 270 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <!-- Header Outline -->
+                        <rect x="20" y="20" width="260" height="110" rx="5" ry="5" fill="#333" stroke="#555" stroke-width="2"/>
+
+                        <!-- Top Row Pins: S6, S4, S2 (left to right) -->
+                        <g class="pin-row">
+                            <!-- S6 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="30" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="40" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="55" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="65" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S6 -->
+                            <rect x="80" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="90" y="44" font-size="12" text-anchor="middle" fill="#000">S6</text>
+                            <!-- Label under S6 -->
+                            <text x="55" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s6-label">Hook Servo</text>
+
+                            <!-- S4 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="110" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="120" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="135" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="145" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S4 -->
+                            <rect x="160" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="170" y="44" font-size="12" text-anchor="middle" fill="#000">S4</text>
+                            <!-- Label under S4 -->
+                            <text x="135" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s4-label">Hook SW1</text>
+
+                            <!-- S2 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="190" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="200" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="215" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="225" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S2 -->
+                            <rect x="240" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="250" y="44" font-size="12" text-anchor="middle" fill="#000">S2</text>
+                            <!-- Label under S2 -->
+                            <text x="215" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="s2-label">TL Servo</text>
+                        </g>
+
+                        <!-- Bottom Row Pins: S5, S3, S1 (left to right) -->
+                        <g class="pin-row">
+                            <!-- S5 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="30" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="40" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="55" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="65" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S5 -->
+                            <rect x="80" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="90" y="94" font-size="12" text-anchor="middle" fill="#000">S5</text>
+                            <!-- Label under S5 -->
+                            <text x="55" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s5-label">Hook SW2</text>
+
+                            <!-- S3 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="110" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="120" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="135" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="145" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S3 -->
+                            <rect x="160" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="170" y="94" font-size="12" text-anchor="middle" fill="#000">S3</text>
+                            <!-- Label under S3 -->
+                            <text x="135" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s3-label">RU Servo</text>
+
+                            <!-- S1 Socket: - + S -->
+                            <!-- - -->
+                            <rect x="190" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                            <text x="200" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                            <!-- + -->
+                            <rect x="215" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                            <text x="225" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                            <!-- S1 -->
+                            <rect x="240" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                            <text x="250" y="94" font-size="12" text-anchor="middle" fill="#000">S1</text>
+                            <!-- Label under S1 -->
+                            <text x="215" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="s1-label">WW Servo</text>
+                        </g>
+                </svg>
+            </div>
+
+            <!-- Side Socket Layout bölümü -->
+            <div class="section">
+                <h2>Side Socket Layout</h2>
+                <svg class="pin-diagram-svg" viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                    <!-- Socket container (beyaz dikdörtgen) -->
+                    <rect x="120" y="10" width="80" height="160" rx="3" ry="3" fill="#FFFFFF" stroke="#999" stroke-width="2"/>
+
+                    <!-- Pin row (sağ tarafta - orijinal isimler) -->
+                    <g id="socket-pins-right">
+                        <!-- Pin 1 - GND (Siyah) -->
+                        <rect x="200" y="20" width="15" height="12" fill="#000000" stroke="#FFD700" stroke-width="1"/>
+                        <text x="218" y="28" font-size="9" text-anchor="start" fill="#FFD700">GND</text>
+
+                        <!-- Pin 2 - V_BAT (Kırmızı) -->
+                        <rect x="200" y="38" width="15" height="12" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="46" font-size="9" text-anchor="start" fill="#FFD700">V_BAT</text>
+
+                        <!-- Pin 3 - GND (Kahverengi) -->
+                        <rect x="200" y="56" width="15" height="12" fill="#8B4513" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="64" font-size="9" text-anchor="start" fill="#FFD700">GND</text>
+
+                        <!-- Pin 4 - S9 (Mavi) -->
+                        <rect x="200" y="74" width="15" height="12" fill="#2196F3" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="82" font-size="9" text-anchor="start" fill="#FFD700">S9</text>
+
+                        <!-- Pin 5 - S8 (Yeşil) -->
+                        <rect x="200" y="92" width="15" height="12" fill="#00FF00" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="100" font-size="9" text-anchor="start" fill="#FFD700">S8</text>
+
+                        <!-- Pin 6 - S7 (Sarı) -->
+                        <rect x="200" y="110" width="15" height="12" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="118" font-size="9" text-anchor="start" fill="#FFD700">S7</text>
+
+                        <!-- Pin 7 - TX (Turuncu) -->
+                        <rect x="200" y="128" width="15" height="12" fill="#FF8C00" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="136" font-size="9" text-anchor="start" fill="#FFD700">TX</text>
+
+                        <!-- Pin 8 - RX (Beyaz) -->
+                        <rect x="200" y="146" width="15" height="12" fill="#FFFFFF" stroke="#000" stroke-width="1"/>
+                        <text x="218" y="154" font-size="9" text-anchor="start" fill="#FFD700">RX</text>
+                    </g>
+
+                    <!-- Sol taraf - Pin numaraları ve fonksiyon labels -->
+                    <g id="socket-functions-left">
+                        <!-- Pin 1 numarası -->
+                        <text x="110" y="28" font-size="9" text-anchor="end" fill="#FFF">1</text>
+                        <!-- Fonksiyon label (sarı kutu + text) - Pin 1 için boş -->
+
+                        <!-- Pin 2 numarası -->
+                        <text x="110" y="46" font-size="9" text-anchor="end" fill="#FFF">2</text>
+                        <!-- Fonksiyon label - Pin 2 için boş -->
+
+                        <!-- Pin 3 numarası -->
+                        <text x="110" y="64" font-size="9" text-anchor="end" fill="#FFF">3</text>
+                        <!-- Fonksiyon label - Pin 3 için boş -->
+
+                        <!-- Pin 4 numarası -->
+                        <text x="110" y="82" font-size="9" text-anchor="end" fill="#FFF">4</text>
+                        <!-- Fonksiyon label (dinamik) -->
+                        <rect x="40" y="75" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-4"/>
+                        <text x="50" y="83" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-4"></text>
+
+                        <!-- Pin 5 numarası -->
+                        <text x="110" y="100" font-size="9" text-anchor="end" fill="#FFF">5</text>
+                        <!-- Fonksiyon label (dinamik) -->
+                        <rect x="40" y="93" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-5"/>
+                        <text x="50" y="101" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-5"></text>
+
+                        <!-- Pin 6 numarası -->
+                        <text x="110" y="118" font-size="9" text-anchor="end" fill="#FFF">6</text>
+                        <!-- Fonksiyon label (dinamik) -->
+                        <rect x="40" y="111" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-6"/>
+                        <text x="50" y="119" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-6"></text>
+
+                        <!-- Pin 7 numarası -->
+                        <text x="110" y="136" font-size="9" text-anchor="end" fill="#FFF">7</text>
+                        <!-- Fonksiyon label - TX için boş -->
+
+                        <!-- Pin 8 numarası -->
+                        <text x="110" y="154" font-size="9" text-anchor="end" fill="#FFF">8</text>
+                        <!-- Fonksiyon label - RX için boş -->
+                    </g>
+                </svg>
+            </div>
+
+            <!-- DT Features bölümü -->
+            <div class="section">
+                <h2>DT Features</h2>
+                <div class="option-row">
+                    <label for="rdt-rx-pin" class="info-label" onclick="showFunctionInfo('rdt-rx')">RDT Rx Pin:</label>
+                    <select id="rdt-rx-pin" name="rdt-rx-pin">
+                        <option value="0" selected>Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6">S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
+                    </select>
+                </div>
+
+                <h3>Auto DT</h3>
+                <div class="auto-dt-container">
+                    <div class="dt-input-row">
+                        <label for="max-sink" class="info-label" onclick="showFunctionInfo('max-sink')">Max Sink (m/s):</label>
+                        <input type="number" id="max-sink-value" name="max-sink-value" min="0" max="10" step="0.1" value="2">
+                    </div>
+                    <div class="dt-input-row">
+                        <label for="max-altitude" class="info-label" onclick="showFunctionInfo('max-altitude')">Max Altitude (m):</label>
+                        <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="500">
+                    </div>
+                    <div class="checkbox-label">
+                        <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
+                        <label for="flip-loop-detection" class="info-label" onclick="showFunctionInfo('flip-loop-detection')">Flip & Loop Detection</label>
+                    </div>
+                    <div class="checkbox-label">
+                        <input type="checkbox" id="geofencing-enabled" name="geofencing-enabled" onchange="toggleGeofencingMap()">
+                        <label for="geofencing-enabled" class="info-label" onclick="showFunctionInfo('geofencing')">Geofencing DT</label>
+                    </div>
+
+                    <!-- Geofencing Map Container (hidden by default) -->
+                    <div id="geofencing-map-container" style="display: none;">
+                        <div class="geofence-instructions">
+                            Tap 4 corners on the map to define the boundary. Exit this area triggers DT.
+                        </div>
+                        <div id="geofence-map"></div>
+                        <div class="geofence-coords-display">
+                            <div class="coord-item">P1: <span id="coord-p1">---, ---</span></div>
+                            <div class="coord-item">P2: <span id="coord-p2">---, ---</span></div>
+                            <div class="coord-item">P3: <span id="coord-p3">---, ---</span></div>
+                            <div class="coord-item">P4: <span id="coord-p4">---, ---</span></div>
+                        </div>
+                        <button type="button" class="clear-geofence-btn" onclick="clearGeofencePoints()">Clear Points</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer Settings -->
+        <div class="section">
+            <h2>Time Settings</h2>
+            <div class="timer-grid">
+                <div class="timer-header">Func.</div>
+                <div class="timer-header">Time</div>
+                <div class="timer-header ru-column" id="header-ru">RU</div>
+                <div class="timer-header tl-column" id="header-tl">TL</div>
+                <div class="timer-header ww-column" id="header-ww">WW</div>
+                <div class="timer-header ww2-column" id="header-ww2">WW2</div>
+
+                <div class="timer-cell function-name" title="Power ON" onclick="showFunctionInfo('on')">On</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="on-ru" name="on-ru" min="1000" max="2000" value="1176">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="on-tl" name="on-tl" min="1000" max="2000" value="1137">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="on-ww" name="on-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="on-ww2" name="on-ww2" min="1000" max="2000" value="1000">
+                </div>
+
+                <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="str-ru" name="str-ru" min="1000" max="2000" value="1020">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="str-tl" name="str-tl" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="str-ww" name="str-ww" min="1000" max="2000" value="1196">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="str-ww2" name="str-ww2" min="1000" max="2000" value="1196">
+                </div>
+
+                <div class="timer-cell function-name" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cir-ru" name="cir-ru" min="1000" max="2000" value="1412">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cir-tl" name="cir-tl" min="1000" max="2000" value="1059">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cir-ww" name="cir-ww" min="1000" max="2000" value="1588">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cir-ww2" name="cir-ww2" min="1000" max="2000" value="1588">
+                </div>
+
+                <div class="timer-cell function-name" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="ola-ru" name="ola-ru" min="1000" max="2000" value="1137">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="ola-tl" name="ola-tl" min="1000" max="2000" value="1020">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="ola-ww" name="ola-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="ola-ww2" name="ola-ww2" min="1000" max="2000" value="1294">
+                </div>
+
+                <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
+                <div class="timer-cell">
+                    <input type="number" id="pu1-time" name="pu1-time" min="0" max="10" step="0.01" value="0.03">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pu1-ru" name="pu1-ru" min="1000" max="2000" value="1137">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pu1-tl" name="pu1-tl" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pu1-ww" name="pu1-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pu1-ww2" name="pu1-ww2" min="1000" max="2000" value="1294">
+                </div>
+
+                <div class="timer-cell function-name" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
+                <div class="timer-cell">
+                    <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.1">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pu2-ru" name="pu2-ru" min="1000" max="2000" value="1118">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pu2-tl" name="pu2-tl" min="1000" max="2000" value="1008">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pu2-ww" name="pu2-ww" min="1000" max="2000" value="1275">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pu2-ww2" name="pu2-ww2" min="1000" max="2000" value="1275">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.4">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr1-ru" name="cr1-ru" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr1-tl" name="cr1-tl" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr1-ww" name="cr1-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr1-ww2" name="cr1-ww2" min="1000" max="2000" value="1235">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.7">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr2-ru" name="cr2-ru" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr2-tl" name="cr2-tl" min="1000" max="2000" value="1255">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr2-ww" name="cr2-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr2-ww2" name="cr2-ww2" min="1000" max="2000" value="1235">
+                </div>
+
+                <div class="timer-cell function-name" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
+                <div class="timer-cell">
+                    <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="cr3-ru" name="cr3-ru" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="cr3-tl" name="cr3-tl" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="cr3-ww" name="cr3-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="cr3-ww2" name="cr3-ww2" min="1000" max="2000" value="1235">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.5">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu1-ru" name="bu1-ru" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu1-tl" name="bu1-tl" min="1000" max="2000" value="1784">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu1-ww" name="bu1-ww" min="1000" max="2000" value="1235">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu1-ww2" name="bu1-ww2" min="1000" max="2000" value="1235">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="1.1">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu2-ru" name="bu2-ru" min="1000" max="2000" value="1098">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu2-tl" name="bu2-tl" min="1000" max="2000" value="1863">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu2-ww" name="bu2-ww" min="1000" max="2000" value="1294">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu2-ww2" name="bu2-ww2" min="1000" max="2000" value="1294">
+                </div>
+
+                <div class="timer-cell function-name" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
+                <div class="timer-cell">
+                    <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.7">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="bu3-ru" name="bu3-ru" min="1000" max="2000" value="1216">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="bu3-tl" name="bu3-tl" min="1000" max="2000" value="1941">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="bu3-ww" name="bu3-ww" min="1000" max="2000" value="1333">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="bu3-ww2" name="bu3-ww2" min="1000" max="2000" value="1333">
+                </div>
+
+                <div class="timer-cell function-name" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
+                <div class="timer-cell">
+                    <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="7.1">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="fg-ru" name="fg-ru" min="1000" max="2000" value="1224">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="fg-tl" name="fg-tl" min="1000" max="2000" value="1137">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="fg-ww" name="fg-ww" min="1000" max="2000" value="1059">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="fg-ww2" name="fg-ww2" min="1000" max="2000" value="1059">
+                </div>
+
+                <div class="timer-cell function-name" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
+                <div class="timer-cell">
+                    <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="180">
+                </div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="gl-ru" name="gl-ru" min="1000" max="2000" value="1204">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="gl-tl" name="gl-tl" min="1000" max="2000" value="1125">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="gl-ww" name="gl-ww" min="1000" max="2000" value="1020">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="gl-ww2" name="gl-ww2" min="1000" max="2000" value="1020">
+                </div>
+
+                <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="dt-ru" name="dt-ru" min="1000" max="2000" value="1392">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="dt-tl" name="dt-tl" min="1000" max="2000" value="2000">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="dt-ww" name="dt-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="dt-ww2" name="dt-ww2" min="1000" max="2000" value="1000">
+                </div>
+
+                <div class="timer-cell function-name" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
+                <div class="timer-cell"></div>
+                <div class="timer-cell ru-column">
+                    <input type="number" id="pk-ru" name="pk-ru" min="1000" max="2000" value="1392">
+                </div>
+                <div class="timer-cell tl-column">
+                    <input type="number" id="pk-tl" name="pk-tl" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww-column">
+                    <input type="number" id="pk-ww" name="pk-ww" min="1000" max="2000" value="1000">
+                </div>
+                <div class="timer-cell ww2-column">
+                    <input type="number" id="pk-ww2" name="pk-ww2" min="1000" max="2000" value="1000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <input type="submit" value="SAVE">
+    </form>
+
+   <script>
+  // Global değişken - cihazdan gelen tüm JSON
+  var fullDeviceJson = null;
+
+  // Eski pin değerlerini sakla (çakışma durumunda geri dönmek için)
+  const previousPinValues = {};
+
+  // Time mode global değişkeni
+  window.currentTimeMode = 'interval'; // 'interval' veya 'absolute'
+
+  // Time input'ları için önceki değerleri sakla (validasyon için)
+  const previousTimeValues = {};
+
+  // Pin Conflict Validation with Revert
+  // changedElementId: Hangi select değişti
+  function validatePinAssignments(changedElementId) {
+    const usedPins = new Map(); // pin -> {name, elementId}
+
+    try {
+      // Tüm pin tanımları
+      const pinDefinitions = [
+        { id: 'ru-servo-pin', name: 'RU Servo' },
+        { id: 'tl-servo-pin', name: 'TL Servo' },
+        { id: 'ww-servo-pin', name: 'WW Servo' },
+        { id: 'ww2-servo-pin', name: 'WW2 Servo' },
+        { id: 'rdt-rx-pin', name: 'RDT Rx' }
+      ];
+
+      // Hook pinlerini ekle
+      const hookType = document.getElementById('hook-type')?.value;
+      if (hookType === '2switch' || hookType === '2switch_servo') {
+        pinDefinitions.push({ id: 'hook-sw1-pin', name: 'Hook SW1' });
+        pinDefinitions.push({ id: 'hook-sw2-pin', name: 'Hook SW2' });
+      }
+      if (hookType === '2switch_servo' || hookType === 'rotary_servo') {
+        pinDefinitions.push({ id: 'hook-servo-pin', name: 'Hook Servo' });
+      }
+      if (hookType === 'rotary_servo') {
+        pinDefinitions.push({ id: 'encoder-pin', name: 'Encoder' });
+      }
+
+      // 1. Önce değişmeyen pinleri topla
+      for (const def of pinDefinitions) {
+        if (def.id === changedElementId) continue; // Değişeni atla
+
+        const element = document.getElementById(def.id);
+        if (!element) continue;
+
+        const pin = parseInt(element.value);
+        if (pin === 0 || isNaN(pin)) continue; // Not Used pinleri atla
+
+        usedPins.set(pin, { name: def.name, elementId: def.id });
+      }
+
+      // 2. Şimdi değişen pin'i kontrol et
+      if (changedElementId) {
+        const changedElement = document.getElementById(changedElementId);
+        if (changedElement) {
+          const changedPin = parseInt(changedElement.value);
+
+          if (changedPin !== 0 && !isNaN(changedPin)) {
+            // Çakışma var mı?
+            if (usedPins.has(changedPin)) {
+              const existingPin = usedPins.get(changedPin);
+              const changedPinName = pinDefinitions.find(d => d.id === changedElementId)?.name || 'Unknown';
+
+              // ESKİ DEĞERE GERİ DÖN
+              const oldValue = previousPinValues[changedElementId] || '0';
+              changedElement.value = oldValue;
+
+              // Güzel modal ile kullanıcıya bildir
+              showPinConflictModal(changedPin, existingPin.name, changedPinName, oldValue);
+
+              console.warn(`⚠️ Pin conflict: ${changedPinName} tried Pin ${changedPin}, already used by ${existingPin.name}. Reverted to ${oldValue}`);
+
+              // Diyagramı güncelle (eski değerle)
+              updatePinDiagram();
+              return;
+            }
+          }
+
+          // Çakışma yok, yeni değeri kaydet
+          previousPinValues[changedElementId] = changedElement.value;
+        }
+      }
+
+    } catch (error) {
+      console.error('❌ Error validating pins:', error);
+    }
+
+    return [];
+  }
+
+  // JSON Schema Validation
+  function validateDeviceJson(json) {
+    try {
+      // Temel yapı kontrolü
+      if (!json || typeof json !== 'object') {
+        console.error('❌ Invalid JSON: not an object');
+        return false;
+      }
+
+      // Zorunlu alanlar
+      if (!json['model-class'] || typeof json['model-class'] !== 'string') {
+        console.error('❌ Invalid JSON: missing or invalid model-class');
+        return false;
+      }
+
+      if (typeof json['selected-preset-index'] !== 'number') {
+        console.error('❌ Invalid JSON: missing or invalid selected-preset-index');
+        return false;
+      }
+
+      // Presets array kontrolü
+      if (!Array.isArray(json.presets) || json.presets.length === 0) {
+        console.error('❌ Invalid JSON: presets must be a non-empty array');
+        return false;
+      }
+
+      // Her preset'i doğrula
+      for (let i = 0; i < json.presets.length; i++) {
+        const preset = json.presets[i];
+
+        if (!preset['preset-name'] || typeof preset['preset-name'] !== 'string') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid preset-name`);
+          return false;
+        }
+
+        if (typeof preset['preset-index'] !== 'number') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid preset-index`);
+          return false;
+        }
+
+        // Timers objesi kontrolü
+        if (!preset.timers || typeof preset.timers !== 'object') {
+          console.error(`❌ Invalid preset ${i}: missing or invalid timers object`);
+          return false;
+        }
+
+        // Pin değerleri kontrolü (0-9 arası olmalı, 0 = Not Used)
+        const pinFields = ['ru-servo-pin', 'tl-servo-pin', 'ww-servo-pin'];
+        for (const field of pinFields) {
+          if (preset[field] !== undefined) {
+            const val = preset[field];
+            if (typeof val !== 'number' || val < 0 || val > 9) {
+              console.error(`❌ Invalid preset ${i}: ${field} must be between 0-9 (0 = Not Used)`);
+              return false;
+            }
+          }
+        }
+      }
+
+      console.log('✅ JSON validation passed');
+      return true;
+    } catch (error) {
+      console.error('❌ JSON validation error:', error);
+      return false;
+    }
+  }
+
+  // SAVE butonunu yeniden aktif et (Flutter'dan çağrılacak)
+  function onSaveComplete(success) {
+    var saveButton = document.querySelector('input[type="submit"]');
+    saveButton.disabled = false;
+
+    if (success) {
+      saveButton.value = 'SAVED ✓';
+      saveButton.style.backgroundColor = '#4CAF50'; // Yeşil
+      console.log('✅ Settings saved successfully');
+
+      // 2 saniye sonra butonu normal haline getir
+      setTimeout(function() {
+        saveButton.value = 'SAVE';
+        saveButton.style.backgroundColor = '#FFD700'; // Sarı
+      }, 2000);
+    } else {
+      saveButton.value = 'SAVE FAILED ✗';
+      saveButton.style.backgroundColor = '#f44336'; // Kırmızı
+      console.log('❌ Save failed');
+
+      // 3 saniye sonra butonu normal haline getir
+      setTimeout(function() {
+        saveButton.value = 'SAVE';
+        saveButton.style.backgroundColor = '#FFD700'; // Sarı
+      }, 3000);
+    }
+  }
+
+  // Flutter'dan tüm JSON'u al ve preset selector'ı doldur
+  function initializeWithFullJson(jsonString) {
+    try {
+      const parsedJson = JSON.parse(jsonString);
+
+      // JSON şemasını doğrula
+      if (!validateDeviceJson(parsedJson)) {
+        alert('Invalid device configuration received. Please reconnect to device.');
+        console.error('❌ JSON validation failed');
+        return;
+      }
+
+      fullDeviceJson = parsedJson;
+      console.log('✅ Full JSON received and validated:', fullDeviceJson);
+
+      // Preset selector'ı doldur
+      var selector = document.getElementById('preset-selector');
+      selector.innerHTML = ''; // Mevcut options'ları temizle
+
+      if (fullDeviceJson.presets && fullDeviceJson.presets.length > 0) {
+        fullDeviceJson.presets.forEach(function(preset, index) {
+          var option = document.createElement('option');
+          option.value = preset['preset-index']; // preset-index kullan
+          option.text = preset['preset-name'] || ('Preset ' + preset['preset-index']);
+          selector.appendChild(option);
+        });
+
+        // selected-preset-index değerine göre seç
+        var selectedIndex = fullDeviceJson['selected-preset-index'] || 1;
+        selector.value = selectedIndex;
+
+        console.log('📋 Preset selector dolduruldu, selected-preset-index:', selectedIndex);
+
+        // İlk preset'i yükle
+        onPresetChanged();
+
+        // Delete butonunu güncelle
+        updateDeleteButton();
+      } else {
+        console.error('❌ No presets found in JSON');
+      }
+
+    } catch (e) {
+      console.error('❌ Error parsing full JSON:', e);
+    }
+  }
+
+  // Global değişken - ilk yüklemede modal gösterme
+  var isInitialLoad = true;
+
+  // Preset değiştiğinde çağrılır
+  function onPresetChanged() {
+    var selector = document.getElementById('preset-selector');
+    var selectedPresetIndex = parseInt(selector.value);
+
+    console.log('🔄 Preset changed to index:', selectedPresetIndex);
+
+    if (!fullDeviceJson || !fullDeviceJson.presets) {
+      console.error('❌ Full JSON not loaded yet');
+      return;
+    }
+
+    // Seçilen preset'i bul
+    var selectedPreset = fullDeviceJson.presets.find(function(preset) {
+      return preset['preset-index'] === selectedPresetIndex;
+    });
+
+    if (selectedPreset) {
+      // model-name'i JSON root seviyesinden ekle
+      var presetWithModel = {
+        'model-name': fullDeviceJson['model-name'] || 'Unknown',
+        ...selectedPreset
+      };
+
+      console.log('✅ Loading preset:', presetWithModel['preset-name']);
+
+      // Mevcut loadPresetDataFromJSON fonksiyonunu kullan
+      var jsonString = JSON.stringify(presetWithModel);
+      loadPresetDataFromJSON(jsonString);
+
+      // İlk yüklemeden sonra preset değişikliklerinde info modal göster
+      if (!isInitialLoad) {
+        showPresetChangedModal(selectedPreset['preset-name']);
+      }
+    } else {
+      console.error('❌ Preset not found with index:', selectedPresetIndex);
+    }
+
+    // Delete butonunu güncelle (default preset korumalı)
+    updateDeleteButton();
+
+    // İlk yükleme flag'ini kaldır
+    if (isInitialLoad) {
+      isInitialLoad = false;
+    }
+  }
+
+  // Preset changed modal göster
+  function showPresetChangedModal(presetName) {
+    document.getElementById('changedPresetName').textContent = '"' + presetName + '"';
+    document.getElementById('presetChangedModal').classList.add('show');
+  }
+
+  // Preset changed modal kapat
+  function closePresetChangedModal() {
+    document.getElementById('presetChangedModal').classList.remove('show');
+  }
+
+  // Delete butonunu güncelle
+  function updateDeleteButton() {
+    var selector = document.getElementById('preset-selector');
+    var deleteBtn = document.querySelector('.delete-btn');
+    var selectedIndex = parseInt(selector.value);
+
+    // Index 1 (default) veya tek preset varsa delete disable
+    if (selectedIndex === 1 || fullDeviceJson.presets.length <= 1) {
+      deleteBtn.disabled = true;
+    } else {
+      deleteBtn.disabled = false;
+    }
+  }
+
+  // Add preset modal göster
+  function addNewPreset() {
+    if (!fullDeviceJson) {
+      alert('Device JSON not loaded yet');
+      return;
+    }
+
+    // Input'u temizle ve modal'ı göster
+    var input = document.getElementById('addPresetInput');
+    input.value = '';
+    validateAddPresetInput(); // Butonu disable et
+    document.getElementById('addModal').classList.add('show');
+
+    // Input'a focus ver (küçük gecikme ile)
+    setTimeout(function() {
+      input.focus();
+    }, 300);
+  }
+
+  // Add preset input validasyonu
+  function validateAddPresetInput() {
+    var input = document.getElementById('addPresetInput');
+    var confirmBtn = document.getElementById('addPresetConfirmBtn');
+    var presetName = input.value.trim();
+
+    // Boş değilse butonu aktif et
+    if (presetName.length > 0) {
+      confirmBtn.disabled = false;
+    } else {
+      confirmBtn.disabled = true;
+    }
+  }
+
+  // Add preset modal kapat
+  function closeAddModal() {
+    document.getElementById('addModal').classList.remove('show');
+  }
+
+  // Add preset onayla
+  function confirmAddPreset() {
+    var input = document.getElementById('addPresetInput');
+    var presetName = input.value.trim();
+
+    if (presetName.length === 0) {
+      return;
+    }
+
+    // İsmi 20 karaktere kısıtla
+    presetName = presetName.substring(0, 20);
+
+    console.log('➕ Adding new preset:', presetName);
+
+    // Yeni preset index'i bul (en yüksek index + 1)
+    var maxIndex = Math.max(...fullDeviceJson.presets.map(p => p['preset-index']));
+    var newIndex = maxIndex + 1;
+
+    // Mevcut seçili preset'in verilerini kopyala
+    var selector = document.getElementById('preset-selector');
+    var currentIndex = parseInt(selector.value);
+    var currentPreset = fullDeviceJson.presets.find(p => p['preset-index'] === currentIndex);
+
+    // Yeni preset objesi oluştur (mevcut preset'in kopyası)
+    var newPreset = JSON.parse(JSON.stringify(currentPreset)); // Deep copy
+    newPreset['preset-name'] = presetName;
+    newPreset['preset-index'] = newIndex;
+
+    // fullDeviceJson'a ekle
+    fullDeviceJson.presets.push(newPreset);
+
+    // Selector'ı güncelle
+    var option = document.createElement('option');
+    option.value = newIndex;
+    option.text = presetName;
+    selector.appendChild(option);
+
+    // Yeni preset'i seç
+    selector.value = newIndex;
+    onPresetChanged();
+
+    console.log('✅ Preset added locally, click SAVE to apply changes');
+
+    // Delete butonunu güncelle
+    updateDeleteButton();
+
+    // Modal'ı kapat
+    closeAddModal();
+  }
+
+  // Global değişken - modal onay için
+  var pendingDeleteIndex = null;
+
+  // Modal confirmation dialog göster
+  function showConfirmModal(presetName, presetIndex) {
+    document.getElementById('modalPresetName').textContent = '"' + presetName + '"';
+    pendingDeleteIndex = presetIndex;
+    document.getElementById('confirmModal').classList.add('show');
+  }
+
+  // Modal'ı kapat ve sonucu işle
+  function closeConfirmModal(confirmed) {
+    document.getElementById('confirmModal').classList.remove('show');
+
+    if (confirmed && pendingDeleteIndex !== null) {
+      performDelete(pendingDeleteIndex);
+
+      // Silme işleminden sonra info modal göster
+      setTimeout(function() {
+        showInfoModal();
+      }, 300); // Confirm modal kapanma animasyonu için bekle
+    }
+
+    pendingDeleteIndex = null;
+  }
+
+  // Info modal göster
+  function showInfoModal() {
+    document.getElementById('infoModal').classList.add('show');
+  }
+
+  // Info modal kapat
+  function closeInfoModal() {
+    document.getElementById('infoModal').classList.remove('show');
+  }
+
+  // Servo Range Modal fonksiyonları
+  function showServoRangeModal(enteredValue, validRange, revertedValue) {
+    document.getElementById('servoEnteredValue').textContent = enteredValue;
+    document.getElementById('servoValidRange').textContent = validRange;
+    document.getElementById('servoRevertedValue').textContent = revertedValue;
+    document.getElementById('servoRangeModal').classList.add('show');
+  }
+
+  function closeServoRangeModal() {
+    document.getElementById('servoRangeModal').classList.remove('show');
+  }
+
+  // Time Sequence Modal fonksiyonları
+  function showTimeSequenceModal(previousValue, enteredValue, revertedValue) {
+    // Modal içeriğini güncelle
+    document.getElementById('timePreviousValue').textContent = previousValue + ' s';
+    document.getElementById('timeEnteredValue').textContent = enteredValue + ' s';
+    document.getElementById('timeRevertedValue').textContent = revertedValue + ' s';
+
+    // Modal'ı göster
+    document.getElementById('timeSequenceModal').classList.add('show');
+  }
+
+  function closeTimeSequenceModal() {
+    document.getElementById('timeSequenceModal').classList.remove('show');
+  }
+
+  // Pin Conflict Modal fonksiyonları
+  function showPinConflictModal(pinNumber, existingComponent, attemptedComponent, revertedValue) {
+    // Modal içeriğini güncelle
+    document.getElementById('conflictPinNumber').textContent = `S${pinNumber}`;
+    document.getElementById('conflictExistingComponent').textContent = existingComponent;
+    document.getElementById('conflictAttemptedComponent').textContent = attemptedComponent;
+
+    const revertedLabel = revertedValue === '0' ? 'Not Used' : `S${revertedValue}`;
+    document.getElementById('conflictRevertedValue').textContent = revertedLabel;
+
+    // Modal'ı göster
+    document.getElementById('pinConflictModal').classList.add('show');
+  }
+
+  function closePinConflictModal() {
+    document.getElementById('pinConflictModal').classList.remove('show');
+  }
+
+  // Gerçek silme işlemi
+  function performDelete(selectedIndex) {
+    var selector = document.getElementById('preset-selector');
+
+    console.log('🗑️ Deleting preset index:', selectedIndex);
+
+    // fullDeviceJson'dan sil
+    fullDeviceJson.presets = fullDeviceJson.presets.filter(p => p['preset-index'] !== selectedIndex);
+
+    // Selector'dan sil
+    selector.remove(selector.selectedIndex);
+
+    // İlk preset'i seç
+    if (fullDeviceJson.presets.length > 0) {
+      selector.value = fullDeviceJson.presets[0]['preset-index'];
+      onPresetChanged();
+    }
+
+    console.log('✅ Preset deleted locally, click SAVE to apply changes');
+
+    // Delete butonunu güncelle
+    updateDeleteButton();
+  }
+
+  // Mevcut preset'i sil (HTML içinde, SAVE'e kadar lokal)
+  function deleteCurrentPreset() {
+    var selector = document.getElementById('preset-selector');
+    var selectedIndex = parseInt(selector.value);
+
+    if (!fullDeviceJson) {
+      alert('Device JSON not loaded yet');
+      return;
+    }
+
+    // Index 1 (default) korumalı
+    if (selectedIndex === 1) {
+      alert('Cannot delete default preset');
+      return;
+    }
+
+    // Tek preset kaldıysa silme
+    if (fullDeviceJson.presets.length <= 1) {
+      alert('Cannot delete the last preset');
+      return;
+    }
+
+    // Preset ismini bul ve modal göster
+    var presetName = fullDeviceJson.presets.find(p => p['preset-index'] === selectedIndex)['preset-name'];
+    showConfirmModal(presetName, selectedIndex);
+  }
+
+  // Form gönderildiğinde bu fonksiyon çalışacaktır
+  // Mevcut form değerlerini alıp selected preset'e kaydet, sonra tüm JSON'u gönder
+  function submitForm(event) {
+    event.preventDefault(); // Formun normal submit işlemini durdur
+
+    try {
+      if (!fullDeviceJson) {
+        alert('Device JSON not loaded yet');
+        return false;
+      }
+
+      // Eğer absolute mode'daysa, önce interval'e dönüştür (JSON'a kaydetmek için)
+      const currentTimeMode = window.currentTimeMode || 'interval';
+      if (currentTimeMode === 'absolute') {
+        convertAllTimeInputs('interval');
+      }
+
+      // SAVE butonunu disable et ve "SAVING..." yap
+      var saveButton = document.querySelector('input[type="submit"]');
+      saveButton.disabled = true;
+      saveButton.value = 'SAVING...';
+      saveButton.style.backgroundColor = '#CCA000'; // Koyu sarı
+
+      console.log('💾 SAVE button clicked, updating current preset with form values...');
+
+    // Mevcut seçili preset'i bul
+    var selector = document.getElementById('preset-selector');
+    var selectedIndex = parseInt(selector.value);
+    var currentPreset = fullDeviceJson.presets.find(p => p['preset-index'] === selectedIndex);
+
+    if (!currentPreset) {
+      alert('Current preset not found');
+      return false;
+    }
+
+    // Form değerlerini currentPreset'e kaydet
+    // Strobe value
+    currentPreset['strobe-value'] = parseInt(document.getElementById('strobe-value').value);
+
+    // Servo pins
+    currentPreset['ru-servo-pin'] = parseInt(document.getElementById('ru-servo-pin').value);
+    currentPreset['tl-servo-pin'] = parseInt(document.getElementById('tl-servo-pin').value);
+    currentPreset['ww-servo-pin'] = parseInt(document.getElementById('ww-servo-pin').value);
+    currentPreset['ww2-servo-pin'] = parseInt(document.getElementById('ww2-servo-pin').value);
+
+    // RDT Rx pin
+    currentPreset['rdt-rx-pin'] = parseInt(document.getElementById('rdt-rx-pin').value);
+
+    // Hook settings
+    currentPreset['hook-type'] = document.getElementById('hook-type').value;
+
+    // Hook sw1 ve sw2 (2switch ve 2switch_servo için)
+    var hookSw1Elem = document.getElementById('hook-sw1-pin');
+    if (hookSw1Elem) {
+      currentPreset['hook-sw1-pin'] = parseInt(hookSw1Elem.value);
+    } else {
+      currentPreset['hook-sw1-pin'] = -1; // Kullanılmıyor
+    }
+
+    var hookSw2Elem = document.getElementById('hook-sw2-pin');
+    if (hookSw2Elem) {
+      currentPreset['hook-sw2-pin'] = parseInt(hookSw2Elem.value);
+    } else {
+      currentPreset['hook-sw2-pin'] = -1; // Kullanılmıyor
+    }
+
+    // Hook servo (2switch_servo ve rotary_servo için)
+    var hookServoElem = document.getElementById('hook-servo-pin');
+    if (hookServoElem) {
+      currentPreset['hook-servo-pin'] = parseInt(hookServoElem.value);
+    } else {
+      currentPreset['hook-servo-pin'] = -1; // Kullanılmıyor
+    }
+
+    // Encoder pin (rotary_servo için)
+    var encoderPinElem = document.getElementById('encoder-pin');
+    if (encoderPinElem) {
+      currentPreset['encoder-pin'] = parseInt(encoderPinElem.value);
+    } else {
+      currentPreset['encoder-pin'] = -1; // Kullanılmıyor
+    }
+
+    // Auto DT settings
+    currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
+    currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
+    currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+
+    // Geofencing DT settings
+    const geofenceData = getGeofenceData();
+    currentPreset['geofencing'] = geofenceData;
+
+    // UI Preferences - Range Mode and Time Mode
+    currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
+    currentPreset['time-mode'] = window.currentTimeMode || 'interval';
+
+    // Timers - nested structure
+    if (!currentPreset.timers) {
+      currentPreset.timers = {};
+    }
+
+    // Helper function to update timer
+    function updateTimer(key) {
+      if (!currentPreset.timers[key]) {
+        currentPreset.timers[key] = {};
+      }
+      var timer = currentPreset.timers[key];
+
+      // Time field (if exists)
+      var timeElem = document.getElementById(key + '-time');
+      if (timeElem) {
+        timer.time = parseFloat(timeElem.value);
+      }
+
+      // Servo positions - UI formatından PWM'e dönüştür
+      const currentMode = window.currentServoRangeMode || '1000-2000';
+
+      const ruUiValue = parseInt(document.getElementById(key + '-ru').value);
+      const tlUiValue = parseInt(document.getElementById(key + '-tl').value);
+      const wwUiValue = parseInt(document.getElementById(key + '-ww').value);
+      const ww2UiValue = parseInt(document.getElementById(key + '-ww2').value);
+
+      // UI değerlerini PWM'e dönüştür (JSON'da her zaman PWM olarak saklanır)
+      timer.ru = uiValueToPwm(ruUiValue, currentMode);
+      timer.tl = uiValueToPwm(tlUiValue, currentMode);
+      timer.ww = uiValueToPwm(wwUiValue, currentMode);
+      timer.ww2 = uiValueToPwm(ww2UiValue, currentMode);
+    }
+
+    // Update all timers
+    updateTimer('on');
+    updateTimer('str');
+    updateTimer('cir');
+    updateTimer('ola');
+    updateTimer('pu1');
+    updateTimer('pu2');
+    updateTimer('cr1');
+    updateTimer('cr2');
+    updateTimer('cr3');
+    updateTimer('bu1');
+    updateTimer('bu2');
+    updateTimer('bu3');
+    updateTimer('fg');
+    updateTimer('gl');
+    updateTimer('dt');
+    updateTimer('pk');
+
+    console.log('✅ Current preset updated with form values');
+
+    // Model name'i güncelle (JSON root seviyesinde)
+    var modelNameElem = document.getElementById('model-name');
+    if (modelNameElem && modelNameElem.value) {
+      fullDeviceJson['model-name'] = modelNameElem.value;
+    }
+
+    // selected-preset-index'i güncelle
+    fullDeviceJson['selected-preset-index'] = selectedIndex;
+
+      // Tüm JSON'u string'e çevir ve FormChannel'a gönder
+      var jsonString = JSON.stringify(fullDeviceJson);
+
+      // FormChannel kontrolü
+      if (typeof FormChannel === 'undefined' || !FormChannel.postMessage) {
+        throw new Error('FormChannel not available. Not running in WebView?');
+      }
+
+      console.log('📤 Sending full JSON to Flutter (' + jsonString.length + ' chars)');
+      FormChannel.postMessage(jsonString);
+
+      return false; // Formun normal submit işlemini engelle
+
+    } catch (error) {
+      console.error('❌ Error in submitForm:', error);
+      alert('Failed to save configuration: ' + error.message);
+      onSaveComplete(false);
+      return false;
+    }
+  }
+
+    document.querySelectorAll('input[name="strobe-bit"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let value = 0;
+            document.querySelectorAll('input[name="strobe-bit"]').forEach(cb => {
+                if (cb.checked) {
+                    value += parseInt(cb.value);
+                }
+            });
+            document.getElementById('strobe-value').value = value;
+            updateStrobeAnimation(); // LED animasyonunu güncelle
+        });
+    });
+
+    // Strobe LED animasyonu için değişkenler
+    let strobeInterval;
+    let strobeStep = 0;
+    const STROBE_PERIOD = 125; // 1 saniye / 8 adım = 125ms
+
+    function updateStrobeAnimation() {
+        if (strobeInterval) {
+            clearInterval(strobeInterval);
+        }
+
+        const strobeValue = parseInt(document.getElementById('strobe-value').value);
+        const led = document.getElementById('strobeLed');
+        let isBreak = false;
+        let breakCounter = 0;
+
+        strobeInterval = setInterval(() => {
+            if (isBreak) {
+                led.classList.remove('active'); // Kapalı
+                breakCounter++;
+                if (breakCounter >= 8) { // 1 saniye bekleme (8 * 125ms)
+                    isBreak = false;
+                    breakCounter = 0;
+                }
+            } else {
+                const bitMask = 1 << (7 - strobeStep);
+                if (strobeValue & bitMask) {
+                    led.classList.add('active'); // Açık - glow efekti
+                } else {
+                    led.classList.remove('active'); // Kapalı
+                }
+                strobeStep = (strobeStep + 1) % 8;
+                if (strobeStep === 0) {
+                    isBreak = true;
+                }
+            }
+        }, STROBE_PERIOD);
+    }
+
+    // Sayfa yüklendiğinde animasyonu başlat
+    document.addEventListener('DOMContentLoaded', function() {
+        updateStrobeAnimation();
+
+        // Range mode header'larını başlangıç mode'una göre güncelle
+        const initialMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+        let suffix = '';
+        switch(initialMode) {
+            case '0-100':
+                suffix = ' (%)';
+                break;
+            case '0-255':
+                suffix = '';
+                break;
+            case '1000-2000':
+                suffix = ' (µs)';
+                break;
+        }
+        document.getElementById('header-ru').textContent = 'RU' + suffix;
+        document.getElementById('header-tl').textContent = 'TL' + suffix;
+        document.getElementById('header-ww').textContent = 'WW' + suffix;
+        document.getElementById('header-ww2').textContent = 'WW2' + suffix;
+    });
+
+    // Sayfa kapanmadan önce interval'i temizle (memory leak önleme)
+    window.addEventListener('beforeunload', function() {
+        if (strobeInterval) {
+            clearInterval(strobeInterval);
+            console.log('🧹 Strobe interval cleared on page unload');
+        }
+    });
+
+    // WebView kapandığında veya sayfa gizlendiğinde temizle
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && strobeInterval) {
+            clearInterval(strobeInterval);
+            console.log('🧹 Strobe interval cleared (page hidden)');
+        } else if (!document.hidden) {
+            // Sayfa tekrar görünür olduğunda yeniden başlat
+            updateStrobeAnimation();
+        }
+    });
+
+    // Time inputları için virgülden sonra iki basamak formatı + time mode validation
+    document.querySelectorAll('input[id$="-time"]').forEach(input => {
+        // Focus - önceki değeri kaydet
+        input.addEventListener('focus', function() {
+            previousTimeValues[this.id] = this.value;
+        });
+
+        // Blur - format + validation
+        input.addEventListener('blur', function() {
+            const formattedValue = parseFloat(this.value).toFixed(2);
+            this.value = formattedValue;
+
+            // Absolute mode'da sıra kontrolü
+            validateTimeSequence(this);
+
+            // Yeni değeri kaydet
+            previousTimeValues[this.id] = this.value;
+        });
+
+        // Change - format
+        input.addEventListener('change', function() {
+            this.value = parseFloat(this.value).toFixed(2);
+        });
+
+        // Başlangıç değerini kaydet
+        previousTimeValues[input.id] = input.value;
+    });
+
+    // ========== SERVO RANGE MODE FUNCTIONS ==========
+
+    // Range mode'a göre input limitlerini al
+    function getRangeLimits() {
+        const mode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+        switch(mode) {
+            case '0-100':
+                return { min: 0, max: 100 };
+            case '0-255':
+                return { min: 0, max: 255 };
+            case '1000-2000':
+                return { min: 1000, max: 2000 };
+            default:
+                return { min: 1000, max: 2000 };
+        }
+    }
+
+    // UI değerini PWM değerine (1000-2000µs) dönüştür
+    function uiValueToPwm(uiValue, mode) {
+        const value = parseInt(uiValue);
+        if (isNaN(value)) return 1500; // Default center
+
+        switch(mode) {
+            case '0-100':
+                // 0-100 → 1000-2000
+                return Math.round(1000 + (value * 10));
+            case '0-255':
+                // 0-255 → 1000-2000
+                return Math.round(1000 + (value * (1000 / 255)));
+            case '1000-2000':
+                // Zaten PWM değeri
+                return value;
+            default:
+                return value;
+        }
+    }
+
+    // PWM değerini (1000-2000µs) UI değerine dönüştür
+    function pwmToUiValue(pwmValue, mode) {
+        const value = parseInt(pwmValue);
+        if (isNaN(value)) return mode === '0-100' ? 50 : mode === '0-255' ? 127 : 1500;
+
+        switch(mode) {
+            case '0-100':
+                // 1000-2000 → 0-100
+                return Math.round((value - 1000) / 10);
+            case '0-255':
+                // 1000-2000 → 0-255
+                return Math.round((value - 1000) * (255 / 1000));
+            case '1000-2000':
+                // Zaten PWM değeri
+                return value;
+            default:
+                return value;
+        }
+    }
+
+    // Range mode değiştiğinde header'ları ve input değerlerini güncelle
+    function updateRangeModeLabels() {
+        const mode = document.getElementById('servo-range-mode').value;
+        let suffix = '';
+
+        switch(mode) {
+            case '0-100':
+                suffix = ' (%)';
+                break;
+            case '0-255':
+                suffix = '';
+                break;
+            case '1000-2000':
+                suffix = ' (µs)';
+                break;
+        }
+
+        // Header'ları güncelle
+        document.getElementById('header-ru').textContent = 'RU' + suffix;
+        document.getElementById('header-tl').textContent = 'TL' + suffix;
+        document.getElementById('header-ww').textContent = 'WW' + suffix;
+        document.getElementById('header-ww2').textContent = 'WW2' + suffix;
+
+        // Tüm servo input değerlerini yeni range'e dönüştür
+        convertAllServoInputs(mode);
+    }
+
+    // Tüm servo input'larını yeni range'e dönüştür
+    function convertAllServoInputs(newMode) {
+        const oldMode = window.currentServoRangeMode || '1000-2000';
+
+        document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+            const currentValue = parseInt(input.value);
+            if (isNaN(currentValue)) return;
+
+            // Önce PWM'e dönüştür (eski mode'dan)
+            const pwmValue = uiValueToPwm(currentValue, oldMode);
+
+            // Sonra yeni mode'a dönüştür
+            const newValue = pwmToUiValue(pwmValue, newMode);
+
+            input.value = newValue;
+            previousServoValues[input.id] = newValue.toString();
+        });
+
+        // Mevcut mode'u kaydet
+        window.currentServoRangeMode = newMode;
+    }
+
+    // ========== TIME MODE FUNCTIONS ==========
+
+    // Timer phase sırası (PU1'den GL'ye kadar)
+    const timerPhaseOrder = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+
+    // Interval değerlerini Absolute'e dönüştür
+    function intervalToAbsolute(intervalValue, phaseKey) {
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+        if (phaseIndex === -1) return intervalValue; // Bilinmeyen phase
+
+        let cumulativeTime = 0;
+
+        // Bu phase'e kadar olan tüm interval'leri topla
+        for (let i = 0; i <= phaseIndex; i++) {
+            const phaseId = timerPhaseOrder[i];
+            const timeInput = document.getElementById(phaseId + '-time');
+            if (timeInput) {
+                const value = parseFloat(timeInput.value) || 0;
+
+                // Son phase ise (yani güncellediğimiz), yeni değeri kullan
+                if (i === phaseIndex) {
+                    cumulativeTime += intervalValue;
+                } else {
+                    cumulativeTime += value;
+                }
+            }
+        }
+
+        return cumulativeTime;
+    }
+
+    // Absolute değeri Interval'e dönüştür
+    function absoluteToInterval(absoluteValue, phaseKey) {
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+        if (phaseIndex === -1) return absoluteValue; // Bilinmeyen phase
+
+        // Bir önceki phase'in absolute değerini bul
+        let previousAbsolute = 0;
+
+        if (phaseIndex > 0) {
+            // Önceki tüm interval'leri topla
+            for (let i = 0; i < phaseIndex; i++) {
+                const phaseId = timerPhaseOrder[i];
+                const timeInput = document.getElementById(phaseId + '-time');
+                if (timeInput) {
+                    previousAbsolute += parseFloat(timeInput.value) || 0;
+                }
+            }
+        }
+
+        // Interval = Absolute - Önceki Absolute
+        return absoluteValue - previousAbsolute;
+    }
+
+    // Tüm time input'ları yeni mode'a dönüştür
+    function convertAllTimeInputs(newMode) {
+        const oldMode = window.currentTimeMode || 'interval';
+
+        if (oldMode === newMode) return; // Aynı mode, hiçbir şey yapma
+
+        // Önce tüm mevcut değerleri oku (dönüşüm sırasında değişmesinler diye)
+        const currentValues = {};
+        timerPhaseOrder.forEach(phaseKey => {
+            const timeInput = document.getElementById(phaseKey + '-time');
+            if (timeInput) {
+                currentValues[phaseKey] = parseFloat(timeInput.value) || 0;
+            }
+        });
+
+        // Şimdi dönüşümü yap
+        if (newMode === 'absolute') {
+            // Interval → Absolute
+            let cumulativeTime = 0;
+            timerPhaseOrder.forEach(phaseKey => {
+                const timeInput = document.getElementById(phaseKey + '-time');
+                if (!timeInput) return;
+
+                const intervalValue = currentValues[phaseKey] || 0;
+                cumulativeTime += intervalValue;
+
+                timeInput.value = cumulativeTime.toFixed(2);
+                previousTimeValues[timeInput.id] = timeInput.value;
+            });
+        } else {
+            // Absolute → Interval
+            let previousAbsolute = 0;
+            timerPhaseOrder.forEach(phaseKey => {
+                const timeInput = document.getElementById(phaseKey + '-time');
+                if (!timeInput) return;
+
+                const absoluteValue = currentValues[phaseKey] || 0;
+                const intervalValue = absoluteValue - previousAbsolute;
+
+                timeInput.value = intervalValue.toFixed(2);
+                previousTimeValues[timeInput.id] = timeInput.value;
+
+                previousAbsolute = absoluteValue;
+            });
+        }
+
+        // Mevcut mode'u kaydet
+        window.currentTimeMode = newMode;
+    }
+
+    // Time mode değiştiğinde
+    function updateTimeMode() {
+        const newMode = document.getElementById('time-mode').value;
+        convertAllTimeInputs(newMode);
+    }
+
+    // Absolute mode'da time input validation
+    function validateTimeSequence(inputElement) {
+        const currentMode = window.currentTimeMode || 'interval';
+
+        // Sadece absolute mode'da kontrol et
+        if (currentMode !== 'absolute') return true;
+
+        const phaseKey = inputElement.id.replace('-time', '');
+        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
+
+        if (phaseIndex === -1) return true; // Bilinmeyen phase
+        if (phaseIndex === 0) return true; // İlk phase, kontrol gereksiz
+
+        const currentValue = parseFloat(inputElement.value) || 0;
+
+        // Bir önceki phase'in değerini al
+        const previousPhase = timerPhaseOrder[phaseIndex - 1];
+        const previousInput = document.getElementById(previousPhase + '-time');
+
+        if (!previousInput) return true;
+
+        const previousValue = parseFloat(previousInput.value) || 0;
+
+        // Absolute mode'da her değer bir öncekinden büyük veya eşit olmalı
+        if (currentValue < previousValue) {
+            // Hata! Eski değere geri dön
+            const oldValue = previousTimeValues[inputElement.id] || previousValue;
+            inputElement.value = oldValue;
+
+            // Modal göster
+            showTimeSequenceModal(previousValue, currentValue, oldValue);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // RU, TL, WW, WW2 inputları için dinamik sınır kontrolü
+    // Önceki değerleri sakla (geçersiz girişlerde geri almak için)
+    const previousServoValues = {};
+
+    // Başlangıç mode'unu kaydet
+    window.currentServoRangeMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
+
+    document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+        // Başlangıç değerini kaydet
+        previousServoValues[input.id] = input.value;
+
+        // Focus event - değeri geçici olarak sakla
+        input.addEventListener('focus', function() {
+            // Focus alındığında mevcut geçerli değeri kaydet
+            if (this.value !== '' && this.value !== '-') {
+                const value = parseInt(this.value);
+                if (!isNaN(value)) {
+                    previousServoValues[this.id] = this.value;
+                }
+            }
+        });
+
+        // Input event - sadece başındaki sıfırları temizle, range kontrolü yapma
+        input.addEventListener('input', function() {
+            let value = parseInt(this.value);
+
+            // Boş veya geçersiz giriş - izin ver (kullanıcı yazıyor olabilir)
+            if (this.value === '' || this.value === '-') {
+                return;
+            }
+
+            // Sadece başındaki sıfırları temizle, range kontrolü yapma
+            if (!isNaN(value)) {
+                this.value = value.toString();
+            }
+        });
+
+        // Blur event - Range kontrolü burada yap
+        input.addEventListener('blur', function() {
+            const limits = getRangeLimits();
+            const currentMode = window.currentServoRangeMode || '1000-2000';
+
+            // Boş ise minimum değere set et
+            if (this.value === '' || this.value === '-') {
+                this.value = limits.min.toString();
+                previousServoValues[this.id] = this.value;
+                return;
+            }
+
+            let value = parseInt(this.value);
+
+            // Geçersiz sayı kontrolü
+            if (isNaN(value)) {
+                const oldValue = previousServoValues[this.id] || limits.min.toString();
+                this.value = oldValue;
+
+                // Modal göster
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = '0-100 %';
+                        break;
+                    case '0-255':
+                        rangeText = '0-255';
+                        break;
+                    case '1000-2000':
+                        rangeText = '1000-2000 µs';
+                        break;
+                }
+                showServoRangeModal('Invalid', rangeText, oldValue);
+                return;
+            }
+
+            // Range kontrolü
+            if (value < limits.min || value > limits.max) {
+                const oldValue = previousServoValues[this.id] || limits.min.toString();
+                this.value = oldValue;
+
+                // Modal göster
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = '0-100 %';
+                        break;
+                    case '0-255':
+                        rangeText = '0-255';
+                        break;
+                    case '1000-2000':
+                        rangeText = '1000-2000 µs';
+                        break;
+                }
+                showServoRangeModal(value, rangeText, oldValue);
+                return;
+            }
+
+            // Geçerli değer - kaydet
+            previousServoValues[this.id] = this.value;
+        });
+    });
+
+    // Pin diyagramını güncelleyen fonksiyon
+    function updatePinDiagram() {
+        // Servo pinlerini al
+        const ruServoPin = parseInt(document.getElementById('ru-servo-pin').value);
+        const tlServoPin = parseInt(document.getElementById('tl-servo-pin').value);
+        const wwServoPin = parseInt(document.getElementById('ww-servo-pin').value);
+        const ww2ServoPin = parseInt(document.getElementById('ww2-servo-pin').value);
+
+        // RDT Rx pinini al
+        const rdtRxPin = parseInt(document.getElementById('rdt-rx-pin').value);
+
+        // Hook tipini al
+        const hookType = document.getElementById('hook-type').value;
+
+        // Pin Header Layout etiketlerini temizle (1-6)
+        for (let i = 1; i <= 6; i++) {
+            const label = document.getElementById(`s${i}-label`);
+            if (label) label.textContent = "";
+        }
+
+        // Side Socket Layout - sol taraftaki fonksiyon etiketlerini temizle
+        for (let socketPin = 4; socketPin <= 6; socketPin++) {
+            const funcLabel = document.getElementById(`side-func-label-${socketPin}`);
+            const funcBox = document.getElementById(`side-func-box-${socketPin}`);
+            if (funcLabel) funcLabel.textContent = "";
+            if (funcBox) funcBox.style.visibility = "hidden";
+        }
+
+        // Fonksiyon: Pin label'ını güncelle (hem Pin Header hem Side Socket için)
+        function setPinLabel(pinNumber, labelText) {
+            // Pin 0 (Not Used) ise gösterme
+            if (pinNumber === 0 || isNaN(pinNumber)) return;
+
+            if (pinNumber >= 1 && pinNumber <= 6) {
+                // Pin Header Layout (1-6)
+                const label = document.getElementById(`s${pinNumber}-label`);
+                if (label) label.textContent = labelText;
+            } else if (pinNumber >= 7 && pinNumber <= 9) {
+                // Side Socket Layout (firmware pinleri 7-9 → socket pinleri 6-4)
+                // Firmware Pin 7 = Socket Pin 6 (IO1) → Sarı
+                // Firmware Pin 8 = Socket Pin 5 (IO2) → Yeşil
+                // Firmware Pin 9 = Socket Pin 4 (IO3) → Mavi
+                let socketPin, boxColor, textColor;
+                if (pinNumber === 7) {
+                    socketPin = 6;
+                    boxColor = "#FFD700";  // Sarı
+                    textColor = "#FFD700"; // Sarı
+                } else if (pinNumber === 8) {
+                    socketPin = 5;
+                    boxColor = "#00FF00";  // Yeşil
+                    textColor = "#00FF00"; // Yeşil
+                } else if (pinNumber === 9) {
+                    socketPin = 4;
+                    boxColor = "#2196F3";  // Mavi
+                    textColor = "#2196F3"; // Mavi
+                }
+
+                // Sol taraftaki fonksiyon label'ını güncelle
+                const funcLabel = document.getElementById(`side-func-label-${socketPin}`);
+                const funcBox = document.getElementById(`side-func-box-${socketPin}`);
+                if (funcLabel) {
+                    funcLabel.textContent = labelText;
+                    funcLabel.setAttribute('fill', textColor);
+                }
+                if (funcBox) {
+                    funcBox.setAttribute('fill', boxColor);
+                    funcBox.style.visibility = "visible";
+                }
+            }
+        }
+
+        // Servo pinlerini etiketlere yerleştir
+        setPinLabel(wwServoPin, "WW Servo");
+        setPinLabel(ww2ServoPin, "WW2 Servo");
+        setPinLabel(tlServoPin, "TL Servo");
+        setPinLabel(ruServoPin, "RU Servo");
+
+        // RDT Rx pinini etiketlere yerleştir
+        setPinLabel(rdtRxPin, "RDT Rx");
+
+        // Hook tipine göre diğer pinleri yerleştir
+        if (hookType === "2switch") {
+            // Hook switch pinlerini al
+            const hookSw1 = document.getElementById('hook-sw1-pin') ?
+                            parseInt(document.getElementById('hook-sw1-pin').value) : 2;
+            const hookSw2 = document.getElementById('hook-sw2-pin') ?
+                            parseInt(document.getElementById('hook-sw2-pin').value) : 4;
+
+            setPinLabel(hookSw1, "Hook SW1");
+            setPinLabel(hookSw2, "Hook SW2");
+        }
+        else if (hookType === "2switch_servo") {
+            // Hook switch ve servo pinlerini al
+            const hookSw1 = document.getElementById('hook-sw1-pin') ?
+                            parseInt(document.getElementById('hook-sw1-pin').value) : 2;
+            const hookSw2 = document.getElementById('hook-sw2-pin') ?
+                            parseInt(document.getElementById('hook-sw2-pin').value) : 4;
+            const hookServo = document.getElementById('hook-servo-pin') ?
+                              parseInt(document.getElementById('hook-servo-pin').value) : 6;
+
+            setPinLabel(hookSw1, "Hook SW1");
+            setPinLabel(hookSw2, "Hook SW2");
+            setPinLabel(hookServo, "Hook Servo");
+        }
+        else if (hookType === "rotary_servo") {
+            // Encoder ve servo pinlerini al
+            const encoderPin = document.getElementById('encoder-pin') ?
+                               parseInt(document.getElementById('encoder-pin').value) : 2;
+            const hookServo = document.getElementById('hook-servo-pin') ?
+                              parseInt(document.getElementById('hook-servo-pin').value) : 4;
+
+            setPinLabel(encoderPin, "Encoder");
+            setPinLabel(hookServo, "Hook Servo");
+        }
+    }
+
+    // Time Settings kolonlarının görünürlüğünü güncelle (Not Used pinler için)
+    function updateColumnVisibility() {
+        const timerGrid = document.querySelector('.timer-grid');
+        if (!timerGrid) return;
+
+        const ruPin = document.getElementById('ru-servo-pin').value;
+        const tlPin = document.getElementById('tl-servo-pin').value;
+        const wwPin = document.getElementById('ww-servo-pin').value;
+        const ww2Pin = document.getElementById('ww2-servo-pin').value;
+
+        // Not Used (value="0") ise kolonları gizle
+        timerGrid.classList.toggle('hide-ru', ruPin === '0');
+        timerGrid.classList.toggle('hide-tl', tlPin === '0');
+        timerGrid.classList.toggle('hide-ww', wwPin === '0');
+        timerGrid.classList.toggle('hide-ww2', ww2Pin === '0');
+    }
+
+    // Sayfa yüklendiğinde çalışacak kod
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle butonu için olay dinleyicisi ekle
+        const toggleBtn = document.getElementById('toggleSettingsBtn');
+        const advancedSettings = document.getElementById('advancedSettings');
+        
+        toggleBtn.addEventListener('click', function() {
+            // Ayarları göster/gizle
+            if (advancedSettings.style.display === 'none') {
+                advancedSettings.style.display = 'block';
+                toggleBtn.textContent = 'Hide Settings';
+            } else {
+                advancedSettings.style.display = 'none';
+                toggleBtn.textContent = 'Show Settings';
+            }
+        });
+        
+        // Hook seçeneklerini başlangıçta güncelle
+        updateHookOptions();
+        
+        // Servo pin seçimlerini dinle - çakışma kontrolü + diyagram güncelle + kolon gizleme
+        document.getElementById('ru-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('tl-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('ww-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('ww2-servo-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+            updateColumnVisibility();
+        });
+        document.getElementById('rdt-rx-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+        });
+
+        // Hook tipi değiştiğinde diyagramı güncelle (çakişma kontrolü yok, sadece güncelleme)
+        document.getElementById('hook-type').addEventListener('change', function() {
+            updateHookOptions();
+            updatePinDiagram();
+        });
+
+        // Event delegation: Hook options container değişikliklerini dinle
+        // innerHTML ile içerik değişse bile tek listener yeterli (memory leak yok)
+        const hookOptionsContainer = document.getElementById('hook-options');
+        hookOptionsContainer.addEventListener('change', function(e) {
+            if (e.target.matches('select, input')) {
+                validatePinAssignments(e.target.id);
+                updatePinDiagram();
+            }
+        });
+
+        // Sayfa yüklendiğinde diyagramı ve kolon görünürlüğünü güncelle
+        updatePinDiagram();
+        updateColumnVisibility();
+    });
+    
+    // Hook seçeneklerini güncelleyen fonksiyon
+    function updateHookOptions() {
+        const hookType = document.getElementById('hook-type').value;
+        const hookOptionsContainer = document.getElementById('hook-options');
+        
+        // Mevcut içeriği temizle
+        hookOptionsContainer.innerHTML = '';
+        
+        // Hook tipine göre uygun seçenekleri ekle
+        if (hookType === '2switch') {
+            hookOptionsContainer.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>2 Switch Hook Options</h3>
+                    <div class="option-row">
+                        <label for="hook-sw1-pin">Switch 1 Pin:</label>
+                        <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2" selected>S2</option>
+                            <option value="3">S3</option>
+                            <option value="4">S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-sw2-pin">Switch 2 Pin:</label>
+                        <select id="hook-sw2-pin" name="hook-sw2-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                            <option value="4" selected>S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        } else if (hookType === '2switch_servo') {
+            hookOptionsContainer.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>2 Switch + Servo Hook Options</h3>
+                    <div class="option-row">
+                        <label for="hook-sw1-pin">Switch 1 Pin:</label>
+                        <select id="hook-sw1-pin" name="hook-sw1-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2" selected>S2</option>
+                            <option value="3">S3</option>
+                            <option value="4">S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-sw2-pin">Switch 2 Pin:</label>
+                        <select id="hook-sw2-pin" name="hook-sw2-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                            <option value="4" selected>S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-pin">Servo Pin:</label>
+                        <select id="hook-servo-pin" name="hook-servo-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                            <option value="4">S4</option>
+                            <option value="5">S5</option>
+                            <option value="6" selected>S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        } else if (hookType === 'rotary_servo') {
+            hookOptionsContainer.innerHTML = `
+                <div class="hook-options-container">
+                    <h3>Rotary Encoder + Servo Hook Options</h3>
+                    <div class="option-row">
+                        <label for="encoder-pin">Enc. Pin:</label>
+                        <select id="encoder-pin" name="encoder-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2" selected>S2</option>
+                            <option value="3">S3</option>
+                            <option value="4">S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-pin">Servo Pin:</label>
+                        <select id="hook-servo-pin" name="hook-servo-pin">
+                            <option value="0">Not Used</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                            <option value="4" selected>S4</option>
+                            <option value="5">S5</option>
+                            <option value="6">S6</option>
+                            <option value="7">S7</option>
+                            <option value="8">S8</option>
+                            <option value="9">S9</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Pin diyagramını güncelle (yeni hook options yüklendikten sonra)
+        if (typeof updatePinDiagram === 'function') {
+            updatePinDiagram();
+        }
+    }
+
+    // Flutter'dan gelen JSON verilerini forma yükle (F1A-specific)
+    function loadPresetDataFromJSON(jsonString) {
+        try {
+            if (!jsonString || typeof jsonString !== 'string') {
+                throw new Error('Invalid JSON string provided');
+            }
+
+            var presetData = JSON.parse(jsonString);
+            console.log('Preset data loaded:', presetData);
+
+            // Düz alanları doldur (preset-name, preset-index, vb.)
+            for (var key in presetData) {
+                if (key === 'timers') continue; // timers'ı ayrı işle
+
+                var element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = presetData[key] === 1 || presetData[key] === '1';
+                    } else {
+                        element.value = presetData[key];
+                    }
+                }
+            }
+
+            // Strobe bits'i genişlet (8 bit)
+            if (presetData['strobe-value'] !== undefined) {
+                var strobeValue = parseInt(presetData['strobe-value']);
+                console.log('Loading strobe-value:', strobeValue);
+
+                // Her bir biti kontrol et ve checkbox'ı işaretle
+                for (var i = 7; i >= 0; i--) {
+                    var bit = (strobeValue >> i) & 1;
+                    var checkbox = document.getElementById('bit' + i);
+                    if (checkbox) {
+                        checkbox.checked = (bit === 1);
+                        console.log('Bit ' + i + ':', bit === 1 ? 'checked' : 'unchecked');
+                    }
+                }
+
+                // Strobe LED animasyonunu güncelle
+                if (typeof updateStrobeAnimation === 'function') {
+                    updateStrobeAnimation();
+                }
+            }
+
+            // Timers nested yapısını işle
+            if (presetData.timers) {
+                for (var timerKey in presetData.timers) {
+                    var timer = presetData.timers[timerKey];
+
+                    // time değeri varsa
+                    if (timer.time !== undefined) {
+                        var timeElement = document.getElementById(timerKey + '-time');
+                        if (timeElement) timeElement.value = timer.time;
+                    }
+
+                    // ru, tl, ww, ww2 pozisyonları (PWM → UI formatına dönüştür)
+                    ['ru', 'tl', 'ww', 'ww2'].forEach(function(servo) {
+                        if (timer[servo] !== undefined) {
+                            var servoElement = document.getElementById(timerKey + '-' + servo);
+                            if (servoElement) {
+                                // JSON'daki değer her zaman PWM (1000-2000µs)
+                                const pwmValue = timer[servo];
+                                const currentMode = window.currentServoRangeMode || '1000-2000';
+
+                                // PWM'i UI formatına dönüştür
+                                const uiValue = pwmToUiValue(pwmValue, currentMode);
+                                servoElement.value = uiValue;
+
+                                // Önceki değer olarak kaydet
+                                previousServoValues[servoElement.id] = uiValue.toString();
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Hook tipini güncelle ve seçenekleri göster
+            var hookTypeElement = document.getElementById('hook-type');
+            if (hookTypeElement && typeof updateHookOptions === 'function') {
+                updateHookOptions();
+            }
+
+            // Pin değerlerini başlangıç değeri olarak kaydet (çakışma kontrolü için)
+            previousPinValues['ru-servo-pin'] = document.getElementById('ru-servo-pin')?.value || '0';
+            previousPinValues['tl-servo-pin'] = document.getElementById('tl-servo-pin')?.value || '0';
+            previousPinValues['ww-servo-pin'] = document.getElementById('ww-servo-pin')?.value || '0';
+            previousPinValues['ww2-servo-pin'] = document.getElementById('ww2-servo-pin')?.value || '0';
+            previousPinValues['rdt-rx-pin'] = document.getElementById('rdt-rx-pin')?.value || '0';
+
+            // Hook pinlerini de kaydet (varsa)
+            if (document.getElementById('hook-sw1-pin')) {
+                previousPinValues['hook-sw1-pin'] = document.getElementById('hook-sw1-pin').value;
+            }
+            if (document.getElementById('hook-sw2-pin')) {
+                previousPinValues['hook-sw2-pin'] = document.getElementById('hook-sw2-pin').value;
+            }
+            if (document.getElementById('hook-servo-pin')) {
+                previousPinValues['hook-servo-pin'] = document.getElementById('hook-servo-pin').value;
+            }
+            if (document.getElementById('encoder-pin')) {
+                previousPinValues['encoder-pin'] = document.getElementById('encoder-pin').value;
+            }
+
+            // Pin diyagramını ve kolon görünürlüğünü güncelle
+            if (typeof updatePinDiagram === 'function') {
+                updatePinDiagram();
+            }
+            if (typeof updateColumnVisibility === 'function') {
+                updateColumnVisibility();
+            }
+
+            // UI Preferences - Restore Range Mode and Time Mode
+            if (presetData['range-mode']) {
+                var rangeModeElement = document.getElementById('servo-range-mode');
+                if (rangeModeElement) {
+                    rangeModeElement.value = presetData['range-mode'];
+                    window.currentServoRangeMode = presetData['range-mode'];
+                    // Trigger range mode update to convert all servo values
+                    if (typeof updateRangeModeLabels === 'function') {
+                        updateRangeModeLabels();
+                    }
+                    console.log('✅ Range Mode restored:', presetData['range-mode']);
+                }
+            }
+
+            if (presetData['time-mode']) {
+                var timeModeElement = document.getElementById('time-mode');
+                if (timeModeElement) {
+                    timeModeElement.value = presetData['time-mode'];
+                    window.currentTimeMode = presetData['time-mode'];
+                    // Trigger time mode update to convert all time values
+                    if (typeof updateTimeMode === 'function') {
+                        updateTimeMode();
+                    }
+                    console.log('✅ Time Mode restored:', presetData['time-mode']);
+                }
+            }
+
+            // Load Geofencing data
+            if (presetData['geofencing']) {
+                loadGeofenceData(presetData['geofencing']);
+                console.log('✅ Geofencing data loaded:', presetData['geofencing']);
+            }
+
+            console.log('✅ Form successfully populated from JSON');
+        } catch (e) {
+            console.error('❌ Error loading preset data:', e);
+            alert('Failed to load preset data: ' + e.message);
+        }
+    }
+
+    // Function Info Modal System
+    const functionInfoData = {
+        'ru-servo': {
+            icon: '🎚️',
+            title: 'RU Servo (Rudder)',
+            description: 'Rudder servo controls the vertical tail fin (rudder) for left/right directional control.\n\nThis servo is essential for yaw control during flight phases.\n\nPin assignment determines which hardware output channel controls this servo. Choose a pin that is not used by other servos or switches.'
+        },
+        'tl-servo': {
+            icon: '🎚️',
+            title: 'TL Servo (Tail/Elevator)',
+            description: 'Tail servo controls the horizontal stabilizer (elevator) for pitch control (nose up/down).\n\nThis is the primary control surface for climb and descent angles.\n\nPin assignment determines which hardware output channel controls this servo. Ensure this pin does not conflict with other servos.'
+        },
+        'ww-servo': {
+            icon: '🎚️',
+            title: 'WW Servo (Wing)',
+            description: 'Wing servo controls wing warping or wing flaps for additional lift/drag control.\n\nThis servo helps optimize the model\'s flight characteristics during different phases.\n\nPin assignment determines which hardware output channel controls this servo. Select a unique pin for this servo.'
+        },
+        'ww2-servo': {
+            icon: '🎚️',
+            title: 'WW2 Servo (Wing 2)',
+            description: 'Second wing servo for F1A Flapper models with dual wing control.\n\nFlapper models use two wing servos to control independent wing surfaces for enhanced flight control and stability.\n\nThis servo typically mirrors or complements WW servo movements for coordinated wing control.\n\nPin assignment determines which hardware output channel controls this servo. Required for Flapper configurations.'
+        },
+        'rdt-rx': {
+            icon: '📡',
+            title: 'RDT Rx Pin (Radio DT Receiver)',
+            description: 'Pin assignment for the Radio De-Thermalization receiver input.\n\nRDT allows remote triggering of the DT phase via radio command from the ground, providing manual override control.\n\nThis is useful when:\n• The model needs to land immediately\n• Auto DT features are not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nThe receiver connects to this pin and triggers DT when a signal is received from the transmitter.\n\nSelect "Not Used" if you don\'t have an RDT receiver installed. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
+        },
+        'range-mode': {
+            icon: '📊',
+            title: 'Range Mode',
+            description: 'Selects the input format for servo position values in the Time Settings table.\n\nOptions:\n\n• 0-100 (%): Percentage format (0% = minimum, 100% = maximum)\n• 0-255: 8-bit integer format (classic RC systems)\n• 1000-2000 µs: PWM microsecond format (standard for modern servos)\n\nAll values are internally stored as 1000-2000 µs in the JSON configuration, regardless of the selected display format.\n\nChanging this mode will automatically convert all existing values to the new format.'
+        },
+        'time-mode': {
+            icon: '⏱️',
+            title: 'Time Mode',
+            description: 'Controls how time values are displayed and entered in the Time Settings table.\n\n• Interval: Each phase shows its duration (e.g., PU1: 0.03s, PU2: 0.10s)\n• Absolute: Each phase shows cumulative time from start (e.g., PU1: 0.03s, PU2: 0.13s)\n\nAll values are internally stored as intervals in the JSON configuration.\n\nIn Absolute mode, validation ensures each time value is greater than or equal to the previous phase to maintain chronological order.\n\nUse Interval mode for setting individual phase durations, or Absolute mode for planning total flight timeline.'
+        },
+        'hook-type': {
+            icon: '🪝',
+            title: 'Hook Type',
+            description: 'Determines how the model is released from the tow line. Options:\n\n• 2 Switch: Uses two mechanical switches to detect release\n• 2 Switch + Servo: Adds a servo for active hook release control\n• Rotary Enc. + Servo: Uses a rotary encoder with servo for precise release control\n\nThe hook type affects which pins are used and how the timer detects launch phases.'
+        },
+        'max-sink': {
+            icon: '📉',
+            title: 'Max Sink Rate',
+            description: 'Maximum descent rate (in meters per second) before automatic DT activation.\n\nIf the model descends faster than this rate, the timer will automatically trigger de-thermalization to prevent a dangerous dive or crash.\n\nTypical values: 2-5 m/s\n\nLower values provide more safety but may trigger false positives in turbulent air.'
+        },
+        'max-altitude': {
+            icon: '⛰️',
+            title: 'Max Altitude',
+            description: 'Maximum altitude limit (in meters) before automatic DT activation.\n\nIf the model climbs above this altitude, the timer will automatically trigger de-thermalization to comply with competition rules or prevent fly-aways.\n\nThis is critical for F1A competitions where altitude limits are strictly enforced.\n\nTypical values: 200-500m depending on competition rules.'
+        },
+        'flip-loop-detection': {
+            icon: '🔄',
+            title: 'Flip & Loop Detection',
+            description: 'Enables automatic DT trigger when aerobatic maneuvers (flips or loops) are detected using gyroscope data.\n\nThis safety feature prevents the model from entering uncontrolled aerobatic flight that could lead to structural damage or loss of control.\n\nDetection thresholds:\n• 2.5G for flips\n• 45° for loops\n• 180°/s for spins\n\nUseful for preventing thermal-induced unusual attitudes.'
+        },
+        'geofencing': {
+            icon: '🗺️',
+            title: 'Geofencing DT',
+            description: 'Enables automatic DT trigger when the model exits a defined geographic boundary.\n\nWhen enabled, you can define a 4-point boundary on the map by tapping 4 corners. The system continuously monitors GPS position during flight.\n\nIf the model crosses outside this boundary, DT is automatically triggered to bring the model down within the allowed area.\n\nThis is especially useful for:\n• Competition fly zones with strict boundaries\n• Preventing fly-aways over restricted areas\n• Keeping the model within visual range\n• Complying with local aviation regulations\n\nRequires GPS lock before flight. The boundary is checked at 1Hz during flight.\n\nMarkers are draggable - adjust the boundary anytime before saving.'
+        },
+        'on': {
+            icon: '⚡',
+            title: 'Power ON',
+            description: 'Initial position when the timer is powered on.\n\nAll servos move to their starting positions.\n\nThis is the safe storage and transportation configuration.'
+        },
+        'str': {
+            icon: '↑',
+            title: 'Straight Tow',
+            description: 'Launch phase with straight tow line.\n\nServos are set for optimal climb angle during the initial tow.\n\nThis phase begins when the timer is armed and the model is being towed upward.'
+        },
+        'cir': {
+            icon: '↻',
+            title: 'Circle Tow',
+            description: 'Circling tow phase.\n\nServos adjust to maintain a circular tow pattern, helping the model gain altitude while circling.\n\nThis phase typically follows the straight tow.'
+        },
+        'ola': {
+            icon: '🎯',
+            title: 'On Launch Adjust',
+            description: 'Launch adjustment phase.\n\nFine-tuning servo positions immediately after line release to optimize the initial free flight trajectory and establish proper climb attitude.'
+        },
+        'pu1': {
+            icon: '⬆️',
+            title: 'Pull-Up 1',
+            description: 'First pull-up phase.\n\nThe model climbs to gain altitude.\n\nServo positions are optimized for maximum climb rate while maintaining efficient speed.'
+        },
+        'pu2': {
+            icon: '⬆️',
+            title: 'Pull-Up 2',
+            description: 'Second pull-up phase.\n\nContinued climbing with adjusted servo positions to maintain optimal climb performance as the model gains altitude.'
+        },
+        'cr1': {
+            icon: '🔄',
+            title: 'Circle 1',
+            description: 'First thermal circling phase.\n\nServos are set to maintain a tight, efficient circling pattern to climb in thermals.\n\nThis is the primary thermal soaring configuration.'
+        },
+        'cr2': {
+            icon: '🔄',
+            title: 'Circle 2',
+            description: 'Second thermal circling phase.\n\nServo positions may be slightly adjusted from CR1 to optimize thermal performance as altitude and conditions change.'
+        },
+        'cr3': {
+            icon: '🔄',
+            title: 'Circle 3',
+            description: 'Third thermal circling phase.\n\nFinal thermal soaring configuration before transitioning to descent phases.\n\nOptimized for maximum altitude gain.'
+        },
+        'bu1': {
+            icon: '↘️',
+            title: 'Bunting 1',
+            description: 'First bunting phase.\n\nThe model begins to transition from climb to level flight or gentle descent.\n\nServos adjust to prevent over-climbing and prepare for controlled descent.'
+        },
+        'bu2': {
+            icon: '↘️',
+            title: 'Bunting 2',
+            description: 'Second bunting phase.\n\nContinued transition with servo positions adjusted for stable, controlled flight as the model prepares for faster descent.'
+        },
+        'bu3': {
+            icon: '↘️',
+            title: 'Bunting 3',
+            description: 'Third bunting phase.\n\nFinal bunting configuration before transitioning to fast glide.\n\nServos are set for efficient, controlled descent.'
+        },
+        'fg': {
+            icon: '➡️',
+            title: 'Fast Glide',
+            description: 'Fast glide descent phase.\n\nServos are positioned for high-speed, efficient glide to cover distance quickly and bring the model down to landing altitude.'
+        },
+        'gl': {
+            icon: '✈️',
+            title: 'Glide',
+            description: 'Normal glide phase.\n\nSlower, more controlled glide with servos set for efficient, stable descent.\n\nThis phase prepares the model for final landing approach.'
+        },
+        'dt': {
+            icon: '🪂',
+            title: 'De-Thermalization (DT)',
+            description: 'De-thermalization phase.\n\nServos move to positions that significantly increase drag and reduce lift, causing rapid descent.\n\nThis prevents the model from flying out of bounds or landing too far away.\n\nCritical for competition compliance.'
+        },
+        'pk': {
+            icon: '🅿️',
+            title: 'Park',
+            description: 'Final parking position.\n\nAll servos return to safe storage positions.\n\nThis is the configuration for after landing, during storage, and transport.\n\nPrevents servo and linkage damage.'
+        },
+        'range-mode': {
+            icon: '📊',
+            title: 'Range Mode',
+            description: 'Selects the input format for RU/TL/WW servo values in the Time Settings table.\n\nOptions:\n\n• 0-100 (%): Enter values as percentages (0% = 1000µs, 100% = 2000µs)\n  - Easy to understand\n  - Good for beginners\n\n• 0-255: Traditional 8-bit range (0 = 1000µs, 255 = 2000µs)\n  - Compatible with legacy systems\n  - Fine control with 256 steps\n\n• 1000-2000 µs: Direct PWM microseconds (default)\n  - Precise servo positioning\n  - Standard RC servo control range\n  - 1500µs is center position\n\nIMPORTANT: Regardless of which mode you choose, the device always stores and uses the actual PWM values (1000-2000µs). The range mode only affects how YOU enter the values in this form.\n\nWhen you change the range mode, all existing values are automatically converted to the new format.'
+        }
+    };
+
+    function showFunctionInfo(functionKey) {
+        const info = functionInfoData[functionKey];
+        if (!info) {
+            console.error('No info found for function:', functionKey);
+            return;
+        }
+
+        // Update modal content
+        document.getElementById('functionInfoIcon').textContent = info.icon;
+        document.getElementById('functionInfoTitle').textContent = info.title;
+        document.getElementById('functionInfoBody').textContent = info.description;
+
+        // Show modal
+        document.getElementById('functionInfoModal').style.display = 'flex';
+    }
+
+    function closeFunctionInfoModal() {
+        document.getElementById('functionInfoModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('functionInfoModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeFunctionInfoModal();
+        }
+    });
+
+    // ==================== GEOFENCING FEATURE ====================
+    let geofenceMap = null;
+    let geofenceMarkers = [];
+    let geofencePolygon = null;
+    const maxGeofencePoints = 4;
+
+    // Toggle geofencing map visibility
+    function toggleGeofencingMap() {
+        const enabled = document.getElementById('geofencing-enabled').checked;
+        const container = document.getElementById('geofencing-map-container');
+
+        if (enabled) {
+            container.style.display = 'block';
+            // Initialize map if not already initialized
+            if (!geofenceMap) {
+                initializeGeofenceMap();
+            }
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    // Initialize Leaflet map
+    function initializeGeofenceMap() {
+        // Default center (fallback if geolocation fails)
+        const defaultLat = 51.09853337025952;
+        const defaultLng = 1.2059596354190565;
+
+        // Create map with default location first (zoom 18 = ~100m view)
+        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 18);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(geofenceMap);
+
+        // Try to get user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success - center map on user's location
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    geofenceMap.setView([userLat, userLng], 13);
+                    console.log('📍 Map centered on user location:', userLat, userLng);
+                },
+                function(error) {
+                    // Error or denied - check if we have saved geofence points
+                    console.log('⚠️ Geolocation failed:', error.message);
+
+                    // If we have saved geofence markers, fit map to show them all
+                    if (geofenceMarkers.length > 0) {
+                        const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
+                        geofenceMap.fitBounds(bounds, { padding: [50, 50] });
+                        console.log('📍 Map centered on saved geofence points');
+                    } else {
+                        // No saved points, stay with default Istanbul location
+                        console.log('📍 Using default Istanbul location');
+                    }
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            // Geolocation not supported - check for saved points
+            console.log('⚠️ Geolocation not supported by browser');
+
+            if (geofenceMarkers.length > 0) {
+                const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
+                geofenceMap.fitBounds(bounds, { padding: [50, 50] });
+                console.log('📍 Map centered on saved geofence points');
+            } else {
+                console.log('📍 Using default Istanbul location');
+            }
+        }
+
+        // Add click handler to place markers
+        geofenceMap.on('click', function(e) {
+            addGeofencePoint(e.latlng);
+        });
+
+        console.log('📍 Geofence map initialized');
+    }
+
+    // Add a geofence point
+    function addGeofencePoint(latlng) {
+        // Check if we already have 4 points
+        if (geofenceMarkers.length >= maxGeofencePoints) {
+            alert('Maximum 4 points allowed. Clear points to start over.');
+            return;
+        }
+
+        // Create marker with custom numbering
+        const markerNumber = geofenceMarkers.length + 1;
+        const marker = L.marker(latlng, {
+            draggable: true,
+            icon: L.divIcon({
+                className: 'geofence-marker',
+                html: `<div style="background-color: #FFD700; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; font-size: 16px;">${markerNumber}</div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        }).addTo(geofenceMap);
+
+        // Store marker with its index
+        marker.pointIndex = markerNumber - 1;
+
+        // Add drag event to update polygon and coordinates
+        marker.on('dragend', function() {
+            updateGeofencePolygon();
+            updateCoordinateDisplay();
+        });
+
+        // Add marker to array
+        geofenceMarkers.push(marker);
+
+        // Update polygon and display
+        updateGeofencePolygon();
+        updateCoordinateDisplay();
+
+        console.log(`📍 Added geofence point ${markerNumber}: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
+    }
+
+    // Update the polygon connecting the points
+    function updateGeofencePolygon() {
+        // Remove existing polygon
+        if (geofencePolygon) {
+            geofenceMap.removeLayer(geofencePolygon);
+        }
+
+        // Only draw polygon if we have at least 3 points
+        if (geofenceMarkers.length >= 3) {
+            const points = geofenceMarkers.map(m => m.getLatLng());
+
+            geofencePolygon = L.polygon(points, {
+                color: '#FFD700',
+                fillColor: '#FFD700',
+                fillOpacity: 0.2,
+                weight: 2
+            }).addTo(geofenceMap);
+
+            console.log('🔷 Geofence polygon updated');
+        }
+    }
+
+    // Update coordinate display
+    function updateCoordinateDisplay() {
+        for (let i = 0; i < maxGeofencePoints; i++) {
+            const coordSpan = document.getElementById(`coord-p${i + 1}`);
+            if (i < geofenceMarkers.length) {
+                const latlng = geofenceMarkers[i].getLatLng();
+                coordSpan.textContent = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
+                coordSpan.style.color = '#00FF00';
+            } else {
+                coordSpan.textContent = '----, ----';
+                coordSpan.style.color = '#FFD700';
+            }
+        }
+    }
+
+    // Clear all geofence points
+    function clearGeofencePoints() {
+        // Remove all markers
+        geofenceMarkers.forEach(marker => {
+            geofenceMap.removeLayer(marker);
+        });
+        geofenceMarkers = [];
+
+        // Remove polygon
+        if (geofencePolygon) {
+            geofenceMap.removeLayer(geofencePolygon);
+            geofencePolygon = null;
+        }
+
+        // Reset coordinate display
+        updateCoordinateDisplay();
+
+        console.log('🧹 Geofence points cleared');
+    }
+
+    // Get geofence data for JSON storage
+    function getGeofenceData() {
+        if (!document.getElementById('geofencing-enabled').checked) {
+            return {
+                enabled: 0,
+                points: []
+            };
+        }
+
+        const points = geofenceMarkers.map(marker => {
+            const latlng = marker.getLatLng();
+            return {
+                lat: parseFloat(latlng.lat.toFixed(6)),
+                lng: parseFloat(latlng.lng.toFixed(6))
+            };
+        });
+
+        return {
+            enabled: 1,
+            points: points
+        };
+    }
+
+    // Load geofence data from JSON
+    function loadGeofenceData(data) {
+        if (!data) return;
+
+        // Set enabled state
+        const enabled = data.enabled === 1 || data.enabled === true;
+        document.getElementById('geofencing-enabled').checked = enabled;
+
+        if (enabled) {
+            // Show map container
+            document.getElementById('geofencing-map-container').style.display = 'block';
+
+            // Initialize map if needed
+            if (!geofenceMap) {
+                initializeGeofenceMap();
+            }
+
+            // Wait for map to be ready, then load points
+            setTimeout(() => {
+                // Clear existing points
+                clearGeofencePoints();
+
+                // Add points from data
+                if (data.points && Array.isArray(data.points)) {
+                    data.points.forEach(point => {
+                        if (point.lat !== undefined && point.lng !== undefined) {
+                            addGeofencePoint(L.latLng(point.lat, point.lng));
+                        }
+                    });
+
+                    // If we have at least one point, center map on first point
+                    if (data.points.length > 0) {
+                        geofenceMap.setView([data.points[0].lat, data.points[0].lng], 15);
+                    }
+                }
+
+                console.log('📍 Geofence data loaded:', data.points?.length || 0, 'points');
+            }, 500);
+        } else {
+            document.getElementById('geofencing-map-container').style.display = 'none';
+        }
+    }
+
+    // ==================== END GEOFENCING FEATURE ====================
+</script>
+
+</body>
+</html>

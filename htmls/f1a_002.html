@@ -366,21 +366,34 @@
             appearance: textfield;
         }
 
+        /* Disabled row styling - gray text when time is zero */
+        .timer-cell.disabled,
+        .timer-cell.disabled input {
+            color: #666 !important;
+        }
+
+        .timer-cell.function-name.disabled {
+            color: #666 !important;
+        }
+
         .dt-input-row {
             margin: 15px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 15px;
         }
 
         .dt-input-row label {
             margin: 0;
             flex: 1;
+            padding-right: 20px;
         }
 
         .dt-input-row input {
             width: 120px;
-            margin: 0 0 0 10px;
+            margin: 0 15px 0 10px;
+            cursor: pointer;
         }
 
         .auto-dt-container {
@@ -389,80 +402,13 @@
             border-left: 2px solid #ccc;
         }
 
-        /* Geofencing Styles */
-        #geofencing-map-container {
-            margin-top: 15px;
-            margin-left: -35px; /* Auto DT container'ın margin+padding'ini geri al (20+15=35px) */
-            padding: 15px;
-            background-color: rgba(30, 30, 60, 0.5);
-            border-radius: 8px;
-            border: 1px solid #FFD700;
-        }
-
-        .geofence-instructions {
-            color: #FFD700;
-            font-size: var(--small-font);
-            text-align: center;
+        .section h3 {
+            padding-left: 15px;
+            margin-top: 20px;
             margin-bottom: 10px;
-            font-weight: bold;
         }
 
-        #geofence-map {
-            width: 100%;
-            height: 0;
-            padding-bottom: 100%; /* 1:1 aspect ratio trick */
-            position: relative;
-            border: 2px solid #FFD700;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        #geofence-map .leaflet-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .geofence-coords-display {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-            font-size: var(--small-font);
-        }
-
-        .coord-item {
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            color: #FFD700;
-            font-family: monospace;
-        }
-
-        .clear-geofence-btn {
-            width: 100%;
-            padding: 10px;
-            margin-top: 12px;
-            background-color: #d32f2f;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: var(--base-font);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .clear-geofence-btn:hover {
-            background-color: #b71c1c;
-        }
-
-        .clear-geofence-btn:active {
-            background-color: #7f0000;
-        }
+        /* Geofencing Styles - REMOVED - Now in separate Flutter screen */
 
         .advanced-settings-container {
             background-color: rgba(70, 130, 180, 0.15);
@@ -530,19 +476,20 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            padding: 0 15px;
         }
-        
+
         .option-row label {
             flex: 1;
             margin: 0;
-            padding-right: 10px;
+            padding-right: 20px;
         }
-        
+
         .option-row select,
         .option-row input {
             flex: 1;
             width: auto;
-            margin: 0;
+            margin: 0 15px 0 0;
         }
 
         .pin-diagram-svg {
@@ -1049,6 +996,201 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
         }
+
+        /* Custom Number Input Modal */
+        .modal-dialog-number {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #FFD700;
+            pointer-events: auto;
+        }
+
+        .modal-header-number {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            padding: 8px;
+            border-radius: 18px 18px 0 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modal-header-number h3 {
+            margin: 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .modal-body-number {
+            padding: 12px;
+        }
+
+        .number-display-area {
+            background-color: #222;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 6px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .previous-value-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #444;
+        }
+
+        .previous-value-label {
+            color: #888;
+            font-size: 10px;
+        }
+
+        .previous-value-display {
+            color: #FFD700;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+
+        .number-display-value-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .number-display-value {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .number-display-unit {
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .number-controls {
+            display: grid;
+            gap: 6px;
+        }
+
+        .increment-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .number-btn-increment {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-color: #4CAF50;
+            font-size: 24px;
+            padding: 8px;
+            min-height: 35px;
+        }
+
+        .number-btn-increment:active {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+        }
+
+        .number-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .number-btn {
+            background: linear-gradient(135deg, #333 0%, #444 100%);
+            border: 2px solid #666;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            min-height: 35px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+
+        .number-btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, #222 0%, #333 100%);
+        }
+
+        .number-btn-special {
+            background: linear-gradient(135deg, #555 0%, #666 100%);
+            font-size: 16px;
+        }
+
+        .number-btn-special:active {
+            background: linear-gradient(135deg, #444 0%, #555 100%);
+        }
+
+        .number-btn-action {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            border-color: #FFD700;
+            font-size: 18px;
+        }
+
+        .number-btn-action:active {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+        }
+
+        .number-btn-clear {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            border-color: #f44336;
+            font-size: 16px;
+        }
+
+        .number-btn-clear:active {
+            background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .number-error-message {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: #fff;
+            padding: 5px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 10px;
+            text-align: center;
+            border: 2px solid #f44336;
+            display: none;
+            animation: shake 0.5s;
+            line-height: 1.2;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -1237,6 +1379,62 @@
         </div>
     </div>
 
+    <!-- Number Input Modal -->
+    <div id="numberInputModal" class="modal-overlay">
+        <div class="modal-dialog-number">
+            <div class="modal-header-number">
+                <h3 id="numberInputTitle">Enter Time Value</h3>
+            </div>
+            <div class="modal-body-number">
+                <div class="number-display-area">
+                    <div class="previous-value-row">
+                        <span class="previous-value-label">Current:</span>
+                        <span class="previous-value-display" id="previousValueDisplay">0.00</span>
+                    </div>
+                    <div class="number-display-value-container">
+                        <span class="number-display-value" id="numberDisplayValue">_</span>
+                        <span class="number-display-unit" id="numberDisplayUnit">s</span>
+                    </div>
+                </div>
+                <div class="number-controls">
+                    <!-- Increment/Decrement buttons -->
+                    <div class="increment-buttons">
+                        <button type="button" class="number-btn number-btn-increment" onclick="decrementValue()">−</button>
+                        <button type="button" class="number-btn number-btn-increment" onclick="incrementValue()">+</button>
+                    </div>
+
+                    <!-- Number keypad (1-9, 0, .) -->
+                    <div class="number-keypad">
+                        <button type="button" class="number-btn" onclick="inputDigit('7')">7</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('8')">8</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('9')">9</button>
+
+                        <button type="button" class="number-btn" onclick="inputDigit('4')">4</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('5')">5</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('6')">6</button>
+
+                        <button type="button" class="number-btn" onclick="inputDigit('1')">1</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('2')">2</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('3')">3</button>
+
+                        <button type="button" class="number-btn number-btn-special" onclick="inputDigit('.')">.</button>
+                        <button type="button" class="number-btn" onclick="inputDigit('0')">0</button>
+                        <button type="button" class="number-btn number-btn-clear" onclick="deleteDigit()">⌫</button>
+                    </div>
+
+                    <!-- Error message -->
+                    <div id="numberErrorMessage" class="number-error-message"></div>
+
+                    <!-- Action buttons -->
+                    <div class="action-buttons">
+                        <button type="button" class="number-btn number-btn-clear" onclick="closeNumberInputModal()">Cancel</button>
+                        <button type="button" class="number-btn number-btn-action" onclick="confirmNumberValue()">✓ OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1>F1A Model Configuration</h1>
 
     <form onsubmit="submitForm(event)">
@@ -1283,13 +1481,13 @@
         </div>
 
         <!-- Servo Configuration'dan Auto DT Features'a kadar olan bölümleri gizleyecek buton -->
-        <button id="toggleSettingsBtn" class="toggle-button">Show Settings</button>
+        <button type="button" id="toggleSettingsBtn" class="toggle-button">Show Settings</button>
 
         <!-- Gizlenecek bölümler -->
         <div id="advancedSettings" class="advanced-settings-container" style="display: none;">
-            <!-- Servo Configuration bölümü -->
+            <!-- Servo & Button Configuration bölümü -->
             <div class="section">
-                <h2>Servo Configuration</h2>
+                <h2>Servo & Button Conf.</h2>
                 <div class="option-row">
                     <label for="ru-servo-pin" class="info-label" onclick="showFunctionInfo('ru-servo')">RU Servo Pin:</label>
                     <select id="ru-servo-pin" name="ru-servo-pin">
@@ -1363,6 +1561,24 @@
                     <select id="time-mode" name="time-mode" onchange="updateTimeMode()">
                         <option value="interval" selected>Interval</option>
                         <option value="absolute">Absolute</option>
+                    </select>
+                </div>
+
+                <!-- Start Button Pin seçici -->
+                <hr style="border: 1px solid #555; margin: 20px 0;">
+                <div class="option-row">
+                    <label for="start-button-pin" class="info-label" onclick="showFunctionInfo('start-button')">Start Button Pin:</label>
+                    <select id="start-button-pin" name="start-button-pin" onchange="updatePinDiagram()">
+                        <option value="0">Not Used</option>
+                        <option value="1">S1</option>
+                        <option value="2">S2</option>
+                        <option value="3">S3</option>
+                        <option value="4">S4</option>
+                        <option value="5">S5</option>
+                        <option value="6" selected>S6</option>
+                        <option value="7">S7</option>
+                        <option value="8">S8</option>
+                        <option value="9">S9</option>
                     </select>
                 </div>
             </div>
@@ -1518,45 +1734,51 @@
                         <text x="218" y="154" font-size="9" text-anchor="start" fill="#FFD700">RX</text>
                     </g>
 
-                    <!-- Sol taraf - Pin numaraları ve fonksiyon labels -->
+                    <!-- Sol taraf - Kablo görünümlü renkli kutular ve pin numaraları -->
                     <g id="socket-functions-left">
-                        <!-- Pin 1 numarası -->
-                        <text x="110" y="28" font-size="9" text-anchor="end" fill="#FFF">1</text>
-                        <!-- Fonksiyon label (sarı kutu + text) - Pin 1 için boş -->
+                        <!-- Tek birleşik gri kablo soketi (tüm pinleri kapsayan) -->
+                        <rect x="100" y="20" width="20" height="138" rx="2" ry="2" fill="#CCC" stroke="#999" stroke-width="1.5"/>
 
-                        <!-- Pin 2 numarası -->
-                        <text x="110" y="46" font-size="9" text-anchor="end" fill="#FFF">2</text>
-                        <!-- Fonksiyon label - Pin 2 için boş -->
+                        <!-- Pin 1 - GND (Siyah kablo) -->
+                        <rect x="40" y="20" width="60" height="12" fill="#000000" stroke="#FFD700" stroke-width="1"/>
+                        <text x="128" y="28" font-size="9" text-anchor="start" fill="#333">1</text>
 
-                        <!-- Pin 3 numarası -->
-                        <text x="110" y="64" font-size="9" text-anchor="end" fill="#FFF">3</text>
-                        <!-- Fonksiyon label - Pin 3 için boş -->
+                        <!-- Pin 2 - V_BAT (Kırmızı kablo) -->
+                        <rect x="40" y="38" width="60" height="12" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="46" font-size="9" text-anchor="start" fill="#333">2</text>
 
-                        <!-- Pin 4 numarası -->
-                        <text x="110" y="82" font-size="9" text-anchor="end" fill="#FFF">4</text>
+                        <!-- Pin 3 - GND (Kahverengi kablo) -->
+                        <rect x="40" y="56" width="60" height="12" fill="#8B4513" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="64" font-size="9" text-anchor="start" fill="#333">3</text>
+
+                        <!-- Pin 4 - S9 (Mavi kablo) -->
+                        <rect x="40" y="74" width="60" height="12" fill="#2196F3" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="82" font-size="9" text-anchor="start" fill="#333">4</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="75" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-4"/>
-                        <text x="50" y="83" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-4"></text>
+                        <rect x="5" y="75" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-4"/>
+                        <text x="15" y="83" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-4"></text>
 
-                        <!-- Pin 5 numarası -->
-                        <text x="110" y="100" font-size="9" text-anchor="end" fill="#FFF">5</text>
+                        <!-- Pin 5 - S8 (Yeşil kablo) -->
+                        <rect x="40" y="92" width="60" height="12" fill="#00FF00" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="100" font-size="9" text-anchor="start" fill="#333">5</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="93" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-5"/>
-                        <text x="50" y="101" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-5"></text>
+                        <rect x="5" y="93" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-5"/>
+                        <text x="15" y="101" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-5"></text>
 
-                        <!-- Pin 6 numarası -->
-                        <text x="110" y="118" font-size="9" text-anchor="end" fill="#FFF">6</text>
+                        <!-- Pin 6 - S7 (Sarı kablo) -->
+                        <rect x="40" y="110" width="60" height="12" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="118" font-size="9" text-anchor="start" fill="#333">6</text>
                         <!-- Fonksiyon label (dinamik) -->
-                        <rect x="40" y="111" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-6"/>
-                        <text x="50" y="119" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-6"></text>
+                        <rect x="5" y="111" width="8" height="10" fill="#FFD700" stroke="#000" stroke-width="0.5" id="side-func-box-6"/>
+                        <text x="15" y="119" font-size="8" text-anchor="start" fill="#FFD700" font-weight="bold" id="side-func-label-6"></text>
 
-                        <!-- Pin 7 numarası -->
-                        <text x="110" y="136" font-size="9" text-anchor="end" fill="#FFF">7</text>
-                        <!-- Fonksiyon label - TX için boş -->
+                        <!-- Pin 7 - TX (Turuncu kablo) -->
+                        <rect x="40" y="128" width="60" height="12" fill="#FF8C00" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="136" font-size="9" text-anchor="start" fill="#333">7</text>
 
-                        <!-- Pin 8 numarası -->
-                        <text x="110" y="154" font-size="9" text-anchor="end" fill="#FFF">8</text>
-                        <!-- Fonksiyon label - RX için boş -->
+                        <!-- Pin 8 - RX (Beyaz kablo) -->
+                        <rect x="40" y="146" width="60" height="12" fill="#FFFFFF" stroke="#000" stroke-width="1"/>
+                        <text x="128" y="154" font-size="9" text-anchor="start" fill="#333">8</text>
                     </g>
                 </svg>
             </div>
@@ -1584,35 +1806,21 @@
                 <div class="auto-dt-container">
                     <div class="dt-input-row">
                         <label for="max-sink" class="info-label" onclick="showFunctionInfo('max-sink')">Max Sink (m/s):</label>
-                        <input type="number" id="max-sink-value" name="max-sink-value" min="0" max="10" step="0.1" value="2">
+                        <input type="text" id="max-sink-value" name="max-sink-value" value="2" readonly onclick="openNumberInputModal(this, 'autodt-sink')">
                     </div>
                     <div class="dt-input-row">
                         <label for="max-altitude" class="info-label" onclick="showFunctionInfo('max-altitude')">Max Altitude (m):</label>
-                        <input type="number" id="max-altitude-value" name="max-altitude-value" min="0" max="1000" value="500">
+                        <input type="text" id="max-altitude-value" name="max-altitude-value" value="500" readonly onclick="openNumberInputModal(this, 'autodt-altitude')">
+                    </div>
+                    <div class="dt-input-row">
+                        <label for="max-distance" class="info-label" onclick="showFunctionInfo('max-distance')">Max Distance (m):</label>
+                        <input type="text" id="max-distance-value" name="max-distance-value" value="1000" readonly onclick="openNumberInputModal(this, 'autodt-distance')">
                     </div>
                     <div class="checkbox-label">
                         <input type="checkbox" id="flip-loop-detection" name="flip-loop-detection">
                         <label for="flip-loop-detection" class="info-label" onclick="showFunctionInfo('flip-loop-detection')">Flip & Loop Detection</label>
                     </div>
-                    <div class="checkbox-label">
-                        <input type="checkbox" id="geofencing-enabled" name="geofencing-enabled" onchange="toggleGeofencingMap()">
-                        <label for="geofencing-enabled" class="info-label" onclick="showFunctionInfo('geofencing')">Geofencing DT</label>
-                    </div>
-
-                    <!-- Geofencing Map Container (hidden by default) -->
-                    <div id="geofencing-map-container" style="display: none;">
-                        <div class="geofence-instructions">
-                            Tap 4 corners on the map to define the boundary. Exit this area triggers DT.
-                        </div>
-                        <div id="geofence-map"></div>
-                        <div class="geofence-coords-display">
-                            <div class="coord-item">P1: <span id="coord-p1">---, ---</span></div>
-                            <div class="coord-item">P2: <span id="coord-p2">---, ---</span></div>
-                            <div class="coord-item">P3: <span id="coord-p3">---, ---</span></div>
-                            <div class="coord-item">P4: <span id="coord-p4">---, ---</span></div>
-                        </div>
-                        <button type="button" class="clear-geofence-btn" onclick="clearGeofencePoints()">Clear Points</button>
-                    </div>
+                    <!-- Geofencing DT moved to separate screen in Flutter app (main menu > Geofencing) -->
                 </div>
             </div>
         </div>
@@ -1919,7 +2127,8 @@
         { id: 'tl-servo-pin', name: 'TL Servo' },
         { id: 'ww-servo-pin', name: 'WW Servo' },
         { id: 'ww2-servo-pin', name: 'WW2 Servo' },
-        { id: 'rdt-rx-pin', name: 'RDT Rx' }
+        { id: 'rdt-rx-pin', name: 'RDT Rx' },
+        { id: 'start-button-pin', name: 'Start Button' }
       ];
 
       // Hook pinlerini ekle
@@ -1985,6 +2194,52 @@
     }
 
     return [];
+  }
+
+  // Update timer row disabled state based on time value
+  function updateTimerRowDisabledState(phaseId) {
+    const timeInput = document.getElementById(`${phaseId}-time`);
+    if (!timeInput) return; // On, Str, Cir, OLA, DT, PK gibi zaman inputu olmayan fazlar
+
+    const timeValue = parseFloat(timeInput.value) || 0;
+    const isDisabled = timeValue === 0;
+
+    console.log(`🔄 ${phaseId}: value="${timeInput.value}", parsed=${timeValue}, disabled=${isDisabled}`);
+
+    // Find all elements for this phase by ID
+    const elementsToUpdate = [
+      // Function name cell - find by onclick attribute
+      ...document.querySelectorAll('.timer-cell.function-name')
+    ].find(cell => {
+      const onclick = cell.getAttribute('onclick');
+      return onclick && onclick.includes(`'${phaseId}'`);
+    });
+
+    // Time input's parent cell
+    const timeCell = timeInput.parentElement;
+
+    // Servo input cells
+    const ruCell = document.getElementById(`${phaseId}-ru`)?.parentElement;
+    const tlCell = document.getElementById(`${phaseId}-tl`)?.parentElement;
+    const wwCell = document.getElementById(`${phaseId}-ww`)?.parentElement;
+    const ww2Cell = document.getElementById(`${phaseId}-ww2`)?.parentElement;
+
+    // Apply or remove disabled class to all cells
+    const cells = [elementsToUpdate, timeCell, ruCell, tlCell, wwCell, ww2Cell].filter(c => c);
+
+    cells.forEach(cell => {
+      if (isDisabled) {
+        cell.classList.add('disabled');
+      } else {
+        cell.classList.remove('disabled');
+      }
+    });
+  }
+
+  // Update all timer rows on page load or data change
+  function updateAllTimerRowsDisabledState() {
+    const phases = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+    phases.forEach(phase => updateTimerRowDisabledState(phase));
   }
 
   // JSON Schema Validation
@@ -2472,6 +2727,9 @@
     // RDT Rx pin
     currentPreset['rdt-rx-pin'] = parseInt(document.getElementById('rdt-rx-pin').value);
 
+    // Start Button pin
+    currentPreset['start-button-pin'] = parseInt(document.getElementById('start-button-pin').value);
+
     // Hook settings
     currentPreset['hook-type'] = document.getElementById('hook-type').value;
 
@@ -2509,11 +2767,10 @@
     // Auto DT settings
     currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
     currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
+    currentPreset['max-distance-value'] = parseFloat(document.getElementById('max-distance-value').value);
     currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
 
-    // Geofencing DT settings
-    const geofenceData = getGeofenceData();
-    currentPreset['geofencing'] = geofenceData;
+    // Geofencing DT settings - REMOVED - Now managed separately via app's Geofencing screen
 
     // UI Preferences - Range Mode and Time Mode
     currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
@@ -2696,33 +2953,394 @@
         }
     });
 
-    // Time inputları için virgülden sonra iki basamak formatı + time mode validation
+    // ========== NUMBER INPUT MODAL FUNCTIONS ==========
+    let currentEditingInput = null;
+    let currentInputString = '';
+    let previousValue = '0.00';
+    let isServoInput = false;
+    let currentInputType = '';
+
+    // Servo değerleri için önceki değerleri sakla
+    const previousServoValues = {};
+
+    // Time input'larına tıklandığında özel modal aç
     document.querySelectorAll('input[id$="-time"]').forEach(input => {
-        // Focus - önceki değeri kaydet
-        input.addEventListener('focus', function() {
-            previousTimeValues[this.id] = this.value;
-        });
+        // Mobil klavyeyi engelle - read-only yap
+        input.setAttribute('readonly', 'readonly');
+        input.style.cursor = 'pointer';
 
-        // Blur - format + validation
-        input.addEventListener('blur', function() {
-            const formattedValue = parseFloat(this.value).toFixed(2);
-            this.value = formattedValue;
-
-            // Absolute mode'da sıra kontrolü
-            validateTimeSequence(this);
-
-            // Yeni değeri kaydet
-            previousTimeValues[this.id] = this.value;
-        });
-
-        // Change - format
-        input.addEventListener('change', function() {
-            this.value = parseFloat(this.value).toFixed(2);
+        // Click event - modal aç
+        input.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNumberInputModal(this, 'time');
         });
 
         // Başlangıç değerini kaydet
         previousTimeValues[input.id] = input.value;
     });
+
+    // Servo input'larına tıklandığında özel modal aç (RU, TL, WW, WW2)
+    document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
+        // Mobil klavyeyi engelle - read-only yap
+        input.setAttribute('readonly', 'readonly');
+        input.style.cursor = 'pointer';
+
+        // Click event - modal aç
+        input.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNumberInputModal(this, 'servo');
+        });
+
+        // Başlangıç değerini kaydet (eğer yoksa)
+        if (!previousServoValues[input.id]) {
+            previousServoValues[input.id] = input.value;
+        }
+    });
+
+    // Number input modal aç
+    function openNumberInputModal(inputElement, inputType) {
+        currentEditingInput = inputElement;
+        previousValue = inputElement.value;
+        currentInputString = inputElement.value; // Mevcut değeri başlat
+        currentInputType = inputType;
+        isServoInput = (inputType === 'servo');
+
+        // Modal başlığını ayarla
+        if (inputType === 'time') {
+            const phaseKey = inputElement.id.replace('-time', '').toUpperCase();
+            document.getElementById('numberInputTitle').textContent = `${phaseKey} Time`;
+            document.getElementById('numberDisplayUnit').textContent = 's';
+            document.getElementById('previousValueDisplay').textContent = previousValue + 's';
+        } else if (inputType === 'autodt-sink') {
+            document.getElementById('numberInputTitle').textContent = 'Max Sink Rate';
+            document.getElementById('numberDisplayUnit').textContent = 'm/s';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m/s';
+        } else if (inputType === 'autodt-altitude') {
+            document.getElementById('numberInputTitle').textContent = 'Max Altitude';
+            document.getElementById('numberDisplayUnit').textContent = 'm';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m';
+        } else if (inputType === 'autodt-distance') {
+            document.getElementById('numberInputTitle').textContent = 'Max Distance';
+            document.getElementById('numberDisplayUnit').textContent = 'm';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' m';
+        } else {
+            // Servo input
+            const parts = inputElement.id.split('-');
+            const phaseKey = parts[0].toUpperCase();
+            const servoKey = parts[1].toUpperCase();
+            document.getElementById('numberInputTitle').textContent = `${phaseKey} ${servoKey}`;
+
+            // Birim - range mode'a göre
+            const currentMode = window.currentServoRangeMode || '1000-2000';
+            let unit = '';
+            switch(currentMode) {
+                case '0-100':
+                    unit = '%';
+                    break;
+                case '0-255':
+                    unit = '';
+                    break;
+                case '1000-2000':
+                    unit = 'µs';
+                    break;
+            }
+            document.getElementById('numberDisplayUnit').textContent = unit;
+            document.getElementById('previousValueDisplay').textContent = previousValue + unit;
+        }
+
+        // Mevcut değeri göster (başlangıçta boş)
+        updateNumberDisplay();
+
+        // Error mesajını gizle
+        hideNumberError();
+
+        // Modal'ı göster
+        document.getElementById('numberInputModal').classList.add('show');
+    }
+
+    // Number input modal kapat
+    function closeNumberInputModal() {
+        document.getElementById('numberInputModal').classList.remove('show');
+        currentEditingInput = null;
+        currentInputString = '';
+        hideNumberError();
+    }
+
+    // Error message göster
+    function showNumberError(message) {
+        const errorDiv = document.getElementById('numberErrorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+
+        // Shake animasyonunu yeniden tetikle
+        errorDiv.style.animation = 'none';
+        setTimeout(() => {
+            errorDiv.style.animation = 'shake 0.5s';
+        }, 10);
+    }
+
+    // Error message gizle
+    function hideNumberError() {
+        document.getElementById('numberErrorMessage').style.display = 'none';
+    }
+
+    // Rakam gir
+    function inputDigit(digit) {
+        // Error mesajını gizle (kullanıcı tekrar giriş yapıyor)
+        hideNumberError();
+
+        // Nokta kontrolü - sadece bir tane olabilir
+        if (digit === '.' && currentInputString.includes('.')) {
+            return;
+        }
+
+        // İlk karakter nokta ise başa 0 ekle
+        if (digit === '.' && currentInputString === '') {
+            currentInputString = '0.';
+        } else {
+            currentInputString += digit;
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Son rakamı sil (backspace)
+    function deleteDigit() {
+        // Error mesajını gizle (kullanıcı tekrar giriş yapıyor)
+        hideNumberError();
+
+        if (currentInputString.length > 0) {
+            currentInputString = currentInputString.slice(0, -1);
+            updateNumberDisplay();
+        }
+    }
+
+    // Display güncelle
+    function updateNumberDisplay() {
+        if (currentInputString === '') {
+            document.getElementById('numberDisplayValue').textContent = '_';
+        } else {
+            document.getElementById('numberDisplayValue').textContent = currentInputString;
+        }
+    }
+
+    // Gereksiz sıfırları kaldır
+    function formatNumber(value) {
+        // 2 ondalık basamağa yuvarla, sonra gereksiz sıfırları kaldır
+        const rounded = Math.round(value * 100) / 100;
+        return rounded.toString();
+    }
+
+    // Son basamağa göre step hesapla (maksimum 2 ondalık basamak)
+    function getSmartStep() {
+        if (currentInputString === '' || currentInputString === '_') {
+            return 1;
+        }
+
+        const str = currentInputString;
+
+        // Nokta var mı?
+        if (str.includes('.')) {
+            const parts = str.split('.');
+            const decimalPart = parts[1] || '';
+            const decimalPlaces = decimalPart.length;
+
+            if (decimalPlaces === 0) {
+                return 1; // "5." → +1
+            } else if (decimalPlaces === 1) {
+                return 0.1; // "5.2" → +0.1
+            } else {
+                // 2 veya daha fazla basamak → maksimum 2 basamak
+                return 0.01; // "5.25" → +0.01
+            }
+        } else {
+            // Tam sayı
+            return 1; // "1234" → +1
+        }
+    }
+
+    // Değer artır
+    function incrementValue() {
+        hideNumberError();
+
+        const step = getSmartStep();
+        const hadDecimal = currentInputString.includes('.');
+        let currentValue = parseFloat(currentInputString) || 0;
+        currentValue += step;
+
+        // Floating point hatası düzelt - maksimum 2 ondalık basamak
+        currentValue = Math.round(currentValue * 100) / 100;
+
+        // Format: eğer önceden nokta varsa, basamak sayısını koru
+        if (hadDecimal) {
+            const parts = currentInputString.split('.');
+            const decimalPlaces = parts[1] ? parts[1].length : 1;
+
+            if (decimalPlaces === 1) {
+                currentInputString = currentValue.toFixed(1);
+            } else {
+                currentInputString = currentValue.toFixed(2);
+            }
+        } else {
+            // Nokta yoksa normal string
+            currentInputString = currentValue.toString();
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Değer azalt
+    function decrementValue() {
+        hideNumberError();
+
+        const step = getSmartStep();
+        const hadDecimal = currentInputString.includes('.');
+        let currentValue = parseFloat(currentInputString) || 0;
+        currentValue -= step;
+
+        // Negatif olmasını engelle
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+
+        // Floating point hatası düzelt - maksimum 2 ondalık basamak
+        currentValue = Math.round(currentValue * 100) / 100;
+
+        // Format: eğer önceden nokta varsa, basamak sayısını koru
+        if (hadDecimal) {
+            const parts = currentInputString.split('.');
+            const decimalPlaces = parts[1] ? parts[1].length : 1;
+
+            if (decimalPlaces === 1) {
+                currentInputString = currentValue.toFixed(1);
+            } else {
+                currentInputString = currentValue.toFixed(2);
+            }
+        } else {
+            // Nokta yoksa normal string
+            currentInputString = currentValue.toString();
+        }
+
+        updateNumberDisplay();
+    }
+
+    // Değeri onayla ve input'a kaydet
+    function confirmNumberValue() {
+        if (!currentEditingInput) return;
+
+        // Boş ise önceki değeri koru
+        if (currentInputString === '') {
+            closeNumberInputModal();
+            return;
+        }
+
+        // Sayıya dönüştür
+        let numValue = parseFloat(currentInputString);
+
+        // Geçersiz sayı kontrolü
+        if (isNaN(numValue)) {
+            showNumberError('⚠️ Invalid number!');
+            return;
+        }
+
+        // Negatif değerleri kontrol et
+        if (numValue < 0) {
+            showNumberError('⚠️ Negative values not allowed!');
+            return;
+        }
+
+        if (currentInputType === 'autodt-sink') {
+            // MAX SINK RATE - 0 to 10 m/s, 1 decimal
+            if (numValue < 0 || numValue > 10) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 10 m/s');
+                return;
+            }
+            currentEditingInput.value = parseFloat(numValue.toFixed(1)).toString();
+        } else if (currentInputType === 'autodt-altitude') {
+            // MAX ALTITUDE - 0 to 1000 m, integer
+            if (numValue < 0 || numValue > 1000) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 1000 m');
+                return;
+            }
+            currentEditingInput.value = Math.round(numValue).toString();
+        } else if (currentInputType === 'autodt-distance') {
+            // MAX DISTANCE - 0 to 10000 m, integer
+            if (numValue < 0 || numValue > 10000) {
+                showNumberError('⚠️ Out of range! Valid: 0 - 10000 m');
+                return;
+            }
+            currentEditingInput.value = Math.round(numValue).toString();
+        } else if (isServoInput) {
+            // SERVO INPUT - Range kontrolü ve blur validation
+            const oldValue = currentEditingInput.value;
+            previousServoValues[currentEditingInput.id] = oldValue;
+
+            // Tam sayı formatı (servo için ondalık yok)
+            currentEditingInput.value = Math.round(numValue).toString();
+
+            // Servo validation
+            const isValid = validateServoRange(currentEditingInput);
+
+            if (!isValid) {
+                // Validation başarısız - modal açık kalsın, uyarı göster
+                const currentMode = window.currentServoRangeMode || '1000-2000';
+                const limits = getRangeLimits();
+                let rangeText = '';
+                switch(currentMode) {
+                    case '0-100':
+                        rangeText = `${limits.min}% - ${limits.max}%`;
+                        break;
+                    case '0-255':
+                        rangeText = `${limits.min} - ${limits.max}`;
+                        break;
+                    case '1000-2000':
+                        rangeText = `${limits.min}µs - ${limits.max}µs`;
+                        break;
+                }
+                showNumberError(`⚠️ Out of range! Valid: ${rangeText}`);
+                // Input değerini önceki haline döndür
+                currentEditingInput.value = oldValue;
+                // Modal'ı kapatma
+                return;
+            }
+
+            // Başarılıysa önceki değeri güncelle
+            previousServoValues[currentEditingInput.id] = currentEditingInput.value;
+        } else {
+            // TIME INPUT - 2 ondalık basamak
+            const oldValue = currentEditingInput.value;
+            previousTimeValues[currentEditingInput.id] = oldValue;
+
+            // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+            currentEditingInput.value = parseFloat(numValue.toFixed(2)).toString();
+
+            // Absolute mode'da sıra kontrolü
+            const isValid = validateTimeSequence(currentEditingInput);
+
+            if (!isValid) {
+                // Validation başarısız - modal açık kalsın, uyarı göster
+                showNumberError('⚠️ Time must be ≥ previous phase (Absolute mode)');
+                // Input değerini önceki haline döndür
+                currentEditingInput.value = oldValue;
+                // Modal'ı kapatma
+                return;
+            }
+
+            // Başarılıysa önceki değeri güncelle
+            previousTimeValues[currentEditingInput.id] = currentEditingInput.value;
+
+            // Update disabled state for time inputs (grey color when time is 0)
+            const phaseId = currentEditingInput.id.replace('-time', '');
+            if (typeof updateTimerRowDisabledState === 'function') {
+                updateTimerRowDisabledState(phaseId);
+            }
+        }
+
+        // Modal'ı kapat (sadece validation başarılıysa buraya gelir)
+        closeNumberInputModal();
+    }
+
+    // ========== END NUMBER INPUT MODAL FUNCTIONS ==========
 
     // ========== SERVO RANGE MODE FUNCTIONS ==========
 
@@ -2910,7 +3528,8 @@
                 const intervalValue = currentValues[phaseKey] || 0;
                 cumulativeTime += intervalValue;
 
-                timeInput.value = cumulativeTime.toFixed(2);
+                // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+                timeInput.value = parseFloat(cumulativeTime.toFixed(2)).toString();
                 previousTimeValues[timeInput.id] = timeInput.value;
             });
         } else {
@@ -2923,7 +3542,8 @@
                 const absoluteValue = currentValues[phaseKey] || 0;
                 const intervalValue = absoluteValue - previousAbsolute;
 
-                timeInput.value = intervalValue.toFixed(2);
+                // Gereksiz sıfırları kaldır (0.70 → 0.7, 1.00 → 1)
+                timeInput.value = parseFloat(intervalValue.toFixed(2)).toString();
                 previousTimeValues[timeInput.id] = timeInput.value;
 
                 previousAbsolute = absoluteValue;
@@ -2932,6 +3552,11 @@
 
         // Mevcut mode'u kaydet
         window.currentTimeMode = newMode;
+
+        // Update disabled states after time conversion
+        if (typeof updateAllTimerRowsDisabledState === 'function') {
+            updateAllTimerRowsDisabledState();
+        }
     }
 
     // Time mode değiştiğinde
@@ -2979,103 +3604,41 @@
     }
 
     // RU, TL, WW, WW2 inputları için dinamik sınır kontrolü
-    // Önceki değerleri sakla (geçersiz girişlerde geri almak için)
-    const previousServoValues = {};
+    // NOT: previousServoValues zaten NUMBER INPUT MODAL FUNCTIONS bölümünde tanımlı (line 2931)
 
     // Başlangıç mode'unu kaydet
     window.currentServoRangeMode = document.getElementById('servo-range-mode')?.value || '1000-2000';
 
+    // Servo range validation fonksiyonu (sadece number input modal için)
+    function validateServoRange(input) {
+        const limits = getRangeLimits();
+
+        // Boş ise geçerli kabul et
+        if (input.value === '' || input.value === '-') {
+            return true;
+        }
+
+        let value = parseInt(input.value);
+
+        // Geçersiz sayı kontrolü
+        if (isNaN(value)) {
+            return false;
+        }
+
+        // Range kontrolü
+        if (value < limits.min || value > limits.max) {
+            return false;
+        }
+
+        // Geçerli değer
+        return true;
+    }
+
+    // Tüm servo input'ların başlangıç değerlerini kaydet
     document.querySelectorAll('input[id$="-ru"], input[id$="-tl"], input[id$="-ww"], input[id$="-ww2"]').forEach(input => {
-        // Başlangıç değerini kaydet
-        previousServoValues[input.id] = input.value;
-
-        // Focus event - değeri geçici olarak sakla
-        input.addEventListener('focus', function() {
-            // Focus alındığında mevcut geçerli değeri kaydet
-            if (this.value !== '' && this.value !== '-') {
-                const value = parseInt(this.value);
-                if (!isNaN(value)) {
-                    previousServoValues[this.id] = this.value;
-                }
-            }
-        });
-
-        // Input event - sadece başındaki sıfırları temizle, range kontrolü yapma
-        input.addEventListener('input', function() {
-            let value = parseInt(this.value);
-
-            // Boş veya geçersiz giriş - izin ver (kullanıcı yazıyor olabilir)
-            if (this.value === '' || this.value === '-') {
-                return;
-            }
-
-            // Sadece başındaki sıfırları temizle, range kontrolü yapma
-            if (!isNaN(value)) {
-                this.value = value.toString();
-            }
-        });
-
-        // Blur event - Range kontrolü burada yap
-        input.addEventListener('blur', function() {
-            const limits = getRangeLimits();
-            const currentMode = window.currentServoRangeMode || '1000-2000';
-
-            // Boş ise minimum değere set et
-            if (this.value === '' || this.value === '-') {
-                this.value = limits.min.toString();
-                previousServoValues[this.id] = this.value;
-                return;
-            }
-
-            let value = parseInt(this.value);
-
-            // Geçersiz sayı kontrolü
-            if (isNaN(value)) {
-                const oldValue = previousServoValues[this.id] || limits.min.toString();
-                this.value = oldValue;
-
-                // Modal göster
-                let rangeText = '';
-                switch(currentMode) {
-                    case '0-100':
-                        rangeText = '0-100 %';
-                        break;
-                    case '0-255':
-                        rangeText = '0-255';
-                        break;
-                    case '1000-2000':
-                        rangeText = '1000-2000 µs';
-                        break;
-                }
-                showServoRangeModal('Invalid', rangeText, oldValue);
-                return;
-            }
-
-            // Range kontrolü
-            if (value < limits.min || value > limits.max) {
-                const oldValue = previousServoValues[this.id] || limits.min.toString();
-                this.value = oldValue;
-
-                // Modal göster
-                let rangeText = '';
-                switch(currentMode) {
-                    case '0-100':
-                        rangeText = '0-100 %';
-                        break;
-                    case '0-255':
-                        rangeText = '0-255';
-                        break;
-                    case '1000-2000':
-                        rangeText = '1000-2000 µs';
-                        break;
-                }
-                showServoRangeModal(value, rangeText, oldValue);
-                return;
-            }
-
-            // Geçerli değer - kaydet
-            previousServoValues[this.id] = this.value;
-        });
+        if (!previousServoValues[input.id]) {
+            previousServoValues[input.id] = input.value;
+        }
     });
 
     // Pin diyagramını güncelleyen fonksiyon
@@ -3157,6 +3720,10 @@
 
         // RDT Rx pinini etiketlere yerleştir
         setPinLabel(rdtRxPin, "RDT Rx");
+
+        // Start Button pinini al ve etiketlere yerleştir
+        const startButtonPin = parseInt(document.getElementById('start-button-pin').value);
+        setPinLabel(startButtonPin, "Start Button");
 
         // Hook tipine göre diğer pinleri yerleştir
         if (hookType === "2switch") {
@@ -3256,6 +3823,10 @@
             validatePinAssignments(e.target.id);
             updatePinDiagram();
         });
+        document.getElementById('start-button-pin').addEventListener('change', function(e) {
+            validatePinAssignments(e.target.id);
+            updatePinDiagram();
+        });
 
         // Hook tipi değiştiğinde diyagramı güncelle (çakişma kontrolü yok, sadece güncelleme)
         document.getElementById('hook-type').addEventListener('change', function() {
@@ -3273,9 +3844,21 @@
             }
         });
 
+        // Timer input değişikliklerini dinle - disabled state güncellemesi
+        const phases = ['pu1', 'pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
+        phases.forEach(phase => {
+            const timeInput = document.getElementById(`${phase}-time`);
+            if (timeInput) {
+                timeInput.addEventListener('input', function() {
+                    updateTimerRowDisabledState(phase);
+                });
+            }
+        });
+
         // Sayfa yüklendiğinde diyagramı ve kolon görünürlüğünü güncelle
         updatePinDiagram();
         updateColumnVisibility();
+        updateAllTimerRowsDisabledState();
     });
     
     // Hook seçeneklerini güncelleyen fonksiyon
@@ -3507,6 +4090,7 @@
             previousPinValues['ww-servo-pin'] = document.getElementById('ww-servo-pin')?.value || '0';
             previousPinValues['ww2-servo-pin'] = document.getElementById('ww2-servo-pin')?.value || '0';
             previousPinValues['rdt-rx-pin'] = document.getElementById('rdt-rx-pin')?.value || '0';
+            previousPinValues['start-button-pin'] = document.getElementById('start-button-pin')?.value || '0';
 
             // Hook pinlerini de kaydet (varsa)
             if (document.getElementById('hook-sw1-pin')) {
@@ -3557,10 +4141,11 @@
                 }
             }
 
-            // Load Geofencing data
-            if (presetData['geofencing']) {
-                loadGeofenceData(presetData['geofencing']);
-                console.log('✅ Geofencing data loaded:', presetData['geofencing']);
+            // Geofencing data - REMOVED - Now managed separately via app's Geofencing screen
+
+            // Update timer row disabled states based on time values
+            if (typeof updateAllTimerRowsDisabledState === 'function') {
+                updateAllTimerRowsDisabledState();
             }
 
             console.log('✅ Form successfully populated from JSON');
@@ -3597,6 +4182,11 @@
             title: 'RDT Rx Pin (Radio DT Receiver)',
             description: 'Pin assignment for the Radio De-Thermalization receiver input.\n\nRDT allows remote triggering of the DT phase via radio command from the ground, providing manual override control.\n\nThis is useful when:\n• The model needs to land immediately\n• Auto DT features are not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nThe receiver connects to this pin and triggers DT when a signal is received from the transmitter.\n\nSelect "Not Used" if you don\'t have an RDT receiver installed. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
         },
+        'start-button': {
+            icon: '🔘',
+            title: 'Start Button Pin',
+            description: 'Pin assignment for the Start button with multi-function timing control.\n\nButton Functions:\n\n• Press (any duration): Single beep as feedback\n\n• Hold 1 second: Two beeps (restart mode armed)\n  - Release button: System restarts\n  - Buzzer and LED indicate restart sequence\n  - Timer returns to initial startup state\n  - All settings preserved in memory\n\n• Hold 6 seconds: Three beeps + complete shutdown\n  - All outputs turned off (LED, strobe, servos, BLE)\n  - System waits for button release in low-power state\n  - Release button: Enters deep sleep mode\n  - Ultra-low power consumption (~µA range)\n  - Press button again to wake the device\n\nThe button uses an internal pull-up resistor, so external resistor is not required. Simply connect the button between the selected pin and ground (GND).\n\nDefault: S6 (Pin 6)\n\nSelect a pin that doesn\'t conflict with servo, RDT, or hook switch assignments.'
+        },
         'range-mode': {
             icon: '📊',
             title: 'Range Mode',
@@ -3622,16 +4212,17 @@
             title: 'Max Altitude',
             description: 'Maximum altitude limit (in meters) before automatic DT activation.\n\nIf the model climbs above this altitude, the timer will automatically trigger de-thermalization to comply with competition rules or prevent fly-aways.\n\nThis is critical for F1A competitions where altitude limits are strictly enforced.\n\nTypical values: 200-500m depending on competition rules.'
         },
+        'max-distance': {
+            icon: '📏',
+            title: 'Max Distance',
+            description: 'Maximum distance from the GPS home coordinate (in meters) before automatic DT activation.\n\nThe home coordinate is set at the first GPS fix after the timer is powered on. If the model flies beyond this distance from the home position, the timer will automatically trigger de-thermalization.\n\nThis is a radius-based geofencing feature that helps:\n• Prevent fly-aways\n• Keep the model within competition boundaries\n• Ensure the model stays within visual range\n• Comply with local airspace regulations\n\nDefault value: 1000 meters\n\nNote: Requires GPS fix at startup to establish home coordinate. If no GPS fix is available, this feature is disabled.'
+        },
         'flip-loop-detection': {
             icon: '🔄',
             title: 'Flip & Loop Detection',
             description: 'Enables automatic DT trigger when aerobatic maneuvers (flips or loops) are detected using gyroscope data.\n\nThis safety feature prevents the model from entering uncontrolled aerobatic flight that could lead to structural damage or loss of control.\n\nDetection thresholds:\n• 2.5G for flips\n• 45° for loops\n• 180°/s for spins\n\nUseful for preventing thermal-induced unusual attitudes.'
         },
-        'geofencing': {
-            icon: '🗺️',
-            title: 'Geofencing DT',
-            description: 'Enables automatic DT trigger when the model exits a defined geographic boundary.\n\nWhen enabled, you can define a 4-point boundary on the map by tapping 4 corners. The system continuously monitors GPS position during flight.\n\nIf the model crosses outside this boundary, DT is automatically triggered to bring the model down within the allowed area.\n\nThis is especially useful for:\n• Competition fly zones with strict boundaries\n• Preventing fly-aways over restricted areas\n• Keeping the model within visual range\n• Complying with local aviation regulations\n\nRequires GPS lock before flight. The boundary is checked at 1Hz during flight.\n\nMarkers are draggable - adjust the boundary anytime before saving.'
-        },
+        // 'geofencing' info removed - feature moved to separate Flutter screen
         'on': {
             icon: '⚡',
             title: 'Power ON',
@@ -3746,257 +4337,18 @@
         }
     });
 
-    // ==================== GEOFENCING FEATURE ====================
-    let geofenceMap = null;
-    let geofenceMarkers = [];
-    let geofencePolygon = null;
-    const maxGeofencePoints = 4;
-
-    // Toggle geofencing map visibility
-    function toggleGeofencingMap() {
-        const enabled = document.getElementById('geofencing-enabled').checked;
-        const container = document.getElementById('geofencing-map-container');
-
-        if (enabled) {
-            container.style.display = 'block';
-            // Initialize map if not already initialized
-            if (!geofenceMap) {
-                initializeGeofenceMap();
-            }
-        } else {
-            container.style.display = 'none';
+    // Close number input modal when clicking outside
+    document.getElementById('numberInputModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeNumberInputModal();
         }
-    }
+    });
 
-    // Initialize Leaflet map
-    function initializeGeofenceMap() {
-        // Default center (fallback if geolocation fails)
-        const defaultLat = 51.09853337025952;
-        const defaultLng = 1.2059596354190565;
-
-        // Create map with default location first (zoom 18 = ~100m view)
-        geofenceMap = L.map('geofence-map').setView([defaultLat, defaultLng], 18);
-
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(geofenceMap);
-
-        // Try to get user's current location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Success - center map on user's location
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    geofenceMap.setView([userLat, userLng], 13);
-                    console.log('📍 Map centered on user location:', userLat, userLng);
-                },
-                function(error) {
-                    // Error or denied - check if we have saved geofence points
-                    console.log('⚠️ Geolocation failed:', error.message);
-
-                    // If we have saved geofence markers, fit map to show them all
-                    if (geofenceMarkers.length > 0) {
-                        const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
-                        geofenceMap.fitBounds(bounds, { padding: [50, 50] });
-                        console.log('📍 Map centered on saved geofence points');
-                    } else {
-                        // No saved points, stay with default Istanbul location
-                        console.log('📍 Using default Istanbul location');
-                    }
-                },
-                {
-                    enableHighAccuracy: false,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
-            );
-        } else {
-            // Geolocation not supported - check for saved points
-            console.log('⚠️ Geolocation not supported by browser');
-
-            if (geofenceMarkers.length > 0) {
-                const bounds = L.latLngBounds(geofenceMarkers.map(m => m.getLatLng()));
-                geofenceMap.fitBounds(bounds, { padding: [50, 50] });
-                console.log('📍 Map centered on saved geofence points');
-            } else {
-                console.log('📍 Using default Istanbul location');
-            }
-        }
-
-        // Add click handler to place markers
-        geofenceMap.on('click', function(e) {
-            addGeofencePoint(e.latlng);
-        });
-
-        console.log('📍 Geofence map initialized');
-    }
-
-    // Add a geofence point
-    function addGeofencePoint(latlng) {
-        // Check if we already have 4 points
-        if (geofenceMarkers.length >= maxGeofencePoints) {
-            alert('Maximum 4 points allowed. Clear points to start over.');
-            return;
-        }
-
-        // Create marker with custom numbering
-        const markerNumber = geofenceMarkers.length + 1;
-        const marker = L.marker(latlng, {
-            draggable: true,
-            icon: L.divIcon({
-                className: 'geofence-marker',
-                html: `<div style="background-color: #FFD700; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; font-size: 16px;">${markerNumber}</div>`,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
-            })
-        }).addTo(geofenceMap);
-
-        // Store marker with its index
-        marker.pointIndex = markerNumber - 1;
-
-        // Add drag event to update polygon and coordinates
-        marker.on('dragend', function() {
-            updateGeofencePolygon();
-            updateCoordinateDisplay();
-        });
-
-        // Add marker to array
-        geofenceMarkers.push(marker);
-
-        // Update polygon and display
-        updateGeofencePolygon();
-        updateCoordinateDisplay();
-
-        console.log(`📍 Added geofence point ${markerNumber}: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`);
-    }
-
-    // Update the polygon connecting the points
-    function updateGeofencePolygon() {
-        // Remove existing polygon
-        if (geofencePolygon) {
-            geofenceMap.removeLayer(geofencePolygon);
-        }
-
-        // Only draw polygon if we have at least 3 points
-        if (geofenceMarkers.length >= 3) {
-            const points = geofenceMarkers.map(m => m.getLatLng());
-
-            geofencePolygon = L.polygon(points, {
-                color: '#FFD700',
-                fillColor: '#FFD700',
-                fillOpacity: 0.2,
-                weight: 2
-            }).addTo(geofenceMap);
-
-            console.log('🔷 Geofence polygon updated');
-        }
-    }
-
-    // Update coordinate display
-    function updateCoordinateDisplay() {
-        for (let i = 0; i < maxGeofencePoints; i++) {
-            const coordSpan = document.getElementById(`coord-p${i + 1}`);
-            if (i < geofenceMarkers.length) {
-                const latlng = geofenceMarkers[i].getLatLng();
-                coordSpan.textContent = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
-                coordSpan.style.color = '#00FF00';
-            } else {
-                coordSpan.textContent = '----, ----';
-                coordSpan.style.color = '#FFD700';
-            }
-        }
-    }
-
-    // Clear all geofence points
-    function clearGeofencePoints() {
-        // Remove all markers
-        geofenceMarkers.forEach(marker => {
-            geofenceMap.removeLayer(marker);
-        });
-        geofenceMarkers = [];
-
-        // Remove polygon
-        if (geofencePolygon) {
-            geofenceMap.removeLayer(geofencePolygon);
-            geofencePolygon = null;
-        }
-
-        // Reset coordinate display
-        updateCoordinateDisplay();
-
-        console.log('🧹 Geofence points cleared');
-    }
-
-    // Get geofence data for JSON storage
-    function getGeofenceData() {
-        if (!document.getElementById('geofencing-enabled').checked) {
-            return {
-                enabled: 0,
-                points: []
-            };
-        }
-
-        const points = geofenceMarkers.map(marker => {
-            const latlng = marker.getLatLng();
-            return {
-                lat: parseFloat(latlng.lat.toFixed(6)),
-                lng: parseFloat(latlng.lng.toFixed(6))
-            };
-        });
-
-        return {
-            enabled: 1,
-            points: points
-        };
-    }
-
-    // Load geofence data from JSON
-    function loadGeofenceData(data) {
-        if (!data) return;
-
-        // Set enabled state
-        const enabled = data.enabled === 1 || data.enabled === true;
-        document.getElementById('geofencing-enabled').checked = enabled;
-
-        if (enabled) {
-            // Show map container
-            document.getElementById('geofencing-map-container').style.display = 'block';
-
-            // Initialize map if needed
-            if (!geofenceMap) {
-                initializeGeofenceMap();
-            }
-
-            // Wait for map to be ready, then load points
-            setTimeout(() => {
-                // Clear existing points
-                clearGeofencePoints();
-
-                // Add points from data
-                if (data.points && Array.isArray(data.points)) {
-                    data.points.forEach(point => {
-                        if (point.lat !== undefined && point.lng !== undefined) {
-                            addGeofencePoint(L.latLng(point.lat, point.lng));
-                        }
-                    });
-
-                    // If we have at least one point, center map on first point
-                    if (data.points.length > 0) {
-                        geofenceMap.setView([data.points[0].lat, data.points[0].lng], 15);
-                    }
-                }
-
-                console.log('📍 Geofence data loaded:', data.points?.length || 0, 'points');
-            }, 500);
-        } else {
-            document.getElementById('geofencing-map-container').style.display = 'none';
-        }
-    }
-
-    // ==================== END GEOFENCING FEATURE ====================
+    // ==================== GEOFENCING FEATURE REMOVED ====================
+    // Geofencing DT is now managed via separate Flutter screen (main menu > Geofencing)
+    // All map functionality, coordinate selection, and data management moved to geofencing_screen.dart
+    // BLE command: SET_GEOFENCING:{"enabled":1,"points":[{"lat":X,"lng":Y},...]}
+    // ==================== END GEOFENCING ====================
 </script>
 
 </body>

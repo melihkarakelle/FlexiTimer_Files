@@ -59,6 +59,17 @@
             margin-bottom: 0;
         }
 
+        .time-settings-box {
+            margin-top: calc(var(--base-margin) * 2);
+        }
+
+        .time-settings-box h2 {
+            color: #FFD700;
+            margin: 0 0 var(--base-margin) 0;
+            font-size: calc(var(--base-font) * 1.2);
+            text-align: center;
+        }
+
         .section h2 {
             color: #FFD700;
             margin: 0 0 var(--base-margin) 0;
@@ -143,6 +154,7 @@
             border-radius: 5px;
             width: 100%;
             cursor: pointer;
+            margin-top: calc(var(--base-margin) * 2);
         }
 
         /* Strobe pattern styling */
@@ -411,15 +423,30 @@
         /* Geofencing Styles - REMOVED - Now in separate Flutter screen */
 
         .advanced-settings-container {
-            background-color: rgba(70, 130, 180, 0.15);
-            padding: 2px;
+            background-color: rgba(30, 40, 55, 0.95);
+            padding: 10px 6px;
             border-radius: 12px;
-            border: 2px solid rgba(70, 130, 180, 0.3);
+            border: 1px solid rgba(100, 220, 200, 0.3);
             margin-bottom: 20px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
         }
 
         .advanced-settings-container .section {
             padding: 2px;
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .advanced-settings-container h2 {
+            color: #64DCC8;
+        }
+
+        .settings-panel-title {
+            color: #64DCC8;
+            font-size: calc(var(--base-font) * 1.3);
+            text-align: center;
+            margin: 4px 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(100, 220, 200, 0.25);
         }
 
         /* Pin diagram label styling for better fit */
@@ -492,6 +519,53 @@
             margin: 0 15px 0 0;
         }
 
+        .servo-range-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            padding: 0 15px;
+            gap: 6px;
+        }
+
+        .servo-range-row label {
+            font-size: var(--small-font);
+            color: #aaa;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .servo-range-row input {
+            width: 70px;
+            padding: 5px;
+            font-size: var(--small-font);
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            text-align: center;
+            margin: 0;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .servo-range-row input::-webkit-outer-spin-button,
+        .servo-range-row input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        .servo-range-row .range-separator {
+            color: #888;
+            font-size: var(--small-font);
+        }
+
+        .servo-range-row .range-unit {
+            color: #888;
+            font-size: var(--small-font);
+        }
+
         .pin-diagram-svg {
             width: 100%;
             height: auto;
@@ -504,21 +578,36 @@
             padding: var(--base-padding) calc(var(--base-padding) * 0.3) calc(var(--base-padding) * 0.3) calc(var(--base-padding) * 0.3);
         }
 
-        .toggle-button {
-            background-color: #FFD700;
-            color: #000;
-            font-size: calc(var(--base-font) * 1.1);
-            padding: var(--base-padding);
-            border: none;
-            border-radius: 5px;
-            width: 100%;
-            cursor: pointer;
-            margin: 20px 0;
-            font-weight: bold;
+        /* Settings gear icon in header */
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: var(--base-margin);
         }
-        
-        .toggle-button:hover {
-            background-color: #FFC000;
+        .header-row h1 {
+            margin-bottom: 0;
+            flex: 1;
+            text-align: center;
+        }
+        .settings-gear {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.3s;
+        }
+        .settings-gear:hover {
+            opacity: 1;
+        }
+        .settings-gear.active {
+            opacity: 1;
+            transform: translateY(-50%) rotate(90deg);
         }
 
         /* Preset name container için özel stil */
@@ -610,6 +699,7 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 10px;
+            padding-left: 4px;
         }
 
         .model-name-container label {
@@ -629,7 +719,12 @@
         }
 
         .model-name-container input:focus {
-            outline: 1px solid #FFD700;
+            outline: 1px solid #64DCC8;
+        }
+
+        .model-name-static {
+            color: #FFD700;
+            font-size: var(--base-font);
         }
 
         input, select, button {
@@ -1191,9 +1286,53 @@
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
+        /* Saving spinner overlay */
+        .saving-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .saving-overlay.active {
+            display: flex;
+        }
+
+        .saving-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .saving-text {
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Saving Overlay -->
+    <div id="savingOverlay" class="saving-overlay">
+        <div class="saving-spinner"></div>
+        <div class="saving-text">Saving...</div>
+    </div>
+
     <!-- Confirmation Modal -->
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-dialog">
@@ -1435,19 +1574,24 @@
         </div>
     </div>
 
-    <h1>F1A Model Configuration</h1>
+    <div class="header-row">
+        <h1>F1A Model Configuration</h1>
+        <svg class="settings-gear" id="settingsGearBtn" viewBox="0 0 24 24" fill="#64DCC8" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84a.48.48 0 00-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87a.48.48 0 00.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/>
+        </svg>
+    </div>
 
     <form onsubmit="submitForm(event)">
 
-        <!-- Model Identification -->
+        <!-- Preset Settings -->
         <div class="section section-before-toggle">
-            <h2>Model Identification</h2>
+            <h2>Preset Settings</h2>
             
             <div class="model-name-container">
-                <label for="model-name">Model Name:</label>
-                <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+                <label>Model Name:</label>
+                <span id="model-name-display" class="model-name-static">—</span>
             </div>
-            
+
             <div class="preset-name-container">
                 <label for="preset-selector">Select Preset:</label>
                 <div class="preset-controls">
@@ -1478,13 +1622,291 @@
                 </div>
                 <input type="hidden" id="strobe-value" name="strobe-value" value="81">
             </div>
-        </div>
 
-        <!-- Servo Configuration'dan Auto DT Features'a kadar olan bölümleri gizleyecek buton -->
-        <button type="button" id="toggleSettingsBtn" class="toggle-button">Show Settings</button>
+            <!-- Time Settings -->
+            <div class="time-settings-box">
+                <h2>Time Settings</h2>
+                <div class="timer-grid">
+                    <div class="timer-header">Func.</div>
+                    <div class="timer-header">Time</div>
+                    <div class="timer-header ru-column" id="header-ru">RU</div>
+                    <div class="timer-header tl-column" id="header-tl">TL</div>
+                    <div class="timer-header ww-column" id="header-ww">WW</div>
+                    <div class="timer-header ww2-column" id="header-ww2">WW2</div>
+
+                    <div class="timer-cell function-name" title="Power ON" onclick="showFunctionInfo('on')">On</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="on-ru" name="on-ru" min="800" max="2200" value="1176">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="on-tl" name="on-tl" min="800" max="2200" value="1137">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="on-ww" name="on-ww" min="800" max="2200" value="1000">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="on-ww2" name="on-ww2" min="800" max="2200" value="1000">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="str-ru" name="str-ru" min="800" max="2200" value="1020">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="str-tl" name="str-tl" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="str-ww" name="str-ww" min="800" max="2200" value="1196">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="str-ww2" name="str-ww2" min="800" max="2200" value="1196">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="cir-ru" name="cir-ru" min="800" max="2200" value="1412">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="cir-tl" name="cir-tl" min="800" max="2200" value="1059">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="cir-ww" name="cir-ww" min="800" max="2200" value="1588">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="cir-ww2" name="cir-ww2" min="800" max="2200" value="1588">
+                    </div>
+
+                    <div class="timer-cell function-name" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="ola-ru" name="ola-ru" min="800" max="2200" value="1137">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="ola-tl" name="ola-tl" min="800" max="2200" value="1020">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="ola-ww" name="ola-ww" min="800" max="2200" value="1294">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="ola-ww2" name="ola-ww2" min="800" max="2200" value="1294">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
+                    <div class="timer-cell">
+                        <input type="number" id="pu1-time" name="pu1-time" min="0" max="10" step="0.01" value="0.03">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="pu1-ru" name="pu1-ru" min="800" max="2200" value="1137">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="pu1-tl" name="pu1-tl" min="800" max="2200" value="1000">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="pu1-ww" name="pu1-ww" min="800" max="2200" value="1294">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="pu1-ww2" name="pu1-ww2" min="800" max="2200" value="1294">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
+                    <div class="timer-cell">
+                        <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.1">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="pu2-ru" name="pu2-ru" min="800" max="2200" value="1118">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="pu2-tl" name="pu2-tl" min="800" max="2200" value="1008">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="pu2-ww" name="pu2-ww" min="800" max="2200" value="1275">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="pu2-ww2" name="pu2-ww2" min="800" max="2200" value="1275">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
+                    <div class="timer-cell">
+                        <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.4">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="cr1-ru" name="cr1-ru" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="cr1-tl" name="cr1-tl" min="800" max="2200" value="1235">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="cr1-ww" name="cr1-ww" min="800" max="2200" value="1235">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="cr1-ww2" name="cr1-ww2" min="800" max="2200" value="1235">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
+                    <div class="timer-cell">
+                        <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.7">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="cr2-ru" name="cr2-ru" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="cr2-tl" name="cr2-tl" min="800" max="2200" value="1255">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="cr2-ww" name="cr2-ww" min="800" max="2200" value="1235">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="cr2-ww2" name="cr2-ww2" min="800" max="2200" value="1235">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
+                    <div class="timer-cell">
+                        <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="cr3-ru" name="cr3-ru" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="cr3-tl" name="cr3-tl" min="800" max="2200" value="1294">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="cr3-ww" name="cr3-ww" min="800" max="2200" value="1235">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="cr3-ww2" name="cr3-ww2" min="800" max="2200" value="1235">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
+                    <div class="timer-cell">
+                        <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.5">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="bu1-ru" name="bu1-ru" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="bu1-tl" name="bu1-tl" min="800" max="2200" value="1784">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="bu1-ww" name="bu1-ww" min="800" max="2200" value="1235">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="bu1-ww2" name="bu1-ww2" min="800" max="2200" value="1235">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
+                    <div class="timer-cell">
+                        <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="1.1">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="bu2-ru" name="bu2-ru" min="800" max="2200" value="1098">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="bu2-tl" name="bu2-tl" min="800" max="2200" value="1863">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="bu2-ww" name="bu2-ww" min="800" max="2200" value="1294">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="bu2-ww2" name="bu2-ww2" min="800" max="2200" value="1294">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
+                    <div class="timer-cell">
+                        <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.7">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="bu3-ru" name="bu3-ru" min="800" max="2200" value="1216">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="bu3-tl" name="bu3-tl" min="800" max="2200" value="1941">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="bu3-ww" name="bu3-ww" min="800" max="2200" value="1333">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="bu3-ww2" name="bu3-ww2" min="800" max="2200" value="1333">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
+                    <div class="timer-cell">
+                        <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="7.1">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="fg-ru" name="fg-ru" min="800" max="2200" value="1224">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="fg-tl" name="fg-tl" min="800" max="2200" value="1137">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="fg-ww" name="fg-ww" min="800" max="2200" value="1059">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="fg-ww2" name="fg-ww2" min="800" max="2200" value="1059">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
+                    <div class="timer-cell">
+                        <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="180">
+                    </div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="gl-ru" name="gl-ru" min="800" max="2200" value="1204">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="gl-tl" name="gl-tl" min="800" max="2200" value="1125">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="gl-ww" name="gl-ww" min="800" max="2200" value="1020">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="gl-ww2" name="gl-ww2" min="800" max="2200" value="1020">
+                    </div>
+
+                    <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="dt-ru" name="dt-ru" min="800" max="2200" value="1392">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="dt-tl" name="dt-tl" min="800" max="2200" value="2000">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="dt-ww" name="dt-ww" min="800" max="2200" value="1000">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="dt-ww2" name="dt-ww2" min="800" max="2200" value="1000">
+                    </div>
+
+                    <div class="timer-cell function-name" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
+                    <div class="timer-cell"></div>
+                    <div class="timer-cell ru-column">
+                        <input type="number" id="pk-ru" name="pk-ru" min="800" max="2200" value="1392">
+                    </div>
+                    <div class="timer-cell tl-column">
+                        <input type="number" id="pk-tl" name="pk-tl" min="800" max="2200" value="1000">
+                    </div>
+                    <div class="timer-cell ww-column">
+                        <input type="number" id="pk-ww" name="pk-ww" min="800" max="2200" value="1000">
+                    </div>
+                    <div class="timer-cell ww2-column">
+                        <input type="number" id="pk-ww2" name="pk-ww2" min="800" max="2200" value="1000">
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Gizlenecek bölümler -->
         <div id="advancedSettings" class="advanced-settings-container" style="display: none;">
+            <h1 class="settings-panel-title">Model Settings</h1>
+            <!-- Model Name -->
+            <div class="section">
+                <div class="option-row">
+                    <label for="model-name">Model Name:</label>
+                    <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
+                </div>
+            </div>
             <!-- Servo & Button Configuration bölümü -->
             <div class="section">
                 <h2>Servo & Button Conf.</h2>
@@ -1503,6 +1925,14 @@
                         <option value="9">S9</option>
                     </select>
                 </div>
+                <div class="servo-range-row" id="ru-servo-range-row" style="display:none;">
+                    <label>Min:</label>
+                    <input type="text" id="ru-servo-min" name="ru-servo-min" value="800" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-separator">-</span>
+                    <label>Max:</label>
+                    <input type="text" id="ru-servo-max" name="ru-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-unit">µs</span>
+                </div>
                 <div class="option-row">
                     <label for="tl-servo-pin" class="info-label" onclick="showFunctionInfo('tl-servo')">TL Servo Pin:</label>
                     <select id="tl-servo-pin" name="tl-servo-pin">
@@ -1517,6 +1947,14 @@
                         <option value="8">S8</option>
                         <option value="9">S9</option>
                     </select>
+                </div>
+                <div class="servo-range-row" id="tl-servo-range-row" style="display:none;">
+                    <label>Min:</label>
+                    <input type="text" id="tl-servo-min" name="tl-servo-min" value="800" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-separator">-</span>
+                    <label>Max:</label>
+                    <input type="text" id="tl-servo-max" name="tl-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-unit">µs</span>
                 </div>
                 <div class="option-row">
                     <label for="ww-servo-pin" class="info-label" onclick="showFunctionInfo('ww-servo')">WW Servo Pin:</label>
@@ -1533,6 +1971,14 @@
                         <option value="9">S9</option>
                     </select>
                 </div>
+                <div class="servo-range-row" id="ww-servo-range-row" style="display:none;">
+                    <label>Min:</label>
+                    <input type="text" id="ww-servo-min" name="ww-servo-min" value="800" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-separator">-</span>
+                    <label>Max:</label>
+                    <input type="text" id="ww-servo-max" name="ww-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-unit">µs</span>
+                </div>
                 <div class="option-row">
                     <label for="ww2-servo-pin" class="info-label" onclick="showFunctionInfo('ww2-servo')">WW2 Servo Pin:</label>
                     <select id="ww2-servo-pin" name="ww2-servo-pin">
@@ -1548,12 +1994,20 @@
                         <option value="9">S9</option>
                     </select>
                 </div>
+                <div class="servo-range-row" id="ww2-servo-range-row" style="display:none;">
+                    <label>Min:</label>
+                    <input type="text" id="ww2-servo-min" name="ww2-servo-min" value="800" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-separator">-</span>
+                    <label>Max:</label>
+                    <input type="text" id="ww2-servo-max" name="ww2-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
+                    <span class="range-unit">µs</span>
+                </div>
                 <div class="option-row">
                     <label for="servo-range-mode" class="info-label" onclick="showFunctionInfo('range-mode')">Range Mode:</label>
                     <select id="servo-range-mode" name="servo-range-mode" onchange="updateRangeModeLabels()">
                         <option value="0-100">0-100 (%)</option>
                         <option value="0-255">0-255</option>
-                        <option value="1000-2000" selected>1000-2000 µs</option>
+                        <option value="1000-2000" selected>800-2200 µs</option>
                     </select>
                 </div>
                 <div class="option-row">
@@ -1587,12 +2041,14 @@
             <div class="section">
                 <h2>Hook Configuration</h2>
 
-                <label for="hook-type" class="info-label" onclick="showFunctionInfo('hook-type')">Hook Type:</label>
-                <select id="hook-type" name="hook-type" onchange="updateHookOptions()">
-                    <option value="2switch">2 Switch</option>
-                    <option value="2switch_servo">2 Switch + Servo</option>
-                    <option value="rotary_servo">Rotary Enc. + Servo</option>
-                </select>
+                <div class="option-row">
+                    <label for="hook-type" class="info-label" onclick="showFunctionInfo('hook-type')">Hook Type:</label>
+                    <select id="hook-type" name="hook-type" onchange="updateHookOptions()">
+                        <option value="2switch">2 Switch</option>
+                        <option value="2switch_servo">2 Switch + Servo</option>
+                        <option value="rotary_servo">Rotary Enc. + Servo</option>
+                    </select>
+                </div>
                 
                 <div id="hook-options">
                     <!-- Bu alan dinamik olarak doldurulacak -->
@@ -1825,279 +2281,6 @@
             </div>
         </div>
 
-        <!-- Timer Settings -->
-        <div class="section">
-            <h2>Time Settings</h2>
-            <div class="timer-grid">
-                <div class="timer-header">Func.</div>
-                <div class="timer-header">Time</div>
-                <div class="timer-header ru-column" id="header-ru">RU</div>
-                <div class="timer-header tl-column" id="header-tl">TL</div>
-                <div class="timer-header ww-column" id="header-ww">WW</div>
-                <div class="timer-header ww2-column" id="header-ww2">WW2</div>
-
-                <div class="timer-cell function-name" title="Power ON" onclick="showFunctionInfo('on')">On</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="on-ru" name="on-ru" min="1000" max="2000" value="1176">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="on-tl" name="on-tl" min="1000" max="2000" value="1137">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="on-ww" name="on-ww" min="1000" max="2000" value="1000">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="on-ww2" name="on-ww2" min="1000" max="2000" value="1000">
-                </div>
-
-                <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="str-ru" name="str-ru" min="1000" max="2000" value="1020">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="str-tl" name="str-tl" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="str-ww" name="str-ww" min="1000" max="2000" value="1196">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="str-ww2" name="str-ww2" min="1000" max="2000" value="1196">
-                </div>
-
-                <div class="timer-cell function-name" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="cir-ru" name="cir-ru" min="1000" max="2000" value="1412">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="cir-tl" name="cir-tl" min="1000" max="2000" value="1059">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="cir-ww" name="cir-ww" min="1000" max="2000" value="1588">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="cir-ww2" name="cir-ww2" min="1000" max="2000" value="1588">
-                </div>
-
-                <div class="timer-cell function-name" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="ola-ru" name="ola-ru" min="1000" max="2000" value="1137">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="ola-tl" name="ola-tl" min="1000" max="2000" value="1020">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="ola-ww" name="ola-ww" min="1000" max="2000" value="1294">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="ola-ww2" name="ola-ww2" min="1000" max="2000" value="1294">
-                </div>
-
-                <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
-                <div class="timer-cell">
-                    <input type="number" id="pu1-time" name="pu1-time" min="0" max="10" step="0.01" value="0.03">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="pu1-ru" name="pu1-ru" min="1000" max="2000" value="1137">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="pu1-tl" name="pu1-tl" min="1000" max="2000" value="1000">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="pu1-ww" name="pu1-ww" min="1000" max="2000" value="1294">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="pu1-ww2" name="pu1-ww2" min="1000" max="2000" value="1294">
-                </div>
-
-                <div class="timer-cell function-name" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
-                <div class="timer-cell">
-                    <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.1">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="pu2-ru" name="pu2-ru" min="1000" max="2000" value="1118">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="pu2-tl" name="pu2-tl" min="1000" max="2000" value="1008">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="pu2-ww" name="pu2-ww" min="1000" max="2000" value="1275">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="pu2-ww2" name="pu2-ww2" min="1000" max="2000" value="1275">
-                </div>
-
-                <div class="timer-cell function-name" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
-                <div class="timer-cell">
-                    <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.4">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="cr1-ru" name="cr1-ru" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="cr1-tl" name="cr1-tl" min="1000" max="2000" value="1235">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="cr1-ww" name="cr1-ww" min="1000" max="2000" value="1235">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="cr1-ww2" name="cr1-ww2" min="1000" max="2000" value="1235">
-                </div>
-
-                <div class="timer-cell function-name" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
-                <div class="timer-cell">
-                    <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.7">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="cr2-ru" name="cr2-ru" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="cr2-tl" name="cr2-tl" min="1000" max="2000" value="1255">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="cr2-ww" name="cr2-ww" min="1000" max="2000" value="1235">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="cr2-ww2" name="cr2-ww2" min="1000" max="2000" value="1235">
-                </div>
-
-                <div class="timer-cell function-name" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
-                <div class="timer-cell">
-                    <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="cr3-ru" name="cr3-ru" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="cr3-tl" name="cr3-tl" min="1000" max="2000" value="1294">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="cr3-ww" name="cr3-ww" min="1000" max="2000" value="1235">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="cr3-ww2" name="cr3-ww2" min="1000" max="2000" value="1235">
-                </div>
-
-                <div class="timer-cell function-name" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
-                <div class="timer-cell">
-                    <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.5">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="bu1-ru" name="bu1-ru" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="bu1-tl" name="bu1-tl" min="1000" max="2000" value="1784">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="bu1-ww" name="bu1-ww" min="1000" max="2000" value="1235">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="bu1-ww2" name="bu1-ww2" min="1000" max="2000" value="1235">
-                </div>
-
-                <div class="timer-cell function-name" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
-                <div class="timer-cell">
-                    <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="1.1">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="bu2-ru" name="bu2-ru" min="1000" max="2000" value="1098">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="bu2-tl" name="bu2-tl" min="1000" max="2000" value="1863">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="bu2-ww" name="bu2-ww" min="1000" max="2000" value="1294">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="bu2-ww2" name="bu2-ww2" min="1000" max="2000" value="1294">
-                </div>
-
-                <div class="timer-cell function-name" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
-                <div class="timer-cell">
-                    <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.7">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="bu3-ru" name="bu3-ru" min="1000" max="2000" value="1216">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="bu3-tl" name="bu3-tl" min="1000" max="2000" value="1941">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="bu3-ww" name="bu3-ww" min="1000" max="2000" value="1333">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="bu3-ww2" name="bu3-ww2" min="1000" max="2000" value="1333">
-                </div>
-
-                <div class="timer-cell function-name" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
-                <div class="timer-cell">
-                    <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="7.1">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="fg-ru" name="fg-ru" min="1000" max="2000" value="1224">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="fg-tl" name="fg-tl" min="1000" max="2000" value="1137">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="fg-ww" name="fg-ww" min="1000" max="2000" value="1059">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="fg-ww2" name="fg-ww2" min="1000" max="2000" value="1059">
-                </div>
-
-                <div class="timer-cell function-name" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
-                <div class="timer-cell">
-                    <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="180">
-                </div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="gl-ru" name="gl-ru" min="1000" max="2000" value="1204">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="gl-tl" name="gl-tl" min="1000" max="2000" value="1125">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="gl-ww" name="gl-ww" min="1000" max="2000" value="1020">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="gl-ww2" name="gl-ww2" min="1000" max="2000" value="1020">
-                </div>
-
-                <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="dt-ru" name="dt-ru" min="1000" max="2000" value="1392">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="dt-tl" name="dt-tl" min="1000" max="2000" value="2000">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="dt-ww" name="dt-ww" min="1000" max="2000" value="1000">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="dt-ww2" name="dt-ww2" min="1000" max="2000" value="1000">
-                </div>
-
-                <div class="timer-cell function-name" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
-                <div class="timer-cell"></div>
-                <div class="timer-cell ru-column">
-                    <input type="number" id="pk-ru" name="pk-ru" min="1000" max="2000" value="1392">
-                </div>
-                <div class="timer-cell tl-column">
-                    <input type="number" id="pk-tl" name="pk-tl" min="1000" max="2000" value="1000">
-                </div>
-                <div class="timer-cell ww-column">
-                    <input type="number" id="pk-ww" name="pk-ww" min="1000" max="2000" value="1000">
-                </div>
-                <div class="timer-cell ww2-column">
-                    <input type="number" id="pk-ww2" name="pk-ww2" min="1000" max="2000" value="1000">
-                </div>
-            </div>
-        </div>
-
         <!-- Submit Button -->
         <input type="submit" value="SAVE">
     </form>
@@ -2311,6 +2494,7 @@
 
   // SAVE butonunu yeniden aktif et (Flutter'dan çağrılacak)
   function onSaveComplete(success) {
+    document.getElementById('savingOverlay').classList.remove('active');
     var saveButton = document.querySelector('input[type="submit"]');
     saveButton.disabled = false;
 
@@ -2416,6 +2600,12 @@
       // Mevcut loadPresetDataFromJSON fonksiyonunu kullan
       var jsonString = JSON.stringify(presetWithModel);
       loadPresetDataFromJSON(jsonString);
+
+      // Statik model name gösterimini güncelle
+      var displayElem = document.getElementById('model-name-display');
+      if (displayElem) {
+        displayElem.textContent = fullDeviceJson['model-name'] || '—';
+      }
 
       // İlk yüklemeden sonra preset değişikliklerinde info modal göster
       if (!isInitialLoad) {
@@ -2701,6 +2891,7 @@
       saveButton.disabled = true;
       saveButton.value = 'SAVING...';
       saveButton.style.backgroundColor = '#CCA000'; // Koyu sarı
+      document.getElementById('savingOverlay').classList.add('active');
 
       console.log('💾 SAVE button clicked, updating current preset with form values...');
 
@@ -2723,6 +2914,16 @@
     currentPreset['tl-servo-pin'] = parseInt(document.getElementById('tl-servo-pin').value);
     currentPreset['ww-servo-pin'] = parseInt(document.getElementById('ww-servo-pin').value);
     currentPreset['ww2-servo-pin'] = parseInt(document.getElementById('ww2-servo-pin').value);
+
+    // Servo min/max ranges
+    currentPreset['ru-servo-min'] = parseInt(document.getElementById('ru-servo-min').value) || 800;
+    currentPreset['ru-servo-max'] = parseInt(document.getElementById('ru-servo-max').value) || 2200;
+    currentPreset['tl-servo-min'] = parseInt(document.getElementById('tl-servo-min').value) || 800;
+    currentPreset['tl-servo-max'] = parseInt(document.getElementById('tl-servo-max').value) || 2200;
+    currentPreset['ww-servo-min'] = parseInt(document.getElementById('ww-servo-min').value) || 800;
+    currentPreset['ww-servo-max'] = parseInt(document.getElementById('ww-servo-max').value) || 2200;
+    currentPreset['ww2-servo-min'] = parseInt(document.getElementById('ww2-servo-min').value) || 800;
+    currentPreset['ww2-servo-max'] = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
 
     // RDT Rx pin
     currentPreset['rdt-rx-pin'] = parseInt(document.getElementById('rdt-rx-pin').value);
@@ -2803,10 +3004,10 @@
       const ww2UiValue = parseInt(document.getElementById(key + '-ww2').value);
 
       // UI değerlerini PWM'e dönüştür (JSON'da her zaman PWM olarak saklanır)
-      timer.ru = uiValueToPwm(ruUiValue, currentMode);
-      timer.tl = uiValueToPwm(tlUiValue, currentMode);
-      timer.ww = uiValueToPwm(wwUiValue, currentMode);
-      timer.ww2 = uiValueToPwm(ww2UiValue, currentMode);
+      timer.ru = uiValueToPwm(ruUiValue, currentMode, 'ru');
+      timer.tl = uiValueToPwm(tlUiValue, currentMode, 'tl');
+      timer.ww = uiValueToPwm(wwUiValue, currentMode, 'ww');
+      timer.ww2 = uiValueToPwm(ww2UiValue, currentMode, 'ww2');
     }
 
     // Update all timers
@@ -3023,6 +3224,15 @@
             document.getElementById('numberInputTitle').textContent = 'Max Distance';
             document.getElementById('numberDisplayUnit').textContent = 'm';
             document.getElementById('previousValueDisplay').textContent = previousValue + ' m';
+        } else if (inputType === 'servo-minmax') {
+            // Servo min/max µs input
+            var parts = inputElement.id.split('-');
+            var servoKey = parts[0].toUpperCase();
+            if (parts[0] === 'ww2') servoKey = 'WW2';
+            var minOrMax = parts[2].charAt(0).toUpperCase() + parts[2].slice(1); // Min veya Max
+            document.getElementById('numberInputTitle').textContent = servoKey + ' Servo ' + minOrMax;
+            document.getElementById('numberDisplayUnit').textContent = 'µs';
+            document.getElementById('previousValueDisplay').textContent = previousValue + ' µs';
         } else {
             // Servo input
             const parts = inputElement.id.split('-');
@@ -3270,6 +3480,17 @@
                 return;
             }
             currentEditingInput.value = Math.round(numValue).toString();
+        } else if (currentInputType === 'servo-minmax') {
+            // SERVO MIN/MAX - 800 to 2200 µs, integer
+            if (numValue < 800 || numValue > 2200) {
+                showNumberError('⚠️ Out of range! Valid: 800 - 2200 µs');
+                return;
+            }
+            currentEditingInput.value = Math.round(numValue).toString();
+            // Extract servo name from ID (e.g., 'ru-servo-min' → 'ru')
+            var parts = currentEditingInput.id.split('-');
+            var servoName = parts[0];
+            validateServoMinMax(servoName);
         } else if (isServoInput) {
             // SERVO INPUT - Range kontrolü ve blur validation
             const oldValue = currentEditingInput.value;
@@ -3344,6 +3565,51 @@
 
     // ========== SERVO RANGE MODE FUNCTIONS ==========
 
+    // Per-servo min/max µs değerlerini DOM'dan oku
+    function getServoMinMax(servoName) {
+        var minEl = document.getElementById(servoName + '-servo-min');
+        var maxEl = document.getElementById(servoName + '-servo-max');
+        var min = minEl ? parseInt(minEl.value) : 800;
+        var max = maxEl ? parseInt(maxEl.value) : 2200;
+        return {
+            min: Math.max(800, Math.min(2200, isNaN(min) ? 800 : min)),
+            max: Math.max(800, Math.min(2200, isNaN(max) ? 2200 : max))
+        };
+    }
+
+    // Servo min/max validation
+    function validateServoMinMax(servoName) {
+        var minEl = document.getElementById(servoName + '-servo-min');
+        var maxEl = document.getElementById(servoName + '-servo-max');
+        if (!minEl || !maxEl) return;
+
+        var minVal = parseInt(minEl.value);
+        var maxVal = parseInt(maxEl.value);
+
+        if (isNaN(minVal) || minVal < 800) minVal = 800;
+        if (minVal > 2200) minVal = 2200;
+        if (isNaN(maxVal) || maxVal > 2200) maxVal = 2200;
+        if (maxVal < 800) maxVal = 800;
+
+        if (minVal >= maxVal) {
+            if (minVal > 2100) {
+                minVal = 2100;
+                maxVal = 2200;
+            } else {
+                maxVal = minVal + 100;
+            }
+        }
+
+        minEl.value = minVal;
+        maxEl.value = maxVal;
+
+        // Mevcut mode µs değilse, servo değerlerini yeniden dönüştür
+        var currentMode = window.currentServoRangeMode || '1000-2000';
+        if (currentMode !== '1000-2000') {
+            convertAllServoInputs(currentMode);
+        }
+    }
+
     // Range mode'a göre input limitlerini al
     function getRangeLimits() {
         const mode = document.getElementById('servo-range-mode')?.value || '1000-2000';
@@ -3353,46 +3619,54 @@
             case '0-255':
                 return { min: 0, max: 255 };
             case '1000-2000':
-                return { min: 1000, max: 2000 };
+                return { min: 800, max: 2200 };
             default:
-                return { min: 1000, max: 2000 };
+                return { min: 800, max: 2200 };
         }
     }
 
-    // UI değerini PWM değerine (1000-2000µs) dönüştür
-    function uiValueToPwm(uiValue, mode) {
-        const value = parseInt(uiValue);
-        if (isNaN(value)) return 1500; // Default center
+    // UI değerini PWM değerine dönüştür (servoName: 'ru','tl','ww','ww2')
+    function uiValueToPwm(uiValue, mode, servoName) {
+        var value = parseInt(uiValue);
+        if (isNaN(value)) return 1500;
 
         switch(mode) {
-            case '0-100':
-                // 0-100 → 1000-2000
-                return Math.round(1000 + (value * 10));
-            case '0-255':
-                // 0-255 → 1000-2000
-                return Math.round(1000 + (value * (1000 / 255)));
+            case '0-100': {
+                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var span = range.max - range.min;
+                return Math.round(range.min + (value * span / 100));
+            }
+            case '0-255': {
+                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var span = range.max - range.min;
+                return Math.round(range.min + (value * span / 255));
+            }
             case '1000-2000':
-                // Zaten PWM değeri
                 return value;
             default:
                 return value;
         }
     }
 
-    // PWM değerini (1000-2000µs) UI değerine dönüştür
-    function pwmToUiValue(pwmValue, mode) {
-        const value = parseInt(pwmValue);
+    // PWM değerini UI değerine dönüştür (servoName: 'ru','tl','ww','ww2')
+    function pwmToUiValue(pwmValue, mode, servoName) {
+        var value = parseInt(pwmValue);
         if (isNaN(value)) return mode === '0-100' ? 50 : mode === '0-255' ? 127 : 1500;
 
         switch(mode) {
-            case '0-100':
-                // 1000-2000 → 0-100
-                return Math.round((value - 1000) / 10);
-            case '0-255':
-                // 1000-2000 → 0-255
-                return Math.round((value - 1000) * (255 / 1000));
+            case '0-100': {
+                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var span = range.max - range.min;
+                if (span === 0) return 50;
+                return Math.max(0, Math.min(100, Math.round((value - range.min) * 100 / span)));
+            }
+            case '0-255': {
+                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var span = range.max - range.min;
+                if (span === 0) return 127;
+                return Math.max(0, Math.min(255, Math.round((value - range.min) * 255 / span)));
+            }
             case '1000-2000':
-                // Zaten PWM değeri
                 return value;
             default:
                 return value;
@@ -3422,6 +3696,15 @@
         document.getElementById('header-ww').textContent = 'WW' + suffix;
         document.getElementById('header-ww2').textContent = 'WW2' + suffix;
 
+        // Servo min/max satırlarını göster/gizle
+        var showServoRanges = (mode !== '1000-2000');
+        ['ru', 'tl', 'ww', 'ww2'].forEach(function(servo) {
+            var rangeRow = document.getElementById(servo + '-servo-range-row');
+            if (rangeRow) {
+                rangeRow.style.display = showServoRanges ? 'flex' : 'none';
+            }
+        });
+
         // Tüm servo input değerlerini yeni range'e dönüştür
         convertAllServoInputs(mode);
     }
@@ -3434,11 +3717,15 @@
             const currentValue = parseInt(input.value);
             if (isNaN(currentValue)) return;
 
+            // Servo adını input ID'sinden çıkar (ww2 önce kontrol edilmeli)
+            var servoMatch = input.id.match(/-(ru|tl|ww2|ww)$/);
+            var servoName = servoMatch ? servoMatch[1] : null;
+
             // Önce PWM'e dönüştür (eski mode'dan)
-            const pwmValue = uiValueToPwm(currentValue, oldMode);
+            const pwmValue = uiValueToPwm(currentValue, oldMode, servoName);
 
             // Sonra yeni mode'a dönüştür
-            const newValue = pwmToUiValue(pwmValue, newMode);
+            const newValue = pwmToUiValue(pwmValue, newMode, servoName);
 
             input.value = newValue;
             previousServoValues[input.id] = newValue.toString();
@@ -3780,21 +4067,34 @@
 
     // Sayfa yüklendiğinde çalışacak kod
     document.addEventListener('DOMContentLoaded', function() {
-        // Toggle butonu için olay dinleyicisi ekle
-        const toggleBtn = document.getElementById('toggleSettingsBtn');
+        // Gear icon toggle for advanced settings
+        const gearBtn = document.getElementById('settingsGearBtn');
         const advancedSettings = document.getElementById('advancedSettings');
-        
-        toggleBtn.addEventListener('click', function() {
-            // Ayarları göster/gizle
+        const modelIdSection = document.querySelector('.section-before-toggle');
+
+        gearBtn.addEventListener('click', function() {
             if (advancedSettings.style.display === 'none') {
+                // Move advancedSettings above Model Identification
+                modelIdSection.parentNode.insertBefore(advancedSettings, modelIdSection);
                 advancedSettings.style.display = 'block';
-                toggleBtn.textContent = 'Hide Settings';
+                gearBtn.classList.add('active');
             } else {
                 advancedSettings.style.display = 'none';
-                toggleBtn.textContent = 'Show Settings';
+                gearBtn.classList.remove('active');
             }
         });
         
+        // Model name input değiştiğinde statik gösterimi güncelle
+        var modelNameInput = document.getElementById('model-name');
+        if (modelNameInput) {
+            modelNameInput.addEventListener('input', function() {
+                var displayElem = document.getElementById('model-name-display');
+                if (displayElem) {
+                    displayElem.textContent = this.value || '—';
+                }
+            });
+        }
+
         // Hook seçeneklerini başlangıçta güncelle
         updateHookOptions();
         
@@ -4067,7 +4367,7 @@
                                 const currentMode = window.currentServoRangeMode || '1000-2000';
 
                                 // PWM'i UI formatına dönüştür
-                                const uiValue = pwmToUiValue(pwmValue, currentMode);
+                                const uiValue = pwmToUiValue(pwmValue, currentMode, servo);
                                 servoElement.value = uiValue;
 
                                 // Önceki değer olarak kaydet

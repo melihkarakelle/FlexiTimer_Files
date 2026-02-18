@@ -4,13 +4,15 @@
       "firmware_name": "F1A Firmware v1.10",
       "firmware_code": "F1A_110",
       "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/F1A_v1_10.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1a_103.html"
+      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/f1a_103.html",
+      "firmware_type": "bootloader"
     },
     {
       "firmware_name": "SkyLink2.4G Firmware v1",
       "firmware_code": "SkyLink24",
       "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/SkyLink24_v1.zip",
-      "html_link": ""
+      "html_link": "",
+      "firmware_type": "bootloader"
     }
     
   ]

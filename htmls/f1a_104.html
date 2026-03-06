@@ -2337,62 +2337,13 @@
   // JSON Schema Validation
   function validateDeviceJson(json) {
     try {
-      // Temel yapı kontrolü
-      if (!json || typeof json !== 'object') {
-        console.error('❌ Invalid JSON: not an object');
-        return false;
+      if (!json || typeof json !== 'object') return false;
+      // New structure: {settings: {...}, presets: [...]}
+      if (!json.settings || typeof json.settings !== 'object') return false;
+      if (!Array.isArray(json.presets) || json.presets.length === 0) return false;
+      for (var i = 0; i < json.presets.length; i++) {
+        if (typeof json.presets[i]['preset-index'] !== 'number') return false;
       }
-
-      // Zorunlu alanlar
-      if (!json['model-class'] || typeof json['model-class'] !== 'string') {
-        console.error('❌ Invalid JSON: missing or invalid model-class');
-        return false;
-      }
-
-      if (typeof json['selected-preset-index'] !== 'number') {
-        console.error('❌ Invalid JSON: missing or invalid selected-preset-index');
-        return false;
-      }
-
-      // Presets array kontrolü
-      if (!Array.isArray(json.presets) || json.presets.length === 0) {
-        console.error('❌ Invalid JSON: presets must be a non-empty array');
-        return false;
-      }
-
-      // Her preset'i doğrula
-      for (let i = 0; i < json.presets.length; i++) {
-        const preset = json.presets[i];
-
-        if (!preset['preset-name'] || typeof preset['preset-name'] !== 'string') {
-          console.error(`❌ Invalid preset ${i}: missing or invalid preset-name`);
-          return false;
-        }
-
-        if (typeof preset['preset-index'] !== 'number') {
-          console.error(`❌ Invalid preset ${i}: missing or invalid preset-index`);
-          return false;
-        }
-
-        // Timers objesi kontrolü
-        if (!preset.timers || typeof preset.timers !== 'object') {
-          console.error(`❌ Invalid preset ${i}: missing or invalid timers object`);
-          return false;
-        }
-
-        // Pin değerleri kontrolü (0-9 arası olmalı, 0 = Not Used)
-        const pinFields = ['ru-servo-pin', 'tl-servo-pin', 'ww-servo-pin'];
-        for (const field of pinFields) {
-          if (preset[field] !== undefined) {
-            const val = preset[field];
-            if (typeof val !== 'number' || val < 0 || val > 9) {
-              console.error(`❌ Invalid preset ${i}: ${field} must be between 0-9 (0 = Not Used)`);
-              return false;
-            }
-          }
-        }
-      }
-
       console.log('✅ JSON validation passed');
       return true;
     } catch (error) {
@@ -2435,38 +2386,38 @@
     try {
       const parsedJson = JSON.parse(jsonString);
 
-      // JSON şemasını doğrula
-      if (!validateDeviceJson(parsedJson)) {
+      if (!parsedJson.settings || !parsedJson.presets) {
         alert('Invalid device configuration received. Please reconnect to device.');
-        console.error('❌ JSON validation failed');
+        console.error('❌ JSON missing settings or presets block');
         return;
       }
 
       fullDeviceJson = parsedJson;
-      console.log('✅ Full JSON received and validated:', fullDeviceJson);
+      console.log('✅ Full JSON received:', fullDeviceJson);
+
+      // Silinen preset tespiti için orijinal preset-index listesini sakla
+      fullDeviceJson._originalPresetIndices = fullDeviceJson.presets.map(function(p) {
+        return p['preset-index'];
+      });
 
       // Preset selector'ı doldur
       var selector = document.getElementById('preset-selector');
-      selector.innerHTML = ''; // Mevcut options'ları temizle
+      selector.innerHTML = '';
 
-      if (fullDeviceJson.presets && fullDeviceJson.presets.length > 0) {
-        fullDeviceJson.presets.forEach(function(preset, index) {
+      if (fullDeviceJson.presets.length > 0) {
+        fullDeviceJson.presets.forEach(function(preset) {
           var option = document.createElement('option');
-          option.value = preset['preset-index']; // preset-index kullan
+          option.value = preset['preset-index'];
           option.text = preset['preset-name'] || ('Preset ' + preset['preset-index']);
           selector.appendChild(option);
         });
 
-        // selected-preset-index değerine göre seç
-        var selectedIndex = fullDeviceJson['selected-preset-index'] || 1;
+        var selectedIndex = (fullDeviceJson.settings && fullDeviceJson.settings['selected-preset-index']) || 1;
         selector.value = selectedIndex;
 
         console.log('📋 Preset selector dolduruldu, selected-preset-index:', selectedIndex);
 
-        // İlk preset'i yükle
         onPresetChanged();
-
-        // Delete butonunu güncelle
         updateDeleteButton();
       } else {
         console.error('❌ No presets found in JSON');
@@ -2498,31 +2449,8 @@
     });
 
     if (selectedPreset) {
-      // Settings alanlarını root JSON'dan, preset'e özgü alanları preset'ten al.
-      // Böylece bu alanların preset içinde tekrar edilmesi gerekmez.
-      // Preset'e özgü alanları preset'ten, tüm settings alanlarını root'tan al.
-      // Settings alanları spread'den SONRA yazılır — eski preset'teki değerleri override eder.
-      var presetWithModel = {
-        ...selectedPreset,
-        'model-name':          fullDeviceJson['model-name']          || 'Unknown',
-        'ru-servo-pin':        fullDeviceJson['ru-servo-pin']        ?? 0,
-        'tl-servo-pin':        fullDeviceJson['tl-servo-pin']        ?? 0,
-        'ww-servo-pin':        fullDeviceJson['ww-servo-pin']        ?? 0,
-        'ww2-servo-pin':       fullDeviceJson['ww2-servo-pin']       ?? 0,
-        'rdt-rx-pin':          fullDeviceJson['rdt-rx-pin']          ?? 0,
-        'start-button-pin':    fullDeviceJson['start-button-pin']    ?? 6,
-        'hook-type':           fullDeviceJson['hook-type']           || '2switch',
-        'hook-sw1-pin':        fullDeviceJson['hook-sw1-pin']        ?? 2,
-        'hook-sw2-pin':        fullDeviceJson['hook-sw2-pin']        ?? 4,
-        'hook-servo-pin':      fullDeviceJson['hook-servo-pin']      ?? -1,
-        'encoder-pin':         fullDeviceJson['encoder-pin']         ?? -1,
-        'max-sink-value':      fullDeviceJson['max-sink-value']      ?? 2.0,
-        'max-altitude-value':  fullDeviceJson['max-altitude-value']  ?? 500,
-        'max-distance-value':  fullDeviceJson['max-distance-value']  ?? 1000,
-        'flip-loop-detection': fullDeviceJson['flip-loop-detection'] ?? 0,
-        'range-mode':          fullDeviceJson['range-mode']          || '1000-2000',
-        'time-mode':           fullDeviceJson['time-mode']           || 'interval'
-      };
+      // Preset fields first, then settings override — settings always win over preset
+      var presetWithModel = Object.assign({}, selectedPreset, fullDeviceJson.settings || {});
 
       console.log('✅ Loading preset:', presetWithModel['preset-name']);
 
@@ -2840,33 +2768,38 @@
     // Settings alanlarını fullDeviceJson root'una kaydet (preset'e değil)
     fullDeviceJson['ru-servo-pin']        = parseInt(document.getElementById('ru-servo-pin').value);
     fullDeviceJson['tl-servo-pin']        = parseInt(document.getElementById('tl-servo-pin').value);
-    fullDeviceJson['ww-servo-pin']        = parseInt(document.getElementById('ww-servo-pin').value);
-    fullDeviceJson['ww2-servo-pin']       = parseInt(document.getElementById('ww2-servo-pin').value);
-    fullDeviceJson['ru-servo-min']        = parseInt(document.getElementById('ru-servo-min').value) || 800;
-    fullDeviceJson['ru-servo-max']        = parseInt(document.getElementById('ru-servo-max').value) || 2200;
-    fullDeviceJson['tl-servo-min']        = parseInt(document.getElementById('tl-servo-min').value) || 800;
-    fullDeviceJson['tl-servo-max']        = parseInt(document.getElementById('tl-servo-max').value) || 2200;
-    fullDeviceJson['ww-servo-min']        = parseInt(document.getElementById('ww-servo-min').value) || 800;
-    fullDeviceJson['ww-servo-max']        = parseInt(document.getElementById('ww-servo-max').value) || 2200;
-    fullDeviceJson['ww2-servo-min']       = parseInt(document.getElementById('ww2-servo-min').value) || 800;
-    fullDeviceJson['ww2-servo-max']       = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
-    fullDeviceJson['rdt-rx-pin']          = parseInt(document.getElementById('rdt-rx-pin').value);
-    fullDeviceJson['start-button-pin']    = parseInt(document.getElementById('start-button-pin').value);
-    fullDeviceJson['hook-type']           = document.getElementById('hook-type').value;
+    // Write all settings fields into fullDeviceJson.settings — not into root
+    if (!fullDeviceJson.settings) fullDeviceJson.settings = {};
+    var s = fullDeviceJson.settings;
+    s['ru-servo-pin']        = parseInt(document.getElementById('ru-servo-pin').value);
+    s['tl-servo-pin']        = parseInt(document.getElementById('tl-servo-pin').value);
+    s['ww-servo-pin']        = parseInt(document.getElementById('ww-servo-pin').value);
+    s['ww2-servo-pin']       = parseInt(document.getElementById('ww2-servo-pin').value);
+    s['ru-servo-min']        = parseInt(document.getElementById('ru-servo-min').value) || 800;
+    s['ru-servo-max']        = parseInt(document.getElementById('ru-servo-max').value) || 2200;
+    s['tl-servo-min']        = parseInt(document.getElementById('tl-servo-min').value) || 800;
+    s['tl-servo-max']        = parseInt(document.getElementById('tl-servo-max').value) || 2200;
+    s['ww-servo-min']        = parseInt(document.getElementById('ww-servo-min').value) || 800;
+    s['ww-servo-max']        = parseInt(document.getElementById('ww-servo-max').value) || 2200;
+    s['ww2-servo-min']       = parseInt(document.getElementById('ww2-servo-min').value) || 800;
+    s['ww2-servo-max']       = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
+    s['rdt-rx-pin']          = parseInt(document.getElementById('rdt-rx-pin').value);
+    s['start-button-pin']    = parseInt(document.getElementById('start-button-pin').value);
+    s['hook-type']           = document.getElementById('hook-type').value;
     var hookSw1Elem = document.getElementById('hook-sw1-pin');
-    fullDeviceJson['hook-sw1-pin']        = hookSw1Elem ? parseInt(hookSw1Elem.value) : -1;
+    s['hook-sw1-pin']        = hookSw1Elem ? parseInt(hookSw1Elem.value) : -1;
     var hookSw2Elem = document.getElementById('hook-sw2-pin');
-    fullDeviceJson['hook-sw2-pin']        = hookSw2Elem ? parseInt(hookSw2Elem.value) : -1;
+    s['hook-sw2-pin']        = hookSw2Elem ? parseInt(hookSw2Elem.value) : -1;
     var hookServoElem = document.getElementById('hook-servo-pin');
-    fullDeviceJson['hook-servo-pin']      = hookServoElem ? parseInt(hookServoElem.value) : -1;
+    s['hook-servo-pin']      = hookServoElem ? parseInt(hookServoElem.value) : -1;
     var encoderPinElem = document.getElementById('encoder-pin');
-    fullDeviceJson['encoder-pin']         = encoderPinElem ? parseInt(encoderPinElem.value) : -1;
-    fullDeviceJson['max-sink-value']      = parseFloat(document.getElementById('max-sink-value').value);
-    fullDeviceJson['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
-    fullDeviceJson['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
-    fullDeviceJson['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
-    fullDeviceJson['range-mode']          = window.currentServoRangeMode || '1000-2000';
-    fullDeviceJson['time-mode']           = window.currentTimeMode || 'interval';
+    s['encoder-pin']         = encoderPinElem ? parseInt(encoderPinElem.value) : -1;
+    s['max-sink-value']      = parseFloat(document.getElementById('max-sink-value').value);
+    s['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
+    s['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
+    s['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+    s['range-mode']          = window.currentServoRangeMode || '1000-2000';
+    s['time-mode']           = window.currentTimeMode || 'interval';
 
     // Timers - nested structure
     if (!currentPreset.timers) {
@@ -2921,25 +2854,35 @@
 
     console.log('✅ Current preset updated with form values');
 
-    // Model name'i güncelle (JSON root seviyesinde)
+    // model-name settings bloğuna ait
     var modelNameElem = document.getElementById('model-name');
     if (modelNameElem && modelNameElem.value) {
-      fullDeviceJson['model-name'] = modelNameElem.value;
+      fullDeviceJson.settings['model-name'] = modelNameElem.value;
     }
 
-    // selected-preset-index'i güncelle
-    fullDeviceJson['selected-preset-index'] = selectedIndex;
+    // Silinen preset tespiti: orijinal liste ile mevcut liste karşılaştır
+    var currentIndices = fullDeviceJson.presets.map(function(p) { return p['preset-index']; });
+    var originalIndices = fullDeviceJson._originalPresetIndices || currentIndices;
+    var deletedPresets = originalIndices
+      .filter(function(idx) { return !currentIndices.includes(idx); })
+      .map(function(idx) { return 'preset' + idx + '.json'; });
 
-      // Tüm JSON'u string'e çevir ve FormChannel'a gönder
-      var jsonString = JSON.stringify(fullDeviceJson);
+    // {settings, presets, selected-preset-index, deleted-presets} gönder — app içeriklere bakmaz
+    var payload = {
+      settings: fullDeviceJson.settings,
+      presets: fullDeviceJson.presets,
+      'selected-preset-index': selectedIndex,
+      'deleted-presets': deletedPresets
+    };
 
-      // FormChannel kontrolü
-      if (typeof FormChannel === 'undefined' || !FormChannel.postMessage) {
-        throw new Error('FormChannel not available. Not running in WebView?');
-      }
+    var jsonString = JSON.stringify(payload);
 
-      console.log('📤 Sending full JSON to Flutter (' + jsonString.length + ' chars)');
-      FormChannel.postMessage(jsonString);
+    if (typeof FormChannel === 'undefined' || !FormChannel.postMessage) {
+      throw new Error('FormChannel not available. Not running in WebView?');
+    }
+
+    console.log('📤 Sending to Flutter (' + jsonString.length + ' chars), deleted:', deletedPresets);
+    FormChannel.postMessage(jsonString);
 
       return false; // Formun normal submit işlemini engelle
 

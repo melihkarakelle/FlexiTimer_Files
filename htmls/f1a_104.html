@@ -4215,6 +4215,13 @@
                 }
             }
 
+            // UI Preferences - Range Mode'u servo yüklemeden ÖNCE ayarla
+            // Böylece servo değerleri doğru mode ile dönüştürülür
+            var targetRangeMode = presetData['range-mode'] || '1000-2000';
+            window.currentServoRangeMode = targetRangeMode;
+            var rangeModeEl = document.getElementById('servo-range-mode');
+            if (rangeModeEl) rangeModeEl.value = targetRangeMode;
+
             // Timers nested yapısını işle
             if (presetData.timers) {
                 for (var timerKey in presetData.timers) {
@@ -4233,10 +4240,9 @@
                             if (servoElement) {
                                 // JSON'daki değer her zaman PWM (1000-2000µs)
                                 const pwmValue = timer[servo];
-                                const currentMode = window.currentServoRangeMode || '1000-2000';
 
-                                // PWM'i UI formatına dönüştür
-                                const uiValue = pwmToUiValue(pwmValue, currentMode, servo);
+                                // PWM'i UI formatına dönüştür (targetRangeMode zaten set edildi)
+                                const uiValue = pwmToUiValue(pwmValue, targetRangeMode, servo);
                                 servoElement.value = uiValue;
 
                                 // Önceki değer olarak kaydet
@@ -4283,20 +4289,13 @@
                 updateColumnVisibility();
             }
 
-            // UI Preferences - Restore Range Mode and Time Mode
-            if (presetData['range-mode']) {
-                var rangeModeElement = document.getElementById('servo-range-mode');
-                if (rangeModeElement) {
-                    rangeModeElement.value = presetData['range-mode'];
-                    // window.currentServoRangeMode burada set edilmemeli — convertAllServoInputs
-                    // oldMode olarak mevcut (eski) mode'u okumalı ki doğru dönüşüm yapılsın.
-                    // updateRangeModeLabels → convertAllServoInputs → window.currentServoRangeMode = newMode
-                    if (typeof updateRangeModeLabels === 'function') {
-                        updateRangeModeLabels();
-                    }
-                    console.log('✅ Range Mode restored:', presetData['range-mode']);
-                }
+            // UI Preferences - Range Mode header/satır görünürlüğünü güncelle
+            // (window.currentServoRangeMode ve select değeri zaten yukarıda set edildi,
+            //  servo değerleri de doğru modla yüklendi — convertAllServoInputs çağrılmamalı)
+            if (typeof updateRangeModeLabels === 'function') {
+                updateRangeModeLabels();
             }
+            console.log('✅ Range Mode restored:', targetRangeMode);
 
             if (presetData['time-mode']) {
                 var timeModeElement = document.getElementById('time-mode');

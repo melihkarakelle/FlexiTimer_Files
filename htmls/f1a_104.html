@@ -2498,10 +2498,28 @@
     });
 
     if (selectedPreset) {
-      // model-name'i JSON root seviyesinden ekle
+      // Settings alanlarını root JSON'dan, preset'e özgü alanları preset'ten al.
+      // Böylece bu alanların preset içinde tekrar edilmesi gerekmez.
       var presetWithModel = {
-        'model-name': fullDeviceJson['model-name'] || 'Unknown',
-        ...selectedPreset
+        'model-name':          fullDeviceJson['model-name']          || 'Unknown',
+        'ru-servo-pin':        fullDeviceJson['ru-servo-pin']        ?? 0,
+        'tl-servo-pin':        fullDeviceJson['tl-servo-pin']        ?? 0,
+        'ww-servo-pin':        fullDeviceJson['ww-servo-pin']        ?? 0,
+        'ww2-servo-pin':       fullDeviceJson['ww2-servo-pin']       ?? 0,
+        'rdt-rx-pin':          fullDeviceJson['rdt-rx-pin']          ?? 0,
+        'start-button-pin':    fullDeviceJson['start-button-pin']    ?? 6,
+        'hook-type':           fullDeviceJson['hook-type']           || '2switch',
+        'hook-sw1-pin':        fullDeviceJson['hook-sw1-pin']        ?? 2,
+        'hook-sw2-pin':        fullDeviceJson['hook-sw2-pin']        ?? 4,
+        'hook-servo-pin':      fullDeviceJson['hook-servo-pin']      ?? -1,
+        'encoder-pin':         fullDeviceJson['encoder-pin']         ?? -1,
+        'max-sink-value':      fullDeviceJson['max-sink-value']      ?? 2.0,
+        'max-altitude-value':  fullDeviceJson['max-altitude-value']  ?? 500,
+        'max-distance-value':  fullDeviceJson['max-distance-value']  ?? 1000,
+        'flip-loop-detection': fullDeviceJson['flip-loop-detection'] ?? 0,
+        'range-mode':          fullDeviceJson['range-mode']          || '1000-2000',
+        'time-mode':           fullDeviceJson['time-mode']           || 'interval',
+        ...selectedPreset  // preset'e özgü alanlar üstteki değerleri override edebilir
       };
 
       console.log('✅ Loading preset:', presetWithModel['preset-name']);

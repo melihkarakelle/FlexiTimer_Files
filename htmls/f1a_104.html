@@ -2832,77 +2832,41 @@
       return false;
     }
 
-    // Form değerlerini currentPreset'e kaydet
-    // Strobe value
+    // Preset'e özgü alanları currentPreset'e kaydet
     currentPreset['strobe-value'] = parseInt(document.getElementById('strobe-value').value);
-
-    // Servo pins
-    currentPreset['ru-servo-pin'] = parseInt(document.getElementById('ru-servo-pin').value);
-    currentPreset['tl-servo-pin'] = parseInt(document.getElementById('tl-servo-pin').value);
-    currentPreset['ww-servo-pin'] = parseInt(document.getElementById('ww-servo-pin').value);
-    currentPreset['ww2-servo-pin'] = parseInt(document.getElementById('ww2-servo-pin').value);
-
-    // Servo min/max ranges
-    currentPreset['ru-servo-min'] = parseInt(document.getElementById('ru-servo-min').value) || 800;
-    currentPreset['ru-servo-max'] = parseInt(document.getElementById('ru-servo-max').value) || 2200;
-    currentPreset['tl-servo-min'] = parseInt(document.getElementById('tl-servo-min').value) || 800;
-    currentPreset['tl-servo-max'] = parseInt(document.getElementById('tl-servo-max').value) || 2200;
-    currentPreset['ww-servo-min'] = parseInt(document.getElementById('ww-servo-min').value) || 800;
-    currentPreset['ww-servo-max'] = parseInt(document.getElementById('ww-servo-max').value) || 2200;
-    currentPreset['ww2-servo-min'] = parseInt(document.getElementById('ww2-servo-min').value) || 800;
-    currentPreset['ww2-servo-max'] = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
-
-    // RDT Rx pin
-    currentPreset['rdt-rx-pin'] = parseInt(document.getElementById('rdt-rx-pin').value);
-
-    // Start Button pin
-    currentPreset['start-button-pin'] = parseInt(document.getElementById('start-button-pin').value);
-
-    // Hook settings
-    currentPreset['hook-type'] = document.getElementById('hook-type').value;
-
-    // Hook sw1 ve sw2 (2switch ve 2switch_servo için)
-    var hookSw1Elem = document.getElementById('hook-sw1-pin');
-    if (hookSw1Elem) {
-      currentPreset['hook-sw1-pin'] = parseInt(hookSw1Elem.value);
-    } else {
-      currentPreset['hook-sw1-pin'] = -1; // Kullanılmıyor
-    }
-
-    var hookSw2Elem = document.getElementById('hook-sw2-pin');
-    if (hookSw2Elem) {
-      currentPreset['hook-sw2-pin'] = parseInt(hookSw2Elem.value);
-    } else {
-      currentPreset['hook-sw2-pin'] = -1; // Kullanılmıyor
-    }
-
-    // Hook servo (2switch_servo ve rotary_servo için)
-    var hookServoElem = document.getElementById('hook-servo-pin');
-    if (hookServoElem) {
-      currentPreset['hook-servo-pin'] = parseInt(hookServoElem.value);
-    } else {
-      currentPreset['hook-servo-pin'] = -1; // Kullanılmıyor
-    }
-
-    // Encoder pin (rotary_servo için)
-    var encoderPinElem = document.getElementById('encoder-pin');
-    if (encoderPinElem) {
-      currentPreset['encoder-pin'] = parseInt(encoderPinElem.value);
-    } else {
-      currentPreset['encoder-pin'] = -1; // Kullanılmıyor
-    }
-
-    // Auto DT settings
-    currentPreset['max-sink-value'] = parseFloat(document.getElementById('max-sink-value').value);
-    currentPreset['max-altitude-value'] = parseFloat(document.getElementById('max-altitude-value').value);
-    currentPreset['max-distance-value'] = parseFloat(document.getElementById('max-distance-value').value);
-    currentPreset['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
-
-    // Geofencing DT settings - REMOVED - Now managed separately via app's Geofencing screen
-
-    // UI Preferences - Range Mode and Time Mode
     currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
     currentPreset['time-mode'] = window.currentTimeMode || 'interval';
+
+    // Settings alanlarını fullDeviceJson root'una kaydet (preset'e değil)
+    fullDeviceJson['ru-servo-pin']        = parseInt(document.getElementById('ru-servo-pin').value);
+    fullDeviceJson['tl-servo-pin']        = parseInt(document.getElementById('tl-servo-pin').value);
+    fullDeviceJson['ww-servo-pin']        = parseInt(document.getElementById('ww-servo-pin').value);
+    fullDeviceJson['ww2-servo-pin']       = parseInt(document.getElementById('ww2-servo-pin').value);
+    fullDeviceJson['ru-servo-min']        = parseInt(document.getElementById('ru-servo-min').value) || 800;
+    fullDeviceJson['ru-servo-max']        = parseInt(document.getElementById('ru-servo-max').value) || 2200;
+    fullDeviceJson['tl-servo-min']        = parseInt(document.getElementById('tl-servo-min').value) || 800;
+    fullDeviceJson['tl-servo-max']        = parseInt(document.getElementById('tl-servo-max').value) || 2200;
+    fullDeviceJson['ww-servo-min']        = parseInt(document.getElementById('ww-servo-min').value) || 800;
+    fullDeviceJson['ww-servo-max']        = parseInt(document.getElementById('ww-servo-max').value) || 2200;
+    fullDeviceJson['ww2-servo-min']       = parseInt(document.getElementById('ww2-servo-min').value) || 800;
+    fullDeviceJson['ww2-servo-max']       = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
+    fullDeviceJson['rdt-rx-pin']          = parseInt(document.getElementById('rdt-rx-pin').value);
+    fullDeviceJson['start-button-pin']    = parseInt(document.getElementById('start-button-pin').value);
+    fullDeviceJson['hook-type']           = document.getElementById('hook-type').value;
+    var hookSw1Elem = document.getElementById('hook-sw1-pin');
+    fullDeviceJson['hook-sw1-pin']        = hookSw1Elem ? parseInt(hookSw1Elem.value) : -1;
+    var hookSw2Elem = document.getElementById('hook-sw2-pin');
+    fullDeviceJson['hook-sw2-pin']        = hookSw2Elem ? parseInt(hookSw2Elem.value) : -1;
+    var hookServoElem = document.getElementById('hook-servo-pin');
+    fullDeviceJson['hook-servo-pin']      = hookServoElem ? parseInt(hookServoElem.value) : -1;
+    var encoderPinElem = document.getElementById('encoder-pin');
+    fullDeviceJson['encoder-pin']         = encoderPinElem ? parseInt(encoderPinElem.value) : -1;
+    fullDeviceJson['max-sink-value']      = parseFloat(document.getElementById('max-sink-value').value);
+    fullDeviceJson['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
+    fullDeviceJson['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
+    fullDeviceJson['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+    fullDeviceJson['range-mode']          = window.currentServoRangeMode || '1000-2000';
+    fullDeviceJson['time-mode']           = window.currentTimeMode || 'interval';
 
     // Timers - nested structure
     if (!currentPreset.timers) {

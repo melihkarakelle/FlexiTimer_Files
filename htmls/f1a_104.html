@@ -2500,7 +2500,10 @@
     if (selectedPreset) {
       // Settings alanlarını root JSON'dan, preset'e özgü alanları preset'ten al.
       // Böylece bu alanların preset içinde tekrar edilmesi gerekmez.
+      // Preset'e özgü alanları preset'ten, tüm settings alanlarını root'tan al.
+      // Settings alanları spread'den SONRA yazılır — eski preset'teki değerleri override eder.
       var presetWithModel = {
+        ...selectedPreset,
         'model-name':          fullDeviceJson['model-name']          || 'Unknown',
         'ru-servo-pin':        fullDeviceJson['ru-servo-pin']        ?? 0,
         'tl-servo-pin':        fullDeviceJson['tl-servo-pin']        ?? 0,
@@ -2518,8 +2521,7 @@
         'max-distance-value':  fullDeviceJson['max-distance-value']  ?? 1000,
         'flip-loop-detection': fullDeviceJson['flip-loop-detection'] ?? 0,
         'range-mode':          fullDeviceJson['range-mode']          || '1000-2000',
-        'time-mode':           fullDeviceJson['time-mode']           || 'interval',
-        ...selectedPreset  // preset'e özgü alanlar üstteki değerleri override edebilir
+        'time-mode':           fullDeviceJson['time-mode']           || 'interval'
       };
 
       console.log('✅ Loading preset:', presetWithModel['preset-name']);
@@ -2834,8 +2836,6 @@
 
     // Preset'e özgü alanları currentPreset'e kaydet
     currentPreset['strobe-value'] = parseInt(document.getElementById('strobe-value').value);
-    currentPreset['range-mode'] = window.currentServoRangeMode || '1000-2000';
-    currentPreset['time-mode'] = window.currentTimeMode || 'interval';
 
     // Settings alanlarını fullDeviceJson root'una kaydet (preset'e değil)
     fullDeviceJson['ru-servo-pin']        = parseInt(document.getElementById('ru-servo-pin').value);

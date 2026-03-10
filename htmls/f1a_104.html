@@ -1933,6 +1933,8 @@
                     <label>Max:</label>
                     <input type="text" id="ru-servo-max" name="ru-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
                     <span class="range-unit">µs</span>
+                    <input type="checkbox" id="ru-servo-invert" name="ru-servo-invert" style="margin-left:6px; vertical-align:middle;">
+                    <label for="ru-servo-invert" style="font-size:0.8em; color:#aaa; margin-left:2px; cursor:pointer; white-space:nowrap;">inv.</label>
                 </div>
                 <div class="option-row">
                     <label for="tl-servo-pin" class="info-label" onclick="showFunctionInfo('tl-servo')">TL Servo Pin:</label>
@@ -1956,6 +1958,8 @@
                     <label>Max:</label>
                     <input type="text" id="tl-servo-max" name="tl-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
                     <span class="range-unit">µs</span>
+                    <input type="checkbox" id="tl-servo-invert" name="tl-servo-invert" style="margin-left:6px; vertical-align:middle;">
+                    <label for="tl-servo-invert" style="font-size:0.8em; color:#aaa; margin-left:2px; cursor:pointer; white-space:nowrap;">inv.</label>
                 </div>
                 <div class="option-row">
                     <label for="ww-servo-pin" class="info-label" onclick="showFunctionInfo('ww-servo')">WW Servo Pin:</label>
@@ -1979,6 +1983,8 @@
                     <label>Max:</label>
                     <input type="text" id="ww-servo-max" name="ww-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
                     <span class="range-unit">µs</span>
+                    <input type="checkbox" id="ww-servo-invert" name="ww-servo-invert" style="margin-left:6px; vertical-align:middle;">
+                    <label for="ww-servo-invert" style="font-size:0.8em; color:#aaa; margin-left:2px; cursor:pointer; white-space:nowrap;">inv.</label>
                 </div>
                 <div class="option-row">
                     <label for="ww2-servo-pin" class="info-label" onclick="showFunctionInfo('ww2-servo')">WW2 Servo Pin:</label>
@@ -2002,6 +2008,8 @@
                     <label>Max:</label>
                     <input type="text" id="ww2-servo-max" name="ww2-servo-max" value="2200" readonly onclick="openNumberInputModal(this, 'servo-minmax')">
                     <span class="range-unit">µs</span>
+                    <input type="checkbox" id="ww2-servo-invert" name="ww2-servo-invert" style="margin-left:6px; vertical-align:middle;">
+                    <label for="ww2-servo-invert" style="font-size:0.8em; color:#aaa; margin-left:2px; cursor:pointer; white-space:nowrap;">inv.</label>
                 </div>
                 <div class="option-row">
                     <label for="servo-range-mode" class="info-label" onclick="showFunctionInfo('range-mode')">Range Mode:</label>
@@ -2785,6 +2793,10 @@
     s['ww-servo-max']        = parseInt(document.getElementById('ww-servo-max').value) || 2200;
     s['ww2-servo-min']       = parseInt(document.getElementById('ww2-servo-min').value) || 800;
     s['ww2-servo-max']       = parseInt(document.getElementById('ww2-servo-max').value) || 2200;
+    s['ru-servo-invert']     = document.getElementById('ru-servo-invert').checked  ? 1 : 0;
+    s['tl-servo-invert']     = document.getElementById('tl-servo-invert').checked  ? 1 : 0;
+    s['ww-servo-invert']     = document.getElementById('ww-servo-invert').checked  ? 1 : 0;
+    s['ww2-servo-invert']    = document.getElementById('ww2-servo-invert').checked ? 1 : 0;
     s['rdt-rx-pin']          = parseInt(document.getElementById('rdt-rx-pin').value);
     s['start-button-pin']    = parseInt(document.getElementById('start-button-pin').value);
     s['hook-type']           = document.getElementById('hook-type').value;
@@ -2830,10 +2842,15 @@
       const ww2UiValue = parseInt(document.getElementById(key + '-ww2').value);
 
       // UI değerlerini PWM'e dönüştür (JSON'da her zaman PWM olarak saklanır)
-      timer.ru = uiValueToPwm(ruUiValue, currentMode, 'ru');
-      timer.tl = uiValueToPwm(tlUiValue, currentMode, 'tl');
-      timer.ww = uiValueToPwm(wwUiValue, currentMode, 'ww');
-      timer.ww2 = uiValueToPwm(ww2UiValue, currentMode, 'ww2');
+      // Servo invert seçiliyse, 1500µs merkezine göre ayna değeri kaydedilir
+      var ruPwm  = uiValueToPwm(ruUiValue,  currentMode, 'ru');
+      var tlPwm  = uiValueToPwm(tlUiValue,  currentMode, 'tl');
+      var wwPwm  = uiValueToPwm(wwUiValue,  currentMode, 'ww');
+      var ww2Pwm = uiValueToPwm(ww2UiValue, currentMode, 'ww2');
+      timer.ru  = isServoInverted('ru')  ? applyServoInvert(ruPwm)  : ruPwm;
+      timer.tl  = isServoInverted('tl')  ? applyServoInvert(tlPwm)  : tlPwm;
+      timer.ww  = isServoInverted('ww')  ? applyServoInvert(wwPwm)  : wwPwm;
+      timer.ww2 = isServoInverted('ww2') ? applyServoInvert(ww2Pwm) : ww2Pwm;
     }
 
     // Update all timers
@@ -3462,6 +3479,17 @@
     }
 
     // UI değerini PWM değerine dönüştür (servoName: 'ru','tl','ww','ww2')
+    // Servo invert helper: mirrors a µs value around 1500µs center (self-inverse)
+    function applyServoInvert(us) {
+        return 3000 - us;
+    }
+
+    // Returns true if the invert checkbox for the given servo name is checked
+    function isServoInverted(name) {
+        var cb = document.getElementById(name + '-servo-invert');
+        return cb && cb.checked;
+    }
+
     function uiValueToPwm(uiValue, mode, servoName) {
         var value = parseInt(uiValue);
         if (isNaN(value)) return 1500;
@@ -4167,7 +4195,11 @@
                             var servoElement = document.getElementById(timerKey + '-' + servo);
                             if (servoElement) {
                                 // JSON'daki değer her zaman PWM (1000-2000µs)
-                                const pwmValue = timer[servo];
+                                // Servo invert seçiliyse JSON'da ters değer saklıdır — gösterim için geri çevir
+                                var pwmValue = timer[servo];
+                                if (presetData[servo + '-servo-invert'] == 1) {
+                                    pwmValue = applyServoInvert(pwmValue);
+                                }
 
                                 // PWM'i UI formatına dönüştür (targetRangeMode zaten set edildi)
                                 const uiValue = pwmToUiValue(pwmValue, targetRangeMode, servo);

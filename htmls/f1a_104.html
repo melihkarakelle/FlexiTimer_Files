@@ -3476,9 +3476,9 @@
             case '0-255':
                 return { min: 0, max: 255 };
             case '1000-2000':
-                return { min: 800, max: 2200 };
+                return { min: 500, max: 2500 };
             default:
-                return { min: 800, max: 2200 };
+                return { min: 500, max: 2500 };
         }
     }
 
@@ -3500,12 +3500,12 @@
 
         switch(mode) {
             case '0-100': {
-                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var range = servoName ? getServoMinMax(servoName) : { min: 500, max: 2500 };
                 var span = range.max - range.min;
                 return Math.round(range.min + (value * span / 100));
             }
             case '0-255': {
-                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var range = servoName ? getServoMinMax(servoName) : { min: 500, max: 2500 };
                 var span = range.max - range.min;
                 return Math.round(range.min + (value * span / 255));
             }
@@ -3523,13 +3523,13 @@
 
         switch(mode) {
             case '0-100': {
-                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var range = servoName ? getServoMinMax(servoName) : { min: 500, max: 2500 };
                 var span = range.max - range.min;
                 if (span === 0) return 50;
                 return Math.max(0, Math.min(100, Math.round((value - range.min) * 100 / span)));
             }
             case '0-255': {
-                var range = servoName ? getServoMinMax(servoName) : { min: 800, max: 2200 };
+                var range = servoName ? getServoMinMax(servoName) : { min: 500, max: 2500 };
                 var span = range.max - range.min;
                 if (span === 0) return 127;
                 return Math.max(0, Math.min(255, Math.round((value - range.min) * 255 / span)));

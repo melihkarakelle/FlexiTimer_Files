@@ -2211,6 +2211,7 @@
    <script>
   // Global değişken - cihazdan gelen tüm JSON
   var fullDeviceJson = null;
+  var MAX_PRESET_COUNT = 8;
 
   // Eski pin değerlerini sakla (çakışma durumunda geri dönmek için)
   const previousPinValues = {};
@@ -2506,10 +2507,11 @@
     document.getElementById('presetChangedModal').classList.remove('show');
   }
 
-  // Delete butonunu güncelle
+  // Delete ve Add butonlarını güncelle
   function updateDeleteButton() {
     var selector = document.getElementById('preset-selector');
     var deleteBtn = document.querySelector('.delete-btn');
+    var addBtn = document.querySelector('.add-btn');
     var selectedIndex = parseInt(selector.value);
 
     // Index 1 (default) veya tek preset varsa delete disable
@@ -2518,12 +2520,27 @@
     } else {
       deleteBtn.disabled = false;
     }
+
+    // MAX_PRESET_COUNT'a ulaşıldıysa add disable
+    if (fullDeviceJson.presets.length >= MAX_PRESET_COUNT) {
+      addBtn.disabled = true;
+      addBtn.title = 'Maximum ' + MAX_PRESET_COUNT + ' presets reached';
+    } else {
+      addBtn.disabled = false;
+      addBtn.title = 'Add New Preset';
+    }
   }
 
   // Add preset modal göster
   function addNewPreset() {
     if (!fullDeviceJson) {
       alert('Device JSON not loaded yet');
+      return;
+    }
+
+    // Limit kontrolü
+    if (fullDeviceJson.presets.length >= MAX_PRESET_COUNT) {
+      showInfoModal('Preset Limit Reached', 'Maximum ' + MAX_PRESET_COUNT + ' presets allowed. Delete an existing preset to add a new one.');
       return;
     }
 

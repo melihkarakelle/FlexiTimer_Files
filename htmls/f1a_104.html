@@ -4218,9 +4218,20 @@
             }
 
             // Hook tipini güncelle ve seçenekleri göster
+            // updateHookOptions() DOM'u yeniden oluşturur — pin değerlerini önceden kaydet, sonra geri yükle
             var hookTypeElement = document.getElementById('hook-type');
             if (hookTypeElement && typeof updateHookOptions === 'function') {
+                var savedSw1   = presetData['hook-sw1-pin']   !== undefined ? presetData['hook-sw1-pin']   : null;
+                var savedSw2   = presetData['hook-sw2-pin']   !== undefined ? presetData['hook-sw2-pin']   : null;
+                var savedServo = presetData['hook-servo-pin'] !== undefined ? presetData['hook-servo-pin'] : null;
+                var savedEnc   = presetData['encoder-pin']    !== undefined ? presetData['encoder-pin']    : null;
+
                 updateHookOptions();
+
+                if (savedSw1   !== null && document.getElementById('hook-sw1-pin'))   document.getElementById('hook-sw1-pin').value   = savedSw1;
+                if (savedSw2   !== null && document.getElementById('hook-sw2-pin'))   document.getElementById('hook-sw2-pin').value   = savedSw2;
+                if (savedServo !== null && document.getElementById('hook-servo-pin')) document.getElementById('hook-servo-pin').value = savedServo;
+                if (savedEnc   !== null && document.getElementById('encoder-pin'))    document.getElementById('encoder-pin').value    = savedEnc;
             }
 
             // Pin değerlerini başlangıç değeri olarak kaydet (çakışma kontrolü için)

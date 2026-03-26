@@ -3241,7 +3241,7 @@
         pwmUs = Math.max(500, Math.min(2500, pwmUs));
 
         try {
-            FormChannel.postMessage(JSON.stringify({ SET_SERVO_POS: { pin: info.pin, value: pwmUs } }));
+            FormChannel.postMessage(JSON.stringify({ SET_SERVO_POS: { servo: info.servoName, value: pwmUs } }));
             testBtn.classList.add('test-success');
             setTimeout(function() { testBtn.classList.remove('test-success'); }, 600);
         } catch(e) {

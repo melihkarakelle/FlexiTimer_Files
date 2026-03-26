@@ -3070,7 +3070,6 @@
     let previousValue = '0.00';
     let isServoInput = false;
     let currentInputType = '';
-    let servoTestPerformedThisSession = false;
 
     // Servo değerleri için önceki değerleri sakla
     const previousServoValues = {};
@@ -3176,7 +3175,6 @@
         hideNumberError();
 
         // Test butonu: sadece servo input'larda göster
-        servoTestPerformedThisSession = false;
         var testBtn = document.getElementById('numberTestBtn');
         var actionBtns = document.getElementById('numberModalActionButtons');
         if (isServoInput) {
@@ -3194,11 +3192,6 @@
 
     // Number input modal kapat
     function closeNumberInputModal() {
-        // Test yapıldıysa SERVOTESTER_END gönder (firmware normal moda dönsün)
-        if (servoTestPerformedThisSession) {
-            try { FormChannel.postMessage(JSON.stringify({ SERVOTESTER_END: true })); } catch(e) {}
-            servoTestPerformedThisSession = false;
-        }
         document.getElementById('numberInputModal').classList.remove('show');
         currentEditingInput = null;
         currentInputString = '';
@@ -3248,8 +3241,7 @@
         pwmUs = Math.max(500, Math.min(2500, pwmUs));
 
         try {
-            FormChannel.postMessage(JSON.stringify({ SERVOTESTER: { pin: info.pin, value: pwmUs } }));
-            servoTestPerformedThisSession = true;
+            FormChannel.postMessage(JSON.stringify({ SET_SERVO_POS: { pin: info.pin, value: pwmUs } }));
             testBtn.classList.add('test-success');
             setTimeout(function() { testBtn.classList.remove('test-success'); }, 600);
         } catch(e) {

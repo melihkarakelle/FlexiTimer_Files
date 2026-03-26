@@ -232,6 +232,13 @@
             margin-top: 10px;
         }
 
+        .timer-grid-separator {
+            grid-column: 1 / -1;
+            height: 4px;
+            background: #666;
+            margin: 0;
+        }
+
         /* Servo kolonlarını gizlemek için (Not Used seçildiğinde) */
         /* display: none ile gizle, grid otomatik ayarlansın */
         .timer-grid.hide-ru .ru-column {
@@ -1268,6 +1275,30 @@
             background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%);
         }
 
+        .number-btn-test {
+            background: linear-gradient(135deg, #00796B 0%, #004D40 100%);
+            border-color: #26A69A;
+            color: #fff;
+            font-size: 14px;
+            display: none;
+        }
+
+        .number-btn-test:active {
+            background: linear-gradient(135deg, #004D40 0%, #002B22 100%);
+        }
+
+        .number-btn-test.test-success {
+            background: linear-gradient(135deg, #388E3C 0%, #1B5E20 100%);
+            border-color: #66BB6A;
+            transition: background 0.15s;
+        }
+
+        .number-btn-test.test-error {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            border-color: #f44336;
+            transition: background 0.15s;
+        }
+
         .action-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1572,8 +1603,9 @@
                     <div id="numberErrorMessage" class="number-error-message"></div>
 
                     <!-- Action buttons -->
-                    <div class="action-buttons">
+                    <div class="action-buttons" id="numberModalActionButtons">
                         <button type="button" class="number-btn number-btn-clear" onclick="closeNumberInputModal()">Cancel</button>
+                        <button type="button" class="number-btn number-btn-test" id="numberTestBtn" onclick="testServoFromModal()">⚡ Test</button>
                         <button type="button" class="number-btn number-btn-action" onclick="confirmNumberValue()">✓ OK</button>
                     </div>
                 </div>
@@ -1700,6 +1732,8 @@
                     <div class="timer-cell ww2-column">
                         <input type="number" id="ola-ww2" name="ola-ww2" min="500" max="2500" value="1294">
                     </div>
+
+                    <div class="timer-grid-separator"></div>
 
                     <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
                     <div class="timer-cell"></div>
@@ -1868,6 +1902,8 @@
                     <div class="timer-cell ww2-column">
                         <input type="number" id="gl-ww2" name="gl-ww2" min="500" max="2500" value="1020">
                     </div>
+
+                    <div class="timer-grid-separator"></div>
 
                     <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
                     <div class="timer-cell">
@@ -3034,6 +3070,7 @@
     let previousValue = '0.00';
     let isServoInput = false;
     let currentInputType = '';
+    let servoTestPerformedThisSession = false;
 
     // Servo değerleri için önceki değerleri sakla
     const previousServoValues = {};
@@ -3138,16 +3175,88 @@
         // Error mesajını gizle
         hideNumberError();
 
+        // Test butonu: sadece servo input'larda göster
+        servoTestPerformedThisSession = false;
+        var testBtn = document.getElementById('numberTestBtn');
+        var actionBtns = document.getElementById('numberModalActionButtons');
+        if (isServoInput) {
+            testBtn.style.display = '';
+            testBtn.classList.remove('test-success', 'test-error');
+            actionBtns.style.gridTemplateColumns = '1fr 1fr 1fr';
+        } else {
+            testBtn.style.display = 'none';
+            actionBtns.style.gridTemplateColumns = '1fr 1fr';
+        }
+
         // Modal'ı göster
         document.getElementById('numberInputModal').classList.add('show');
     }
 
     // Number input modal kapat
     function closeNumberInputModal() {
+        // Test yapıldıysa SERVOTESTER_END gönder (firmware normal moda dönsün)
+        if (servoTestPerformedThisSession) {
+            try { FormChannel.postMessage(JSON.stringify({ SERVOTESTER_END: true })); } catch(e) {}
+            servoTestPerformedThisSession = false;
+        }
         document.getElementById('numberInputModal').classList.remove('show');
         currentEditingInput = null;
         currentInputString = '';
         hideNumberError();
+    }
+
+    // Servo adı ve pin numarasını currentEditingInput'tan çıkar
+    // Input ID formatı: 'pu1-ru', 'cr3-ww', 'bu2-ww2', 'gl-tl' vs.
+    // Döndürür: { servoName: 'ru'|'tl'|'ww'|'ww2', pin: 1-9 } veya null
+    function getServoNameAndPin() {
+        if (!currentEditingInput || !isServoInput) return null;
+        var match = currentEditingInput.id.match(/-(ru|tl|ww2|ww)$/); // ww2 önce!
+        if (!match) return null;
+        var servoName = match[1];
+        if (!fullDeviceJson || !fullDeviceJson.settings) return null;
+        var pin = parseInt(fullDeviceJson.settings[servoName + '-servo-pin']);
+        if (isNaN(pin)) return null;
+        return { servoName: servoName, pin: pin };
+    }
+
+    // Modal içindeki mevcut değeri cihaz servosuna anlık uygula
+    function testServoFromModal() {
+        var info = getServoNameAndPin();
+        var testBtn = document.getElementById('numberTestBtn');
+
+        // Pin "Not Used" veya bulunamadı
+        if (!info || info.pin === 0) {
+            showNumberError('⚠️ Servo pin is "Not Used" — cannot test');
+            testBtn.classList.add('test-error');
+            setTimeout(function() { testBtn.classList.remove('test-error'); }, 800);
+            return;
+        }
+
+        // Keypad'de yazılan string'i al (yoksa input'un mevcut değeri)
+        var rawValue = (currentInputString !== '' && currentInputString !== '_')
+            ? currentInputString : (currentEditingInput ? currentEditingInput.value : '');
+        var numValue = parseInt(rawValue);
+
+        if (isNaN(numValue)) {
+            showNumberError('⚠️ Enter a value first');
+            return;
+        }
+
+        // UI değerini PWM µs'e dönüştür (mevcut range mode'a göre)
+        var currentMode = window.currentServoRangeMode || '1000-2000';
+        var pwmUs = uiValueToPwm(numValue, currentMode, info.servoName);
+        pwmUs = Math.max(500, Math.min(2500, pwmUs));
+
+        try {
+            FormChannel.postMessage(JSON.stringify({ SERVOTESTER: { pin: info.pin, value: pwmUs } }));
+            servoTestPerformedThisSession = true;
+            testBtn.classList.add('test-success');
+            setTimeout(function() { testBtn.classList.remove('test-success'); }, 600);
+        } catch(e) {
+            showNumberError('⚠️ BLE not connected');
+            testBtn.classList.add('test-error');
+            setTimeout(function() { testBtn.classList.remove('test-error'); }, 800);
+        }
     }
 
     // Error message göster

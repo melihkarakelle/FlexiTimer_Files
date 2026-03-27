@@ -1673,21 +1673,6 @@
                     <div class="timer-header ww-column" id="header-ww">WW</div>
                     <div class="timer-header ww2-column" id="header-ww2">WW2</div>
 
-                    <div class="timer-cell function-name" title="Power ON" onclick="showFunctionInfo('on')">On</div>
-                    <div class="timer-cell"></div>
-                    <div class="timer-cell ru-column">
-                        <input type="number" id="on-ru" name="on-ru" min="500" max="2500" value="1176">
-                    </div>
-                    <div class="timer-cell tl-column">
-                        <input type="number" id="on-tl" name="on-tl" min="500" max="2500" value="1137">
-                    </div>
-                    <div class="timer-cell ww-column">
-                        <input type="number" id="on-ww" name="on-ww" min="500" max="2500" value="1000">
-                    </div>
-                    <div class="timer-cell ww2-column">
-                        <input type="number" id="on-ww2" name="on-ww2" min="500" max="2500" value="1000">
-                    </div>
-
                     <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
                     <div class="timer-cell"></div>
                     <div class="timer-cell ru-column">
@@ -2911,7 +2896,6 @@
     }
 
     // Update all timers
-    updateTimer('on');
     updateTimer('str');
     updateTimer('cir');
     updateTimer('ola');

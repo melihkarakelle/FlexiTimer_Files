@@ -354,6 +354,12 @@
             background-color: rgba(255, 215, 0, 0.3);
         }
 
+        .timer-cell.function-name.phase-active {
+            background-color: rgba(255, 200, 0, 0.40);
+            box-shadow: inset 0 0 8px rgba(255, 200, 0, 0.5);
+            transition: background-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
         /* Info Label - Clickable labels with hover effect */
         .info-label {
             cursor: pointer;
@@ -1673,7 +1679,7 @@
                     <div class="timer-header ww-column" id="header-ww">WW</div>
                     <div class="timer-header ww2-column" id="header-ww2">WW2</div>
 
-                    <div class="timer-cell function-name" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
+                    <div class="timer-cell function-name" data-phase="str" title="Straight Tow" onclick="showFunctionInfo('str')">Str</div>
                     <div class="timer-cell"></div>
                     <div class="timer-cell ru-column">
                         <input type="number" id="str-ru" name="str-ru" min="500" max="2500" value="1020">
@@ -1688,7 +1694,7 @@
                         <input type="number" id="str-ww2" name="str-ww2" min="500" max="2500" value="1196">
                     </div>
 
-                    <div class="timer-cell function-name" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
+                    <div class="timer-cell function-name" data-phase="cir" title="Circle Tow" onclick="showFunctionInfo('cir')">Cir</div>
                     <div class="timer-cell"></div>
                     <div class="timer-cell ru-column">
                         <input type="number" id="cir-ru" name="cir-ru" min="500" max="2500" value="1412">
@@ -1703,7 +1709,7 @@
                         <input type="number" id="cir-ww2" name="cir-ww2" min="500" max="2500" value="1588">
                     </div>
 
-                    <div class="timer-cell function-name" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
+                    <div class="timer-cell function-name" data-phase="ola" title="On Line Acceleration" onclick="showFunctionInfo('ola')">OLA</div>
                     <div class="timer-cell"></div>
                     <div class="timer-cell ru-column">
                         <input type="number" id="ola-ru" name="ola-ru" min="500" max="2500" value="1137">
@@ -1720,7 +1726,7 @@
 
                     <div class="timer-grid-separator"></div>
 
-                    <div class="timer-cell function-name" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
+                    <div class="timer-cell function-name" data-phase="pu1" title="Pitch Up 1" onclick="showFunctionInfo('pu1')">Pu1</div>
                     <div class="timer-cell"></div>
                     <div class="timer-cell ru-column">
                         <input type="number" id="pu1-ru" name="pu1-ru" min="500" max="2500" value="1137">
@@ -1735,7 +1741,7 @@
                         <input type="number" id="pu1-ww2" name="pu1-ww2" min="500" max="2500" value="1294">
                     </div>
 
-                    <div class="timer-cell function-name" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
+                    <div class="timer-cell function-name" data-phase="pu2" title="Pitch Up 2" onclick="showFunctionInfo('pu2')">Pu2</div>
                     <div class="timer-cell">
                         <input type="number" id="pu2-time" name="pu2-time" min="0" max="10" step="0.01" value="0.03">
                     </div>
@@ -1752,7 +1758,7 @@
                         <input type="number" id="pu2-ww2" name="pu2-ww2" min="500" max="2500" value="1275">
                     </div>
 
-                    <div class="timer-cell function-name" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
+                    <div class="timer-cell function-name" data-phase="cr1" title="Cruise 1" onclick="showFunctionInfo('cr1')">Cr1</div>
                     <div class="timer-cell">
                         <input type="number" id="cr1-time" name="cr1-time" min="0" max="10" step="0.01" value="0.1">
                     </div>
@@ -1769,7 +1775,7 @@
                         <input type="number" id="cr1-ww2" name="cr1-ww2" min="500" max="2500" value="1235">
                     </div>
 
-                    <div class="timer-cell function-name" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
+                    <div class="timer-cell function-name" data-phase="cr2" title="Cruise 2" onclick="showFunctionInfo('cr2')">Cr2</div>
                     <div class="timer-cell">
                         <input type="number" id="cr2-time" name="cr2-time" min="0" max="10" step="0.01" value="0.4">
                     </div>
@@ -1786,7 +1792,7 @@
                         <input type="number" id="cr2-ww2" name="cr2-ww2" min="500" max="2500" value="1235">
                     </div>
 
-                    <div class="timer-cell function-name" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
+                    <div class="timer-cell function-name" data-phase="cr3" title="Cruise 3" onclick="showFunctionInfo('cr3')">Cr3</div>
                     <div class="timer-cell">
                         <input type="number" id="cr3-time" name="cr3-time" min="0" max="10" step="0.01" value="0.7">
                     </div>
@@ -1803,7 +1809,7 @@
                         <input type="number" id="cr3-ww2" name="cr3-ww2" min="500" max="2500" value="1235">
                     </div>
 
-                    <div class="timer-cell function-name" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
+                    <div class="timer-cell function-name" data-phase="bu1" title="Bunt 1" onclick="showFunctionInfo('bu1')">Bu1</div>
                     <div class="timer-cell">
                         <input type="number" id="bu1-time" name="bu1-time" min="0" max="10" step="0.01" value="0.7">
                     </div>
@@ -1820,7 +1826,7 @@
                         <input type="number" id="bu1-ww2" name="bu1-ww2" min="500" max="2500" value="1235">
                     </div>
 
-                    <div class="timer-cell function-name" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
+                    <div class="timer-cell function-name" data-phase="bu2" title="Bunt 2" onclick="showFunctionInfo('bu2')">Bu2</div>
                     <div class="timer-cell">
                         <input type="number" id="bu2-time" name="bu2-time" min="0" max="10" step="0.01" value="0.5">
                     </div>
@@ -1837,7 +1843,7 @@
                         <input type="number" id="bu2-ww2" name="bu2-ww2" min="500" max="2500" value="1294">
                     </div>
 
-                    <div class="timer-cell function-name" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
+                    <div class="timer-cell function-name" data-phase="bu3" title="Bunt 3" onclick="showFunctionInfo('bu3')">Bu3</div>
                     <div class="timer-cell">
                         <input type="number" id="bu3-time" name="bu3-time" min="0" max="10" step="0.01" value="1.1">
                     </div>
@@ -1854,7 +1860,7 @@
                         <input type="number" id="bu3-ww2" name="bu3-ww2" min="500" max="2500" value="1333">
                     </div>
 
-                    <div class="timer-cell function-name" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
+                    <div class="timer-cell function-name" data-phase="fg" title="Fast Glide" onclick="showFunctionInfo('fg')">Fg</div>
                     <div class="timer-cell">
                         <input type="number" id="fg-time" name="fg-time" min="0" max="999" step="0.1" value="1.7">
                     </div>
@@ -1871,7 +1877,7 @@
                         <input type="number" id="fg-ww2" name="fg-ww2" min="500" max="2500" value="1059">
                     </div>
 
-                    <div class="timer-cell function-name" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
+                    <div class="timer-cell function-name" data-phase="gl" title="Glide" onclick="showFunctionInfo('gl')">GL</div>
                     <div class="timer-cell">
                         <input type="number" id="gl-time" name="gl-time" min="0" max="999" step="0.1" value="7.1">
                     </div>
@@ -1890,7 +1896,7 @@
 
                     <div class="timer-grid-separator"></div>
 
-                    <div class="timer-cell function-name" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
+                    <div class="timer-cell function-name" data-phase="dt" title="De-Thermalised" onclick="showFunctionInfo('dt')">DT</div>
                     <div class="timer-cell">
                         <input type="number" id="dt-time" name="dt-time" min="0" max="999" step="0.1" value="180">
                     </div>
@@ -1907,7 +1913,7 @@
                         <input type="number" id="dt-ww2" name="dt-ww2" min="500" max="2500" value="1000">
                     </div>
 
-                    <div class="timer-cell function-name" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
+                    <div class="timer-cell function-name" data-phase="pk" title="Park mode 10s after DT" onclick="showFunctionInfo('pk')">Pk</div>
                     <div class="timer-cell">
                         <input type="number" id="pk-time" name="pk-time" min="1" max="60" step="0.5" value="2">
                     </div>
@@ -3047,6 +3053,23 @@
             updateStrobeAnimation();
         }
     });
+
+    // ========== TIMER PHASE LIVE HIGHLIGHT ==========
+    // Called by Flutter app via runJavaScript when a TIMER_PHASE: BLE packet arrives.
+    // phase: 0=OFF, 1=STR, 2=CIR, 3=OLA, 4=PU1, 5=PU2, 6=CR1..8=CR3,
+    //        9=BU1..11=BU3, 12=FG, 13=GL, 14=DT, 15=PK
+    const PHASE_KEY = ['','str','cir','ola','pu1','pu2','cr1','cr2','cr3','bu1','bu2','bu3','fg','gl','dt','pk'];
+
+    function onTimerPhaseUpdate(phase) {
+        document.querySelectorAll('.timer-cell.function-name').forEach(function(el) {
+            el.classList.remove('phase-active');
+        });
+        var key = PHASE_KEY[phase];
+        if (key) {
+            var el = document.querySelector('[data-phase="' + key + '"]');
+            if (el) el.classList.add('phase-active');
+        }
+    }
 
     // ========== NUMBER INPUT MODAL FUNCTIONS ==========
     let currentEditingInput = null;

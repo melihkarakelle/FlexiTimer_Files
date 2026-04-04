@@ -2799,6 +2799,9 @@
       const currentTimeMode = window.currentTimeMode || 'interval';
       if (currentTimeMode === 'absolute') {
         convertAllTimeInputs('interval');
+        // convertAllTimeInputs sets window.currentTimeMode = 'interval', restore it
+        // so that s['time-mode'] below saves the user's actual preference
+        window.currentTimeMode = 'absolute';
       }
 
       // SAVE butonunu disable et ve "SAVING..." yap

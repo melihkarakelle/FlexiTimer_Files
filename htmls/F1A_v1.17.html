@@ -4403,13 +4403,15 @@
             if (presetData['time-mode']) {
                 var timeModeElement = document.getElementById('time-mode');
                 if (timeModeElement) {
-                    timeModeElement.value = presetData['time-mode'];
-                    window.currentTimeMode = presetData['time-mode'];
-                    // Trigger time mode update to convert all time values
-                    if (typeof updateTimeMode === 'function') {
-                        updateTimeMode();
+                    var targetTimeMode = presetData['time-mode'];
+                    timeModeElement.value = targetTimeMode;
+                    // JSON values are always stored as intervals — reset currentTimeMode
+                    // to 'interval' first so convertAllTimeInputs sees a real mode change
+                    window.currentTimeMode = 'interval';
+                    if (typeof convertAllTimeInputs === 'function') {
+                        convertAllTimeInputs(targetTimeMode);
                     }
-                    console.log('✅ Time Mode restored:', presetData['time-mode']);
+                    console.log('✅ Time Mode restored:', targetTimeMode);
                 }
             }
 

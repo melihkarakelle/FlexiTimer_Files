@@ -2864,6 +2864,10 @@
     s['enc-circle']          = encCElem ? (parseInt(encCElem.value) || 0) : 300;
     var encOElem = document.getElementById('enc-ola');
     s['enc-ola']             = encOElem ? (parseInt(encOElem.value) || 0) : 600;
+    var latElem = document.getElementById('hook-servo-latched');
+    s['hook-servo-latched']   = latElem ? (parseInt(latElem.value) || 1000) : 1000;
+    var unlatElem = document.getElementById('hook-servo-unlatched');
+    s['hook-servo-unlatched'] = unlatElem ? (parseInt(unlatElem.value) || 2000) : 2000;
     s['max-sink-value']      = parseFloat(document.getElementById('max-sink-value').value);
     s['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
     s['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
@@ -4220,6 +4224,14 @@
                         </select>
                     </div>
                     <div class="option-row">
+                        <label for="hook-servo-latched" class="info-label" onclick="showFunctionInfo('hook-servo-pos')">Latched µs:</label>
+                        <input type="number" id="hook-servo-latched" name="hook-servo-latched" min="500" max="2500" step="10" value="1000">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-unlatched" class="info-label" onclick="showFunctionInfo('hook-servo-pos')">Unlatched µs:</label>
+                        <input type="number" id="hook-servo-unlatched" name="hook-servo-unlatched" min="500" max="2500" step="10" value="2000">
+                    </div>
+                    <div class="option-row">
                         <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
                         <input type="checkbox" id="hook-accel" name="hook-accel">
                     </div>
@@ -4262,6 +4274,14 @@
                             <option value="8">S8</option>
                             <option value="9">S9</option>
                         </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-latched" class="info-label" onclick="showFunctionInfo('hook-servo-pos')">Latched µs:</label>
+                        <input type="number" id="hook-servo-latched" name="hook-servo-latched" min="500" max="2500" step="10" value="1000">
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-servo-unlatched" class="info-label" onclick="showFunctionInfo('hook-servo-pos')">Unlatched µs:</label>
+                        <input type="number" id="hook-servo-unlatched" name="hook-servo-unlatched" min="500" max="2500" step="10" value="2000">
                     </div>
                     <div class="option-row">
                         <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
@@ -4396,6 +4416,8 @@
                 var savedEncS  = presetData['enc-straight']    !== undefined ? presetData['enc-straight']    : null;
                 var savedEncC  = presetData['enc-circle']      !== undefined ? presetData['enc-circle']      : null;
                 var savedEncO  = presetData['enc-ola']         !== undefined ? presetData['enc-ola']         : null;
+                var savedLat   = presetData['hook-servo-latched']   !== undefined ? presetData['hook-servo-latched']   : null;
+                var savedUnlat = presetData['hook-servo-unlatched'] !== undefined ? presetData['hook-servo-unlatched'] : null;
 
                 updateHookOptions();
 
@@ -4409,6 +4431,8 @@
                 if (savedEncS  !== null && document.getElementById('enc-straight'))    document.getElementById('enc-straight').value    = savedEncS;
                 if (savedEncC  !== null && document.getElementById('enc-circle'))      document.getElementById('enc-circle').value      = savedEncC;
                 if (savedEncO  !== null && document.getElementById('enc-ola'))         document.getElementById('enc-ola').value         = savedEncO;
+                if (savedLat   !== null && document.getElementById('hook-servo-latched'))   document.getElementById('hook-servo-latched').value   = savedLat;
+                if (savedUnlat !== null && document.getElementById('hook-servo-unlatched')) document.getElementById('hook-servo-unlatched').value = savedUnlat;
             }
 
             // Pin değerlerini başlangıç değeri olarak kaydet (çakışma kontrolü için)
@@ -4548,6 +4572,11 @@
             icon: '🎯',
             title: 'Encoder Tow Values',
             description: 'Encoder hooks have forward compliance (usually against a spring). Three reference values define the envelope:\n\n• Straight Value: nominal straight-tow encoder reading.\n• Circle Value: backwards movement beyond this selects circle-tow servo settings.\n• OLA (High-Tension) Value: spring compressed to this reading (high tension) selects OLA servo settings.\n\nRange 0–1023 (10-bit ADC).'
+        },
+        'hook-servo-pos': {
+            icon: '🔧',
+            title: 'Hook Servo Positions (µs)',
+            description: 'The firmware drives the hook latch servo (on the Servo Pin) between two positions:\n\n• Latched µs: hook closed/latched for tow.\n• Unlatched µs: hook open/released.\n\nUsed for relatch (slow release) and release (quick release / accel). Range 500–2500 µs.\n\nNote: the hook servo shares servo channel 4 with WW2 — they cannot be used at the same time.'
         },
         'max-sink': {
             icon: '📉',

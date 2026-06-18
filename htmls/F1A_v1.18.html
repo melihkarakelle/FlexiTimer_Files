@@ -2075,6 +2075,16 @@
                 <div id="hook-options">
                     <!-- Bu alan dinamik olarak doldurulacak -->
                 </div>
+
+                <!-- OLA timing — tüm hook tiplerinde görünür (0 = suppress) -->
+                <div class="option-row">
+                    <label for="ola-delay" class="info-label" onclick="showFunctionInfo('ola-delay')">OLA Delay (s):</label>
+                    <input type="number" id="ola-delay" name="ola-delay" min="0" max="5" step="0.1" value="0.3">
+                </div>
+                <div class="option-row">
+                    <label for="ola-period" class="info-label" onclick="showFunctionInfo('ola-period')">OLA Period (s):</label>
+                    <input type="number" id="ola-period" name="ola-period" min="0" max="5" step="0.1" value="0.6">
+                </div>
             </div>
 
             <!-- Pin Header Layout bölümü -->
@@ -2839,6 +2849,21 @@
     s['hook-servo-pin']      = hookServoElem ? parseInt(hookServoElem.value) : -1;
     var encoderPinElem = document.getElementById('encoder-pin');
     s['encoder-pin']         = encoderPinElem ? parseInt(encoderPinElem.value) : -1;
+    // Hook envelope parametreleri (HELP) — tipe göre koşullu elemanlar; yoksa varsayılan yaz.
+    var accelElem = document.getElementById('hook-accel');
+    s['hook-accel']          = accelElem ? (accelElem.checked ? 1 : 0) : 0;
+    var ms2InvElem = document.getElementById('hook-ms2-invert');
+    s['hook-ms2-invert']     = ms2InvElem ? (ms2InvElem.checked ? 1 : 0) : 0;
+    s['ola-delay']           = parseFloat(document.getElementById('ola-delay').value)  || 0;
+    s['ola-period']          = parseFloat(document.getElementById('ola-period').value) || 0;
+    var rtElem = document.getElementById('release-time');
+    s['release-time']        = rtElem ? (parseFloat(rtElem.value) || 0) : 0.3;
+    var encSElem = document.getElementById('enc-straight');
+    s['enc-straight']        = encSElem ? (parseInt(encSElem.value) || 0) : 100;
+    var encCElem = document.getElementById('enc-circle');
+    s['enc-circle']          = encCElem ? (parseInt(encCElem.value) || 0) : 300;
+    var encOElem = document.getElementById('enc-ola');
+    s['enc-ola']             = encOElem ? (parseInt(encOElem.value) || 0) : 600;
     s['max-sink-value']      = parseFloat(document.getElementById('max-sink-value').value);
     s['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
     s['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
@@ -4069,8 +4094,11 @@
         // Event delegation: Hook options container değişikliklerini dinle
         // innerHTML ile içerik değişse bile tek listener yeterli (memory leak yok)
         const hookOptionsContainer = document.getElementById('hook-options');
+        // Sadece pin seçicileri (S1-S9 select'leri) çakışma kontrolü + diyagram tetikler.
+        // Envelope parametreleri (accel/ms2-invert/release-time/enc-*) pin değildir, atlanır.
+        const hookPinIds = ['hook-sw1-pin', 'hook-sw2-pin', 'hook-servo-pin', 'encoder-pin'];
         hookOptionsContainer.addEventListener('change', function(e) {
-            if (e.target.matches('select, input')) {
+            if (e.target.matches('select') && hookPinIds.indexOf(e.target.id) !== -1) {
                 validatePinAssignments(e.target.id);
                 updatePinDiagram();
             }
@@ -4136,6 +4164,10 @@
                             <option value="9">S9</option>
                         </select>
                     </div>
+                    <div class="option-row">
+                        <label for="hook-ms2-invert" class="info-label" onclick="showFunctionInfo('hook-ms2-invert')">Reverse MS2 (Hall):</label>
+                        <input type="checkbox" id="hook-ms2-invert" name="hook-ms2-invert">
+                    </div>
                 </div>
             `;
         } else if (hookType === '2switch_servo') {
@@ -4187,6 +4219,14 @@
                             <option value="9">S9</option>
                         </select>
                     </div>
+                    <div class="option-row">
+                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
+                        <input type="checkbox" id="hook-accel" name="hook-accel">
+                    </div>
+                    <div class="option-row">
+                        <label for="release-time" class="info-label" onclick="showFunctionInfo('release-time')">Release Time (s):</label>
+                        <input type="number" id="release-time" name="release-time" min="0" max="5" step="0.1" value="0.3">
+                    </div>
                 </div>
             `;
         } else if (hookType === 'rotary_servo') {
@@ -4222,6 +4262,26 @@
                             <option value="8">S8</option>
                             <option value="9">S9</option>
                         </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
+                        <input type="checkbox" id="hook-accel" name="hook-accel">
+                    </div>
+                    <div class="option-row">
+                        <label for="release-time" class="info-label" onclick="showFunctionInfo('release-time')">Release Time (s):</label>
+                        <input type="number" id="release-time" name="release-time" min="0" max="5" step="0.1" value="0.3">
+                    </div>
+                    <div class="option-row">
+                        <label for="enc-straight" class="info-label" onclick="showFunctionInfo('encoder-values')">Straight Value:</label>
+                        <input type="number" id="enc-straight" name="enc-straight" min="0" max="1023" step="1" value="100">
+                    </div>
+                    <div class="option-row">
+                        <label for="enc-circle" class="info-label" onclick="showFunctionInfo('encoder-values')">Circle Value:</label>
+                        <input type="number" id="enc-circle" name="enc-circle" min="0" max="1023" step="1" value="300">
+                    </div>
+                    <div class="option-row">
+                        <label for="enc-ola" class="info-label" onclick="showFunctionInfo('encoder-values')">OLA (High-Tension) Value:</label>
+                        <input type="number" id="enc-ola" name="enc-ola" min="0" max="1023" step="1" value="600">
                     </div>
                 </div>
             `;
@@ -4328,6 +4388,14 @@
                 var savedSw2   = presetData['hook-sw2-pin']   !== undefined ? presetData['hook-sw2-pin']   : null;
                 var savedServo = presetData['hook-servo-pin'] !== undefined ? presetData['hook-servo-pin'] : null;
                 var savedEnc   = presetData['encoder-pin']    !== undefined ? presetData['encoder-pin']    : null;
+                // Hook envelope parametreleri — bu elemanlar updateHookOptions() ile yeniden kurulur,
+                // bu yüzden DOM yeniden oluştuktan SONRA geri yüklenmeli (üstteki genel döngü göremez).
+                var savedAccel = presetData['hook-accel']      !== undefined ? presetData['hook-accel']      : null;
+                var savedMs2Inv= presetData['hook-ms2-invert'] !== undefined ? presetData['hook-ms2-invert'] : null;
+                var savedRt    = presetData['release-time']    !== undefined ? presetData['release-time']    : null;
+                var savedEncS  = presetData['enc-straight']    !== undefined ? presetData['enc-straight']    : null;
+                var savedEncC  = presetData['enc-circle']      !== undefined ? presetData['enc-circle']      : null;
+                var savedEncO  = presetData['enc-ola']         !== undefined ? presetData['enc-ola']         : null;
 
                 updateHookOptions();
 
@@ -4335,6 +4403,12 @@
                 if (savedSw2   !== null && document.getElementById('hook-sw2-pin'))   document.getElementById('hook-sw2-pin').value   = savedSw2;
                 if (savedServo !== null && document.getElementById('hook-servo-pin')) document.getElementById('hook-servo-pin').value = savedServo;
                 if (savedEnc   !== null && document.getElementById('encoder-pin'))    document.getElementById('encoder-pin').value    = savedEnc;
+                if (savedAccel !== null && document.getElementById('hook-accel'))      document.getElementById('hook-accel').checked      = (savedAccel === 1 || savedAccel === '1' || savedAccel === true);
+                if (savedMs2Inv!== null && document.getElementById('hook-ms2-invert')) document.getElementById('hook-ms2-invert').checked = (savedMs2Inv === 1 || savedMs2Inv === '1' || savedMs2Inv === true);
+                if (savedRt    !== null && document.getElementById('release-time'))    document.getElementById('release-time').value    = savedRt;
+                if (savedEncS  !== null && document.getElementById('enc-straight'))    document.getElementById('enc-straight').value    = savedEncS;
+                if (savedEncC  !== null && document.getElementById('enc-circle'))      document.getElementById('enc-circle').value      = savedEncC;
+                if (savedEncO  !== null && document.getElementById('enc-ola'))         document.getElementById('enc-ola').value         = savedEncO;
             }
 
             // Pin değerlerini başlangıç değeri olarak kaydet (çakışma kontrolü için)
@@ -4443,7 +4517,37 @@
         'hook-type': {
             icon: '🪝',
             title: 'Hook Type',
-            description: 'Determines how the model is released from the tow line. Options:\n\n• 2 Switch: Uses two mechanical switches to detect release\n• 2 Switch + Servo: Adds a servo for active hook release control\n• Rotary Enc. + Servo: Uses a rotary encoder with servo for precise release control\n\nThe hook type affects which pins are used and how the timer detects launch phases.'
+            description: 'Determines how the model is released from the tow line. Options:\n\n• 2 Switch: Uses two mechanical switches (MS1/MS2) to detect hook position. MS1 closed = hook forward (straight tow); both closed = OLA; both open = circle tow.\n• 2 Switch + Servo: Adds a servo for active hook release/relatch control.\n• Rotary Enc. + Servo: Uses a rotary encoder (angle values) with servo for precise release control.\n\nServo and encoder hooks can optionally use the accelerometer (~8g) to detect release. The hook type affects which pins are used and how the timer detects launch phases.'
+        },
+        'hook-accel': {
+            icon: '📐',
+            title: 'Accelerometer Release (~8g)',
+            description: 'When enabled, the launch (release) is confirmed by the accelerometer detecting roughly 8g, not only by the hook position change.\n\nWith accelerometer: the hook never re-latches — it just opens and stays open on release.\n\nWithout it: the hook may re-latch if tension is reduced but the hook does not move back within the Release Time.\n\nAvailable for servo and encoder hooks.'
+        },
+        'hook-ms2-invert': {
+            icon: '🔁',
+            title: 'Reverse MS2 (Hall Switch)',
+            description: 'Reverses the sense of the second switch (MS2) for 2-switch hooks.\n\nMany models use Hall-effect switches where MS2 is closed when latched and open when un-latched — the opposite of a standard mechanical switch.\n\nEnable this if your MS2 reads inverted.'
+        },
+        'ola-delay': {
+            icon: '⏲️',
+            title: 'OLA Delay (s)',
+            description: 'Time the hook/sensor must stay in the correct OLA position before the OLA servo movement begins (~0.3s typical).\n\nSet to 0 to suppress the OLA delay. Applies to all hook types.'
+        },
+        'ola-period': {
+            icon: '⏳',
+            title: 'OLA Period (s)',
+            description: 'Time over which the servos move to their final OLA positions after the OLA Delay has elapsed (~0.6s typical).\n\nSet to 0 to suppress the OLA ramp (instant move). Applies to all hook types.'
+        },
+        'release-time': {
+            icon: '⏱️',
+            title: 'Release Time (RT, s)',
+            description: 'At model release, line/hook tension drops and the hook moves backwards, which takes a finite time.\n\nIf the time after tension becomes low is < RT → run the flight programme.\nIf > RT → relatch (or, with accelerometer, simply suppress OLA).\n\n~0.3s typical. Applies to servo and encoder hooks.'
+        },
+        'encoder-values': {
+            icon: '🎯',
+            title: 'Encoder Tow Values',
+            description: 'Encoder hooks have forward compliance (usually against a spring). Three reference values define the envelope:\n\n• Straight Value: nominal straight-tow encoder reading.\n• Circle Value: backwards movement beyond this selects circle-tow servo settings.\n• OLA (High-Tension) Value: spring compressed to this reading (high tension) selects OLA servo settings.\n\nRange 0–1023 (10-bit ADC).'
         },
         'max-sink': {
             icon: '📉',

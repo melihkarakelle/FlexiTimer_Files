@@ -2057,24 +2057,6 @@
                         <option value="absolute">Absolute</option>
                     </select>
                 </div>
-
-                <!-- Start Button Pin seçici -->
-                <hr style="border: 1px solid #555; margin: 20px 0;">
-                <div class="option-row">
-                    <label for="start-button-pin" class="info-label" onclick="showFunctionInfo('start-button')">Start Button Pin:</label>
-                    <select id="start-button-pin" name="start-button-pin" onchange="updatePinDiagram()">
-                        <option value="0">Not Used</option>
-                        <option value="1">S1</option>
-                        <option value="2">S2</option>
-                        <option value="3">S3</option>
-                        <option value="4">S4</option>
-                        <option value="5">S5</option>
-                        <option value="6" selected>S6</option>
-                        <option value="7">S7</option>
-                        <option value="8">S8</option>
-                        <option value="9">S9</option>
-                    </select>
-                </div>
             </div>
 
             <!-- Hook Configuration bölümü -->
@@ -2261,8 +2243,7 @@
         { id: 'tl-servo-pin', name: 'TL Servo' },
         { id: 'ww-servo-pin', name: 'WW Servo' },
         { id: 'ww2-servo-pin', name: 'WW2 Servo' },
-        { id: 'rdt-rx-pin', name: 'RDT Rx' },
-        { id: 'start-button-pin', name: 'Start Button' }
+        { id: 'rdt-rx-pin', name: 'RDT Rx' }
       ];
 
       // Hook pinlerini ekle
@@ -2849,7 +2830,6 @@
     s['ww-servo-invert']     = document.getElementById('ww-servo-invert').checked  ? 1 : 0;
     s['ww2-servo-invert']    = document.getElementById('ww2-servo-invert').checked ? 1 : 0;
     s['rdt-rx-pin']          = parseInt(document.getElementById('rdt-rx-pin').value);
-    s['start-button-pin']    = parseInt(document.getElementById('start-button-pin').value);
     s['hook-type']           = document.getElementById('hook-type').value;
     var hookSw1Elem = document.getElementById('hook-sw1-pin');
     s['hook-sw1-pin']        = hookSw1Elem ? parseInt(hookSw1Elem.value) : -1;
@@ -3968,10 +3948,6 @@
         // RDT Rx pinini etiketlere yerleştir
         setPinLabel(rdtRxPin, "RDT Rx");
 
-        // Start Button pinini al ve etiketlere yerleştir
-        const startButtonPin = parseInt(document.getElementById('start-button-pin').value);
-        setPinLabel(startButtonPin, "Start Button");
-
         // Hook tipine göre diğer pinleri yerleştir
         if (hookType === "2switch") {
             // Hook switch pinlerini al
@@ -4080,10 +4056,6 @@
             updateColumnVisibility();
         });
         document.getElementById('rdt-rx-pin').addEventListener('change', function(e) {
-            validatePinAssignments(e.target.id);
-            updatePinDiagram();
-        });
-        document.getElementById('start-button-pin').addEventListener('change', function(e) {
             validatePinAssignments(e.target.id);
             updatePinDiagram();
         });
@@ -4371,7 +4343,6 @@
             previousPinValues['ww-servo-pin'] = document.getElementById('ww-servo-pin')?.value || '0';
             previousPinValues['ww2-servo-pin'] = document.getElementById('ww2-servo-pin')?.value || '0';
             previousPinValues['rdt-rx-pin'] = document.getElementById('rdt-rx-pin')?.value || '0';
-            previousPinValues['start-button-pin'] = document.getElementById('start-button-pin')?.value || '0';
 
             // Hook pinlerini de kaydet (varsa)
             if (document.getElementById('hook-sw1-pin')) {
@@ -4458,11 +4429,6 @@
             icon: '📡',
             title: 'RDT Rx Pin (Radio DT Receiver)',
             description: 'Pin assignment for the Radio De-Thermalization receiver input.\n\nRDT allows remote triggering of the DT phase via radio command from the ground, providing manual override control.\n\nThis is useful when:\n• The model needs to land immediately\n• Auto DT features are not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nThe receiver connects to this pin and triggers DT when a signal is received from the transmitter.\n\nSelect "Not Used" if you don\'t have an RDT receiver installed. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
-        },
-        'start-button': {
-            icon: '🔘',
-            title: 'Start Button Pin',
-            description: 'Pin assignment for the Start button with multi-function timing control.\n\nButton Functions:\n\n• Press (any duration): Single beep as feedback\n\n• Hold 1 second: Two beeps (restart mode armed)\n  - Release button: System restarts\n  - Buzzer and LED indicate restart sequence\n  - Timer returns to initial startup state\n  - All settings preserved in memory\n\n• Hold 6 seconds: Three beeps + complete shutdown\n  - All outputs turned off (LED, strobe, servos, BLE)\n  - System waits for button release in low-power state\n  - Release button: Enters deep sleep mode\n  - Ultra-low power consumption (~µA range)\n  - Press button again to wake the device\n\nThe button uses an internal pull-up resistor, so external resistor is not required. Simply connect the button between the selected pin and ground (GND).\n\nDefault: S6 (Pin 6)\n\nSelect a pin that doesn\'t conflict with servo, RDT, or hook switch assignments.'
         },
         'range-mode': {
             icon: '📊',

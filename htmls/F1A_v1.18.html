@@ -2185,7 +2185,7 @@
             <div class="section">
                 <h2>DT Features</h2>
                 <div class="option-row">
-                    <label for="rdt-rx-pin" class="info-label" onclick="showFunctionInfo('rdt-rx')">RDT Rx Pin:</label>
+                    <label for="rdt-rx-pin" class="info-label" onclick="showFunctionInfo('rdt-rx')">Ext. RDT Rx Pin:</label>
                     <select id="rdt-rx-pin" name="rdt-rx-pin">
                         <option value="0" selected>Not Used</option>
                         <option value="1">S1</option>
@@ -2253,7 +2253,7 @@
         { id: 'tl-servo-pin', name: 'TL Servo' },
         { id: 'ww-servo-pin', name: 'WW Servo' },
         { id: 'ww2-servo-pin', name: 'WW2 Servo' },
-        { id: 'rdt-rx-pin', name: 'RDT Rx' }
+        { id: 'rdt-rx-pin', name: 'Ext. RDT Rx' }
       ];
 
       // Hook pinlerini ekle
@@ -4529,8 +4529,8 @@
         },
         'rdt-rx': {
             icon: '📡',
-            title: 'RDT Rx Pin (Radio DT Receiver)',
-            description: 'Pin assignment for the Radio De-Thermalization receiver input.\n\nRDT allows remote triggering of the DT phase via radio command from the ground, providing manual override control.\n\nThis is useful when:\n• The model needs to land immediately\n• Auto DT features are not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nThe receiver connects to this pin and triggers DT when a signal is received from the transmitter.\n\nSelect "Not Used" if you don\'t have an RDT receiver installed. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
+            title: 'Ext. RDT Rx Pin (External RDT Receiver)',
+            description: 'Pin assignment for an OPTIONAL external RDT (Radio De-Thermalization) receiver — a button-like module wired to a servo socket that briefly pulls the pin LOW when it receives an RDT signal.\n\nThis runs IN PARALLEL with the built-in radio RDT (it does not disable it), so you can add a second RDT receiver on a different frequency.\n\nWhen the pin goes LOW in flight, the timer triggers DT (with locator strobe + alarm) exactly like the built-in RDT.\n\nUseful when:\n• The model needs to land immediately\n• Auto DT is not sufficient\n• Competition rules require manual DT capability\n• The model is flying out of bounds\n\nSelect "Not Used" if you don\'t have an external RDT receiver. Choose a pin (S1-S9) that doesn\'t conflict with servo or switch assignments.'
         },
         'range-mode': {
             icon: '📊',

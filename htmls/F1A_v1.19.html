@@ -2851,7 +2851,7 @@
     s['encoder-pin']         = encoderPinElem ? parseInt(encoderPinElem.value) : -1;
     // Hook envelope parametreleri (HELP) — tipe göre koşullu elemanlar; yoksa varsayılan yaz.
     var accelElem = document.getElementById('hook-accel');
-    s['hook-accel']          = accelElem ? (accelElem.checked ? 1 : 0) : 0;
+    s['hook-accel']          = accelElem ? (parseInt(accelElem.value) || 0) : 0;
     var ms2InvElem = document.getElementById('hook-ms2-invert');
     s['hook-ms2-invert']     = ms2InvElem ? (ms2InvElem.checked ? 1 : 0) : 0;
     s['ola-delay']           = parseFloat(document.getElementById('ola-delay').value)  || 0;
@@ -4236,8 +4236,21 @@
                         <input type="number" id="hook-servo-unlatched" name="hook-servo-unlatched" min="500" max="2500" step="10" value="2000">
                     </div>
                     <div class="option-row">
-                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
-                        <input type="checkbox" id="hook-accel" name="hook-accel">
+                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release:</label>
+                        <select id="hook-accel" name="hook-accel">
+                            <option value="0" selected>Disabled</option>
+                            <option value="5">5 g</option>
+                            <option value="6">6 g</option>
+                            <option value="7">7 g</option>
+                            <option value="8">8 g</option>
+                            <option value="9">9 g</option>
+                            <option value="10">10 g</option>
+                            <option value="11">11 g</option>
+                            <option value="12">12 g</option>
+                            <option value="13">13 g</option>
+                            <option value="14">14 g</option>
+                            <option value="15">15 g</option>
+                        </select>
                     </div>
                     <div class="option-row">
                         <label for="release-time" class="info-label" onclick="showFunctionInfo('release-time')">Release Time (s):</label>
@@ -4288,8 +4301,21 @@
                         <input type="number" id="hook-servo-unlatched" name="hook-servo-unlatched" min="500" max="2500" step="10" value="2000">
                     </div>
                     <div class="option-row">
-                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release (~8g):</label>
-                        <input type="checkbox" id="hook-accel" name="hook-accel">
+                        <label for="hook-accel" class="info-label" onclick="showFunctionInfo('hook-accel')">Accel. Release:</label>
+                        <select id="hook-accel" name="hook-accel">
+                            <option value="0" selected>Disabled</option>
+                            <option value="5">5 g</option>
+                            <option value="6">6 g</option>
+                            <option value="7">7 g</option>
+                            <option value="8">8 g</option>
+                            <option value="9">9 g</option>
+                            <option value="10">10 g</option>
+                            <option value="11">11 g</option>
+                            <option value="12">12 g</option>
+                            <option value="13">13 g</option>
+                            <option value="14">14 g</option>
+                            <option value="15">15 g</option>
+                        </select>
                     </div>
                     <div class="option-row">
                         <label for="release-time" class="info-label" onclick="showFunctionInfo('release-time')">Release Time (s):</label>
@@ -4429,7 +4455,7 @@
                 if (savedSw2   !== null && document.getElementById('hook-sw2-pin'))   document.getElementById('hook-sw2-pin').value   = savedSw2;
                 if (savedServo !== null && document.getElementById('hook-servo-pin')) document.getElementById('hook-servo-pin').value = savedServo;
                 if (savedEnc   !== null && document.getElementById('encoder-pin'))    document.getElementById('encoder-pin').value    = savedEnc;
-                if (savedAccel !== null && document.getElementById('hook-accel'))      document.getElementById('hook-accel').checked      = (savedAccel === 1 || savedAccel === '1' || savedAccel === true);
+                if (savedAccel !== null && document.getElementById('hook-accel'))      document.getElementById('hook-accel').value        = String(parseInt(savedAccel) || 0);
                 if (savedMs2Inv!== null && document.getElementById('hook-ms2-invert')) document.getElementById('hook-ms2-invert').checked = (savedMs2Inv === 1 || savedMs2Inv === '1' || savedMs2Inv === true);
                 if (savedRt    !== null && document.getElementById('release-time'))    document.getElementById('release-time').value    = savedRt;
                 if (savedEncS  !== null && document.getElementById('enc-straight'))    document.getElementById('enc-straight').value    = savedEncS;
@@ -4545,12 +4571,12 @@
         'hook-type': {
             icon: '🪝',
             title: 'Hook Type',
-            description: 'Determines how the model is released from the tow line. Options:\n\n• 2 Switch: Uses two mechanical switches (MS1/MS2) to detect hook position. MS1 closed = hook forward (straight tow); both closed = OLA; both open = circle tow.\n• 2 Switch + Servo: Adds a servo for active hook release/relatch control.\n• Rotary Enc. + Servo: Uses a rotary encoder (angle values) with servo for precise release control.\n\nServo and encoder hooks can optionally use the accelerometer (~8g) to detect release. The hook type affects which pins are used and how the timer detects launch phases.'
+            description: 'Determines how the model is released from the tow line. Options:\n\n• 2 Switch: Uses two mechanical switches (MS1/MS2) to detect hook position. MS1 closed = hook forward (straight tow); both closed = OLA; both open = circle tow.\n• 2 Switch + Servo: Adds a servo for active hook release/relatch control.\n• Rotary Enc. + Servo: Uses a rotary encoder (angle values) with servo for precise release control.\n\nServo and encoder hooks can optionally use the accelerometer (configurable threshold) to detect release. The hook type affects which pins are used and how the timer detects launch phases.'
         },
         'hook-accel': {
             icon: '📐',
-            title: 'Accelerometer Release (~8g)',
-            description: 'When enabled, the launch (release) is confirmed by the accelerometer detecting roughly 8g, not only by the hook position change.\n\nWith accelerometer: the hook never re-latches — it just opens and stays open on release.\n\nWithout it: the hook may re-latch if tension is reduced but the hook does not move back within the Release Time.\n\nAvailable for servo and encoder hooks.'
+            title: 'Accelerometer Release Threshold',
+            description: 'Sets the accelerometer g-force threshold required to confirm a genuine launch release. Select "Disabled" to rely on hook position alone.\n\nWith accelerometer: the hook never re-latches — it just opens and stays open on release. Launch is confirmed only when the peak g-force during the release window exceeds the selected threshold.\n\nWithout it (Disabled): the hook may re-latch if tension is reduced but the hook does not move back within the Release Time.\n\nTypical launch g-force is 6–10g. Lower values are more sensitive; higher values require a sharper pull.\n\nAvailable for servo and encoder hooks.'
         },
         'hook-ms2-invert': {
             icon: '🔁',

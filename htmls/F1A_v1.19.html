@@ -445,13 +445,55 @@
         }
 
         .advanced-settings-container .section {
-            padding: 2px;
-            border-color: rgba(255, 255, 255, 0.12);
+            position: relative;
+            padding: 14px 12px 10px 14px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(100, 220, 200, 0.22);
+            border-left: 4px solid #64DCC8;
+            border-radius: 10px;
+            background-color: rgba(12, 20, 30, 0.55);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .advanced-settings-container .section:last-child {
+            margin-bottom: 6px;
         }
 
         .advanced-settings-container h2 {
             color: #64DCC8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(100, 220, 200, 0.18);
         }
+
+        .advanced-settings-container h2::before {
+            font-size: calc(var(--base-font) * 1.1);
+            line-height: 1;
+        }
+
+        /* Per-section accent colors + icons so each card is distinguishable */
+        #section-model  { border-left-color: #64DCC8; background-color: rgba(16, 30, 30, 0.55); }
+        #section-model  h2 { color: #64DCC8; border-bottom-color: rgba(100, 220, 200, 0.20); }
+        #section-model  h2::before { content: "\1F3F7\FE0F"; }   /* 🏷️ */
+
+        #section-servo  { border-left-color: #5AB0FF; background-color: rgba(20, 30, 48, 0.55); }
+        #section-servo  h2 { color: #5AB0FF; border-bottom-color: rgba(90, 176, 255, 0.20); }
+        #section-servo  h2::before { content: "\1F39B\FE0F"; }   /* 🎛️ */
+
+        #section-hook   { border-left-color: #FFB454; background-color: rgba(48, 36, 18, 0.55); }
+        #section-hook   h2 { color: #FFB454; border-bottom-color: rgba(255, 180, 84, 0.22); }
+        #section-hook   h2::before { content: "\1FA9D"; }        /* 🪝 */
+
+        #section-pin    { border-left-color: #9D8CFF; background-color: rgba(30, 26, 48, 0.55); }
+        #section-pin    h2 { color: #9D8CFF; border-bottom-color: rgba(157, 140, 255, 0.20); }
+        #section-pin    h2::before { content: "\1F4D0"; }        /* 📐 */
+
+        #section-dt     { border-left-color: #FF7B7B; background-color: rgba(48, 22, 22, 0.55); }
+        #section-dt     h2 { color: #FF7B7B; border-bottom-color: rgba(255, 123, 123, 0.20); }
+        #section-dt     h2::before { content: "\23F1\FE0F"; }    /* ⏱️ */
 
         .settings-panel-title {
             color: #64DCC8;
@@ -1937,15 +1979,16 @@
         <div id="advancedSettings" class="advanced-settings-container" style="display: none;">
             <h1 class="settings-panel-title">Model Settings</h1>
             <!-- Model Name -->
-            <div class="section">
+            <div class="section" id="section-model">
+                <h2>Model Identity</h2>
                 <div class="option-row">
                     <label for="model-name">Model Name:</label>
                     <input type="text" id="model-name" name="model-name" placeholder="e.g., MyModel">
                 </div>
             </div>
             <!-- Servo & Button Configuration bölümü -->
-            <div class="section">
-                <h2>Servo & Button Conf.</h2>
+            <div class="section" id="section-servo">
+                <h2>Servo &amp; Button Conf.</h2>
                 <div class="option-row">
                     <label for="ru-servo-pin" class="info-label" onclick="showFunctionInfo('ru-servo')">RU Servo Pin:</label>
                     <select id="ru-servo-pin" name="ru-servo-pin">
@@ -2060,7 +2103,7 @@
             </div>
 
             <!-- Hook Configuration bölümü -->
-            <div class="section">
+            <div class="section" id="section-hook">
                 <h2>Hook Configuration</h2>
 
                 <div class="option-row">
@@ -2088,7 +2131,7 @@
             </div>
 
             <!-- Pin Header Layout bölümü -->
-            <div class="section">
+            <div class="section" id="section-pin">
                 <h2>Pin Header Layout</h2>
                 <svg class="pin-diagram-svg" viewBox="15 15 270 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
                         <!-- Header Outline -->
@@ -2182,7 +2225,7 @@
 
 
             <!-- DT Features bölümü -->
-            <div class="section">
+            <div class="section" id="section-dt">
                 <h2>DT Features</h2>
                 <div class="option-row">
                     <label for="rdt-rx-pin" class="info-label" onclick="showFunctionInfo('rdt-rx')">Ext. RDT Rx Pin:</label>

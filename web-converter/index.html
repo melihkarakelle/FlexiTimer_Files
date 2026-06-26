@@ -187,6 +187,13 @@
             font-size: 11px; color: var(--red); margin-top: 6px; display: none;
         }
         .range-warn.visible { display: block; }
+        @keyframes shake {
+            0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)}
+            60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+        }
+        @keyframes pulse {
+            0%,100%{transform:scale(1)} 50%{transform:scale(1.18)}
+        }
         table.tt td.nt { background: rgba(0,0,0,.18); }
         table.tt td.nt input { background: transparent; border-color: transparent; color: var(--text-faint); cursor: default; pointer-events: none; }
 
@@ -730,13 +737,13 @@ function loadJsonIntoEditor(json) {
     sv('e-hook-type', s['hook-type'] || '2switch');
 
     // 2switch
-    fillPinSelect(document.getElementById('e-hook-sw1-pin-2s'), s['hook-sw1-pin'] ?? 2);
-    fillPinSelect(document.getElementById('e-hook-sw2-pin-2s'), s['hook-sw2-pin'] ?? 4);
+    fillPinSelect(document.getElementById('e-hook-sw1-pin-2s'), s['hook-sw1-pin'] ?? 4);
+    fillPinSelect(document.getElementById('e-hook-sw2-pin-2s'), s['hook-sw2-pin'] ?? 5);
     sv('e-hook-ms2-invert-2s', s['hook-ms2-invert'] ?? 0);
 
     // 2switch_servo
-    fillPinSelect(document.getElementById('e-hook-sw1-pin-2ss'),  s['hook-sw1-pin']  ?? 2);
-    fillPinSelect(document.getElementById('e-hook-sw2-pin-2ss'),  s['hook-sw2-pin']  ?? 4);
+    fillPinSelect(document.getElementById('e-hook-sw1-pin-2ss'),  s['hook-sw1-pin']  ?? 4);
+    fillPinSelect(document.getElementById('e-hook-sw2-pin-2ss'),  s['hook-sw2-pin']  ?? 5);
     fillPinSelect(document.getElementById('e-hook-servo-pin-2ss'),s['hook-servo-pin']?? 6);
     sv('e-hook-ms2-invert-2ss',     s['hook-ms2-invert']      ?? 0);
     sv('e-hook-servo-latched-2ss',  s['hook-servo-latched']   ?? 1000);
@@ -745,8 +752,8 @@ function loadJsonIntoEditor(json) {
     sv('e-release-time-2ss',        s['release-time']         ?? 0.3);
 
     // rotary_servo
-    fillPinSelect(document.getElementById('e-encoder-pin'),      s['encoder-pin']   ?? 2);
-    fillPinSelect(document.getElementById('e-hook-servo-pin-rs'),s['hook-servo-pin']?? 4);
+    fillPinSelect(document.getElementById('e-encoder-pin'),      s['encoder-pin']   ?? 4);
+    fillPinSelect(document.getElementById('e-hook-servo-pin-rs'),s['hook-servo-pin']?? 5);
     sv('e-hook-servo-latched-rs',  s['hook-servo-latched']   ?? 1000);
     sv('e-hook-servo-unlatched-rs',s['hook-servo-unlatched'] ?? 2000);
     sv('e-hook-accel-rs',          s['hook-accel']           ?? 0);
@@ -764,12 +771,96 @@ function loadJsonIntoEditor(json) {
     sv('e-flip-loop-detection', s['flip-loop-detection'] ?? 0);
 
     updateHookSections(); // also calls updatePinDiagram()
+    initPinPreviousValues();
     buildPresetTabs();
     selectPreset(0);
     buildStrobeBits();
 
     document.getElementById('drop-zone').style.display = 'none';
     document.getElementById('editor-body').style.display = 'block';
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Pin conflict validation
+// ─────────────────────────────────────────────────────────────
+const previousPinValues = {};
+
+const PIN_DEFS_STATIC = [
+    { id: 'e-ru-servo-pin',  name: 'RU Servo' },
+    { id: 'e-tl-servo-pin',  name: 'TL Servo' },
+    { id: 'e-ww-servo-pin',  name: 'WW Servo' },
+    { id: 'e-ww2-servo-pin', name: 'WW2 Servo' },
+    { id: 'e-rdt-rx-pin',    name: 'Ext. RDT Rx' },
+];
+
+function getActivePinDefs() {
+    const defs = [...PIN_DEFS_STATIC];
+    const hookType = document.getElementById('e-hook-type')?.value;
+    if (hookType === '2switch') {
+        defs.push({ id: 'e-hook-sw1-pin-2s', name: 'Hook SW1' });
+        defs.push({ id: 'e-hook-sw2-pin-2s', name: 'Hook SW2' });
+    } else if (hookType === '2switch_servo') {
+        defs.push({ id: 'e-hook-sw1-pin-2ss',   name: 'Hook SW1' });
+        defs.push({ id: 'e-hook-sw2-pin-2ss',   name: 'Hook SW2' });
+        defs.push({ id: 'e-hook-servo-pin-2ss', name: 'Hook Servo' });
+    } else if (hookType === 'rotary_servo') {
+        defs.push({ id: 'e-encoder-pin',       name: 'Encoder' });
+        defs.push({ id: 'e-hook-servo-pin-rs', name: 'Hook Servo' });
+    }
+    return defs;
+}
+
+function validatePinAssignment(changedId) {
+    const defs = getActivePinDefs();
+    const usedPins = new Map();
+    for (const def of defs) {
+        if (def.id === changedId) continue;
+        const el = document.getElementById(def.id);
+        if (!el) continue;
+        const pin = parseInt(el.value);
+        if (!pin || isNaN(pin)) continue;
+        usedPins.set(pin, def);
+    }
+    const changedEl = document.getElementById(changedId);
+    if (!changedEl) return;
+    const pin = parseInt(changedEl.value);
+    if (pin && !isNaN(pin) && usedPins.has(pin)) {
+        const existing = usedPins.get(pin);
+        const attemptedName = defs.find(d => d.id === changedId)?.name || 'Unknown';
+        const oldVal = previousPinValues[changedId] ?? '0';
+        changedEl.value = oldVal;
+        showPinConflictModal(pin, existing.name, attemptedName, oldVal);
+        updatePinDiagram();
+        return;
+    }
+    previousPinValues[changedId] = changedEl.value;
+    updatePinDiagram();
+}
+
+function showPinConflictModal(pin, existing, attempted, reverted) {
+    document.getElementById('pcm-pin').textContent = `S${pin}`;
+    document.getElementById('pcm-existing').textContent = existing;
+    document.getElementById('pcm-attempted').textContent = attempted;
+    document.getElementById('pcm-reverted').textContent = reverted === '0' ? 'Not Used' : `S${reverted}`;
+    document.getElementById('pinConflictModal').style.display = 'flex';
+}
+
+function closePinConflictModal() {
+    document.getElementById('pinConflictModal').style.display = 'none';
+}
+
+function initPinPreviousValues() {
+    getActivePinDefs().forEach(def => {
+        const el = document.getElementById(def.id);
+        if (el) previousPinValues[def.id] = el.value;
+    });
+    // Also store currently-hidden hook sections so they have valid state
+    ['e-hook-sw1-pin-2s','e-hook-sw2-pin-2s',
+     'e-hook-sw1-pin-2ss','e-hook-sw2-pin-2ss','e-hook-servo-pin-2ss',
+     'e-encoder-pin','e-hook-servo-pin-rs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !(id in previousPinValues)) previousPinValues[id] = el.value;
+    });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1236,7 +1327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fillAllPinSelects();
     buildStrobeBits();
 
-    // Live pin diagram updates on every pin select change
+    // Live pin diagram + conflict validation on every pin select change
     const PIN_SELECT_IDS = [
         'e-ru-servo-pin','e-tl-servo-pin','e-ww-servo-pin','e-ww2-servo-pin','e-rdt-rx-pin',
         'e-hook-sw1-pin-2s','e-hook-sw2-pin-2s',
@@ -1245,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     PIN_SELECT_IDS.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('change', updatePinDiagram);
+        if (el) el.addEventListener('change', () => validatePinAssignment(id));
     });
 
     buildRanges('pct');
@@ -1256,5 +1347,28 @@ document.addEventListener('DOMContentLoaded', () => {
     selectFormat('editor');
 });
 </script>
+
+<!-- Pin Conflict Modal -->
+<div id="pinConflictModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:var(--surface2);border:3px solid var(--amber);border-top:6px solid var(--amber);border-radius:var(--radius);padding:24px;max-width:400px;width:90%;animation:shake .5s ease-out;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <span style="font-size:32px;animation:pulse 1.5s ease-in-out infinite;">⚠️</span>
+            <h3 style="color:var(--amber);font-size:20px;font-weight:800;margin:0;">PIN CONFLICT!</h3>
+        </div>
+        <div style="color:var(--text);font-size:15px;line-height:1.7;">
+            <div style="background:var(--surface3);border-left:4px solid var(--red);padding:12px;margin:10px 0;border-radius:6px;">
+                Pin <span id="pcm-pin" style="color:var(--amber);font-weight:800;font-size:17px;"></span> is already in use by:
+                <br><span id="pcm-existing" style="color:var(--red);font-weight:800;"></span>
+            </div>
+            <div style="margin:12px 0;">
+                <span id="pcm-attempted" style="color:#60a0ff;font-weight:800;"></span> cannot use this pin.
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid #444;">
+                ✓ Reverted to: <span id="pcm-reverted" style="color:#4dd;font-weight:800;"></span>
+            </div>
+        </div>
+        <button onclick="closePinConflictModal()" style="margin-top:18px;width:100%;padding:13px;font-size:16px;font-weight:800;background:var(--amber);color:#000;border:none;border-radius:var(--radius-sm);cursor:pointer;">OK, I Understand</button>
+    </div>
+</div>
 </body>
 </html>

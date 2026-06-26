@@ -664,9 +664,9 @@ const PIN_OPTIONS = ['Not Used','S1','S2','S3','S4','S5','S6','S7','S8','S9'];
 function makeDefaultSettings() {
     return {
         'model-name':'','firmware-version':'1.20',
-        'ru-servo-pin':1,'tl-servo-pin':2,'ww-servo-pin':3,'ww2-servo-pin':0,'rdt-rx-pin':0,
+        'ru-servo-pin':1,'tl-servo-pin':3,'ww-servo-pin':5,'ww2-servo-pin':0,'rdt-rx-pin':0,
         'hook-type':'2switch',
-        'hook-sw1-pin':2,'hook-sw2-pin':4,'hook-servo-pin':6,'encoder-pin':2,
+        'hook-sw1-pin':2,'hook-sw2-pin':4,'hook-servo-pin':6,'encoder-pin':2,'hook-servo-pin-rs':4,
         'hook-ms2-invert':0,'hook-accel':0,
         'hook-servo-latched':1000,'hook-servo-unlatched':2000,
         'release-time':0.3,'enc-straight':100,'enc-circle':300,'enc-ola':600,
@@ -729,21 +729,21 @@ function loadJsonIntoEditor(json) {
     sv('e-model-name',          s['model-name']          || '');
     sv('e-firmware-version',    s['firmware-version']    || '1.20');
     fillPinSelect(document.getElementById('e-ru-servo-pin'),   s['ru-servo-pin']   ?? 1);
-    fillPinSelect(document.getElementById('e-tl-servo-pin'),   s['tl-servo-pin']   ?? 2);
-    fillPinSelect(document.getElementById('e-ww-servo-pin'),   s['ww-servo-pin']   ?? 3);
+    fillPinSelect(document.getElementById('e-tl-servo-pin'),   s['tl-servo-pin']   ?? 3);
+    fillPinSelect(document.getElementById('e-ww-servo-pin'),   s['ww-servo-pin']   ?? 5);
     fillPinSelect(document.getElementById('e-ww2-servo-pin'),  s['ww2-servo-pin']  ?? 0);
     fillPinSelect(document.getElementById('e-rdt-rx-pin'),     s['rdt-rx-pin']     ?? 0);
 
     sv('e-hook-type', s['hook-type'] || '2switch');
 
     // 2switch
-    fillPinSelect(document.getElementById('e-hook-sw1-pin-2s'), s['hook-sw1-pin'] ?? 4);
-    fillPinSelect(document.getElementById('e-hook-sw2-pin-2s'), s['hook-sw2-pin'] ?? 5);
+    fillPinSelect(document.getElementById('e-hook-sw1-pin-2s'), s['hook-sw1-pin'] ?? 2);
+    fillPinSelect(document.getElementById('e-hook-sw2-pin-2s'), s['hook-sw2-pin'] ?? 4);
     sv('e-hook-ms2-invert-2s', s['hook-ms2-invert'] ?? 0);
 
     // 2switch_servo
-    fillPinSelect(document.getElementById('e-hook-sw1-pin-2ss'),  s['hook-sw1-pin']  ?? 4);
-    fillPinSelect(document.getElementById('e-hook-sw2-pin-2ss'),  s['hook-sw2-pin']  ?? 5);
+    fillPinSelect(document.getElementById('e-hook-sw1-pin-2ss'),  s['hook-sw1-pin']  ?? 2);
+    fillPinSelect(document.getElementById('e-hook-sw2-pin-2ss'),  s['hook-sw2-pin']  ?? 4);
     fillPinSelect(document.getElementById('e-hook-servo-pin-2ss'),s['hook-servo-pin']?? 6);
     sv('e-hook-ms2-invert-2ss',     s['hook-ms2-invert']      ?? 0);
     sv('e-hook-servo-latched-2ss',  s['hook-servo-latched']   ?? 1000);
@@ -752,8 +752,8 @@ function loadJsonIntoEditor(json) {
     sv('e-release-time-2ss',        s['release-time']         ?? 0.3);
 
     // rotary_servo
-    fillPinSelect(document.getElementById('e-encoder-pin'),      s['encoder-pin']   ?? 4);
-    fillPinSelect(document.getElementById('e-hook-servo-pin-rs'),s['hook-servo-pin']?? 5);
+    fillPinSelect(document.getElementById('e-encoder-pin'),      s['encoder-pin']   ?? 2);
+    fillPinSelect(document.getElementById('e-hook-servo-pin-rs'),s['hook-servo-pin']?? 4);
     sv('e-hook-servo-latched-rs',  s['hook-servo-latched']   ?? 1000);
     sv('e-hook-servo-unlatched-rs',s['hook-servo-unlatched'] ?? 2000);
     sv('e-hook-accel-rs',          s['hook-accel']           ?? 0);

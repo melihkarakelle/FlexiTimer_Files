@@ -6,27 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         :root {
-            --bg:        #1a1a1a;
-            --surface:   #242424;
-            --surface2:  #2e2e2e;
-            --surface3:  #333;
-            --border:    #3a3a3a;
-            --border-hi: #505050;
-            --text:      #e8e8e8;
-            --text-soft: #a0a0a0;
-            --text-faint:#666666;
-            --amber:     #FFD700;
-            --amber-dim: #b89a00;
-            --amber-bg:  rgba(255,215,0,0.08);
-            --amber-bg2: rgba(255,215,0,0.14);
-            --green:     #00b388;
-            --blue:      #4a9eff;
-            --blue-bg:   rgba(74,158,255,0.10);
-            --red:       #e05c5c;
-            --radius:    10px;
-            --radius-sm: 7px;
-            --shadow:    0 2px 8px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.55);
+            /* Light theme matching F1A_v1.20.html */
+            --bg:        #eef1f5;
+            --surface:   #ffffff;
+            --surface2:  #f4f7fa;
+            --surface3:  #e8ecf0;
+            --border:    #c3ccd6;
+            --border-hi: #8899aa;
+            --text:      #14181d;
+            --text-soft: #44505c;
+            --text-faint:#6b7785;
+            --amber:     #B8860B;
+            --amber-dim: #8a6308;
+            --amber-bg:  rgba(184,134,11,0.08);
+            --amber-bg2: rgba(184,134,11,0.14);
+            --green:     #009E73;
+            --blue:      #0072B2;
+            --blue-bg:   rgba(0,114,178,0.08);
+            --red:       #C0392B;
+            --radius:    12px;
+            --radius-sm: 8px;
+            --shadow:    0 1px 3px rgba(20,30,45,0.12), 0 3px 10px rgba(20,30,45,0.08);
+            --shadow-lg: 0 8px 28px rgba(20,30,45,0.22);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -41,15 +42,15 @@
 
         /* ── Header ── */
         .page-header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 20px 12px;
+            background: var(--blue);
+            border-bottom: 3px solid var(--amber);
+            padding: 14px 20px 11px;
             text-align: center;
             position: sticky; top: 0; z-index: 200;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow);
         }
-        .page-header h1 { font-size: 19px; font-weight: 800; color: var(--amber); letter-spacing: -0.3px; }
-        .page-header p  { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+        .page-header h1 { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+        .page-header p  { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
 
         .content { max-width: 900px; margin: 0 auto; padding: 18px 14px; }
 
@@ -71,13 +72,13 @@
         }
         .fmt-card:hover  { border-color: var(--border-hi); background: var(--surface2); }
         .fmt-card:active { transform: scale(0.97); }
-        .fmt-card.active { border-color: var(--amber); background: var(--amber-bg2); }
+        .fmt-card.active { border-color: var(--blue); background: var(--blue-bg); }
         .fmt-card.soon   { cursor: default; opacity: .52; }
         .fmt-card.soon:hover { border-color: var(--border); background: var(--surface); }
         .fmt-card.soon:active { transform: none; }
         .fmt-card .ci { font-size: 24px; line-height: 1; margin-bottom: 4px; }
         .fmt-card .cn { font-size: 13px; font-weight: 800; color: var(--text); }
-        .fmt-card.active .cn { color: var(--amber); }
+        .fmt-card.active .cn { color: var(--blue); }
         .fmt-card .cs { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
         .soon-badge {
             display: inline-block; background: var(--surface2); border: 1px solid var(--border);
@@ -95,8 +96,9 @@
             padding: 16px 14px; margin-bottom: 14px; box-shadow: var(--shadow);
         }
         .card h2 {
-            font-size: 13px; font-weight: 800; color: var(--amber); margin-bottom: 12px;
+            font-size: 14px; font-weight: 800; color: var(--blue); margin-bottom: 12px;
             display: flex; align-items: center; gap: 6px;
+            border-bottom: 2px solid var(--blue); padding-bottom: 8px;
         }
 
         /* ── Form rows ── */
@@ -117,8 +119,8 @@
             -webkit-appearance: none; appearance: none; -moz-appearance: textfield;
         }
         .fg input:focus, .fg select:focus {
-            outline: none; border-color: var(--amber);
-            box-shadow: 0 0 0 3px rgba(255,215,0,.12);
+            outline: none; border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,114,178,.15);
         }
         .fg input::-webkit-outer-spin-button,
         .fg input::-webkit-inner-spin-button { -webkit-appearance: none; }
@@ -154,15 +156,16 @@
         .grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -3px; padding: 0 3px; }
         table.tt { border-collapse: collapse; width: 100%; min-width: 480px; }
         table.tt thead th {
-            background: var(--surface2); color: var(--amber); font-size: 11px; font-weight: 800;
+            background: var(--blue); color: #fff; font-size: 11px; font-weight: 800;
             text-transform: uppercase; letter-spacing: .5px; padding: 7px 5px; text-align: center;
-            border-bottom: 2px solid var(--amber-dim); white-space: nowrap;
+            white-space: nowrap;
         }
-        table.tt thead th:first-child { text-align: left; padding-left: 9px; }
+        table.tt thead th:first-child { text-align: left; padding-left: 9px; border-radius: 6px 0 0 0; }
+        table.tt thead th:last-child { border-radius: 0 6px 0 0; }
         table.tt tbody tr { border-bottom: 1px solid var(--border); }
         table.tt tbody tr:last-child { border-bottom: none; }
-        table.tt tbody tr:hover td { background: rgba(255,255,255,.025); }
-        table.tt tbody tr.sep td { height: 3px; background: var(--amber-dim); opacity: .35; padding: 0; }
+        table.tt tbody tr:hover td { background: var(--blue-bg); }
+        table.tt tbody tr.sep td { height: 3px; background: var(--border); padding: 0; }
         table.tt td { padding: 2px 2px; vertical-align: middle; }
         table.tt td.pn { font-size: 13px; font-weight: 800; color: var(--text-soft); padding-left: 9px; width: 48px; white-space: nowrap; }
         table.tt td.pn.ht { color: var(--text); }
@@ -173,7 +176,7 @@
             -webkit-appearance: none; appearance: none; -moz-appearance: textfield;
             transition: border-color .1s, background .1s;
         }
-        table.tt input[type="number"]:focus { outline: none; border-color: var(--amber); background: var(--amber-bg); }
+        table.tt input[type="number"]:focus { outline: none; border-color: var(--blue); background: var(--blue-bg); }
         table.tt input[type="number"]::-webkit-outer-spin-button,
         table.tt input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         table.tt input.prev {
@@ -194,17 +197,17 @@
         @keyframes pulse {
             0%,100%{transform:scale(1)} 50%{transform:scale(1.18)}
         }
-        table.tt td.nt { background: rgba(0,0,0,.18); }
+        table.tt td.nt { background: var(--surface3); }
         table.tt td.nt input { background: transparent; border-color: transparent; color: var(--text-faint); cursor: default; pointer-events: none; }
 
         /* ── Buttons ── */
         .btn-primary {
-            width: 100%; background: var(--amber); color: #111; font-size: 15px; font-weight: 900;
+            width: 100%; background: var(--blue); color: #fff; font-size: 15px; font-weight: 900;
             padding: 14px; border: none; border-radius: var(--radius); cursor: pointer;
-            box-shadow: 0 3px 14px rgba(255,215,0,.25); transition: background .15s, transform .1s; margin-top: 4px;
+            box-shadow: 0 3px 10px rgba(0,114,178,.25); transition: background .15s, transform .1s; margin-top: 4px;
         }
-        .btn-primary:hover { background: #ffe44d; }
-        .btn-primary:active { transform: scale(.99); background: var(--amber-dim); }
+        .btn-primary:hover { background: #005a8e; }
+        .btn-primary:active { transform: scale(.99); }
 
         .btn-row { display: flex; gap: 10px; margin-top: 4px; }
         .btn-row .btn-primary { flex: 1; }
@@ -222,11 +225,11 @@
             padding: 36px 20px; text-align: center; cursor: pointer;
             transition: border-color .2s, background .2s; background: var(--surface);
         }
-        .drop-zone:hover, .drop-zone.drag-over { border-color: var(--amber); background: var(--amber-bg); }
+        .drop-zone:hover, .drop-zone.drag-over { border-color: var(--blue); background: var(--blue-bg); }
         .drop-zone-icon { font-size: 40px; margin-bottom: 10px; }
         .drop-zone-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
         .drop-zone-sub { font-size: 13px; color: var(--text-soft); }
-        .drop-zone-sub strong { color: var(--amber); }
+        .drop-zone-sub strong { color: var(--blue); }
         #file-input { display: none; }
 
         /* ── Strobe preview ── */
@@ -236,11 +239,12 @@
             width: 24px; height: 24px; border-radius: 4px; background: var(--surface3);
             border: 1.5px solid var(--border); cursor: pointer; transition: background .1s, border-color .1s;
         }
-        .strobe-bit.on { background: var(--amber); border-color: var(--amber-dim); }
+        .strobe-bit.on { background: var(--amber); border-color: var(--amber-dim); box-shadow: 0 0 6px rgba(184,134,11,.4); }
         .strobe-num { font-size: 13px; font-weight: 800; color: var(--text-soft); }
         .strobe-label { font-size: 11px; color: var(--text-faint); }
 
         /* ── Preset tabs ── */
+        /* ── old pill tabs (kept for compat, unused in editor now) ── */
         .preset-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
         .ptab {
             background: var(--surface2); border: 1.5px solid var(--border); border-radius: 7px;
@@ -255,6 +259,52 @@
             cursor: pointer; transition: border-color .12s, color .12s;
         }
         .ptab-add:hover { border-color: var(--amber); color: var(--amber); }
+
+        /* ── Windows-style preset tabs ── */
+        .win-tabs-wrap {
+            margin-bottom: 16px;
+        }
+        .win-tab-bar {
+            display: flex; flex-wrap: wrap; align-items: flex-end;
+            gap: 0; border-bottom: 2px solid var(--blue);
+            padding: 0 0 0 2px;
+        }
+        .win-tab {
+            position: relative; display: flex; align-items: center; gap: 7px;
+            padding: 8px 14px 9px; font-size: 13px; font-weight: 700;
+            color: var(--text-soft); background: var(--surface3);
+            border: 1.5px solid var(--border); border-bottom: none;
+            border-radius: 8px 8px 0 0; cursor: pointer; margin-right: 3px;
+            margin-bottom: -2px;
+            transition: background .12s, color .12s;
+            user-select: none;
+        }
+        .win-tab:hover { background: var(--surface2); color: var(--text); }
+        .win-tab.active {
+            background: var(--surface); color: var(--blue);
+            border-color: var(--blue); border-bottom-color: var(--surface);
+            z-index: 1;
+        }
+        .win-tab .tab-close {
+            font-size: 13px; line-height: 1; color: var(--text-faint);
+            border-radius: 4px; padding: 1px 3px;
+            transition: background .1s, color .1s;
+        }
+        .win-tab .tab-close:hover { background: var(--red); color: #fff; }
+        .win-tab-add {
+            padding: 8px 13px 9px; font-size: 16px; font-weight: 700;
+            color: var(--text-faint); background: transparent;
+            border: 1.5px dashed var(--border-hi); border-bottom: none;
+            border-radius: 8px 8px 0 0; cursor: pointer; margin-bottom: -2px;
+            transition: color .12s, border-color .12s;
+        }
+        .win-tab-add:hover { color: var(--blue); border-color: var(--blue); }
+        .win-tab-content {
+            background: var(--surface); border: 1.5px solid var(--blue);
+            border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+            padding: 16px; box-shadow: var(--shadow);
+        }
+        .win-tab-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         /* ── Hook type sections ── */
         .hook-section { display: none; }
@@ -357,14 +407,6 @@
 
         <!-- Editor (hidden until file loaded) -->
         <div id="editor-body" style="display:none">
-
-            <!-- Preset tabs -->
-            <div class="card">
-                <h2>📋 Presets</h2>
-                <div class="preset-tabs" id="preset-tabs">
-                    <span class="ptab-add" onclick="addPreset()" title="Add preset">＋</span>
-                </div>
-            </div>
 
             <!-- Settings -->
             <div class="card">
@@ -528,25 +570,27 @@
                 </div>
             </div>
 
-            <!-- Current Preset -->
-            <div class="card" id="preset-card">
-                <h2>🗂 Preset: <span id="preset-card-name">—</span></h2>
-                <div class="row2">
-                    <div class="fg"><label>Preset Name</label><input type="text" id="e-preset-name" maxlength="20" oninput="onPresetNameInput()"></div>
+            <!-- Preset tabs (Windows style) -->
+            <div class="win-tabs-wrap">
+                <div class="win-tab-bar" id="win-tab-bar">
+                    <!-- tabs injected by JS -->
                 </div>
-                <div style="font-size:12px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 8px;">Strobe Pattern</div>
-                <div class="strobe-row">
-                    <div class="strobe-bits" id="strobe-bits"></div>
-                    <span class="strobe-num" id="strobe-num">81</span>
-                    <span class="strobe-label">decimal (bit 7 → 0)</span>
-                </div>
-                <hr class="div">
-                <div style="font-size:12px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Timer Phases (µs)</div>
-                <div class="grid-wrap">
-                    <table class="tt" id="editor-timer-table"></table>
-                </div>
-                <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                    <button class="btn-secondary" style="flex:0 0 auto;padding:8px 16px;font-size:13px;" onclick="deleteCurrentPreset()">🗑 Delete Preset</button>
+                <div class="win-tab-content" id="win-tab-content">
+                    <div class="win-tab-row">
+                        <div class="fg"><label>Preset Name</label><input type="text" id="e-preset-name" maxlength="20" oninput="onPresetNameInput()"></div>
+                        <button class="btn-secondary" style="flex:0 0 auto;align-self:flex-end;padding:8px 14px;font-size:13px;" onclick="deleteCurrentPreset()">🗑 Delete</button>
+                    </div>
+                    <div style="font-size:12px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px;">Strobe Pattern</div>
+                    <div class="strobe-row">
+                        <div class="strobe-bits" id="strobe-bits"></div>
+                        <span class="strobe-num" id="strobe-num">81</span>
+                        <span class="strobe-label">decimal (bit 7 → 0)</span>
+                    </div>
+                    <hr class="div">
+                    <div style="font-size:12px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Timer Phases (µs)</div>
+                    <div class="grid-wrap">
+                        <table class="tt" id="editor-timer-table"></table>
+                    </div>
                 </div>
             </div>
 
@@ -917,13 +961,20 @@ function updatePinDiagram() {
 //  Preset tabs
 // ─────────────────────────────────────────────────────────────
 function buildPresetTabs() {
-    const container = document.getElementById('preset-tabs');
+    const bar = document.getElementById('win-tab-bar');
+    const presets = editorJson.presets || [];
+    const canDelete = presets.length > 1;
     let html = '';
-    (editorJson.presets || []).forEach((p, i) => {
-        html += `<span class="ptab${i===currentPresetIdx?' active':''}" onclick="selectPreset(${i})">${p['preset-name'] || ('Preset '+(i+1))}</span>`;
+    presets.forEach((p, i) => {
+        const name = p['preset-name'] || ('Preset '+(i+1));
+        const active = i === currentPresetIdx ? ' active' : '';
+        const closeBtn = canDelete
+            ? `<span class="tab-close" onclick="event.stopPropagation();deletePresetAt(${i})" title="Delete preset">✕</span>`
+            : '';
+        html += `<div class="win-tab${active}" onclick="selectPreset(${i})">${name}${closeBtn}</div>`;
     });
-    html += `<span class="ptab-add" onclick="addPreset()" title="Add preset">＋</span>`;
-    container.innerHTML = html;
+    html += `<div class="win-tab-add" onclick="addPreset()" title="Add preset">＋</div>`;
+    bar.innerHTML = html;
 }
 
 function selectPreset(idx) {
@@ -935,7 +986,6 @@ function selectPreset(idx) {
 
 function loadPresetIntoEditor(preset) {
     document.getElementById('e-preset-name').value = preset['preset-name'] || '';
-    document.getElementById('preset-card-name').textContent = preset['preset-name'] || '';
     updateStrobeBits(preset['strobe-value'] ?? 81);
     buildEditorTimerTable();
     const timers = preset.timers || {};
@@ -976,8 +1026,6 @@ function commitCurrentPreset() {
 }
 
 function onPresetNameInput() {
-    const name = document.getElementById('e-preset-name').value;
-    document.getElementById('preset-card-name').textContent = name;
     buildPresetTabs();
 }
 
@@ -992,8 +1040,13 @@ function addPreset() {
 }
 
 function deleteCurrentPreset() {
+    deletePresetAt(currentPresetIdx);
+}
+
+function deletePresetAt(idx) {
     if (editorJson.presets.length <= 1) { showToast('⚠️ Cannot delete the last preset'); return; }
-    editorJson.presets.splice(currentPresetIdx, 1);
+    commitCurrentPreset();
+    editorJson.presets.splice(idx, 1);
     currentPresetIdx = Math.min(currentPresetIdx, editorJson.presets.length - 1);
     buildPresetTabs();
     loadPresetIntoEditor(editorJson.presets[currentPresetIdx]);
@@ -1361,9 +1414,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <br><span id="pcm-existing" style="color:var(--red);font-weight:800;"></span>
             </div>
             <div style="margin:12px 0;">
-                <span id="pcm-attempted" style="color:#60a0ff;font-weight:800;"></span> cannot use this pin.
+                <span id="pcm-attempted" style="color:var(--blue);font-weight:800;"></span> cannot use this pin.
             </div>
-            <div style="margin-top:12px;padding-top:12px;border-top:1px solid #444;">
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
                 ✓ Reverted to: <span id="pcm-reverted" style="color:#4dd;font-weight:800;"></span>
             </div>
         </div>

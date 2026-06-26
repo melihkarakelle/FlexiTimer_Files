@@ -499,8 +499,12 @@
             <h2>✏️ Enter Servo Values (0–100)</h2>
             <div class="grid-wrap"><table class="tt" id="table-pct"></table></div>
         </div>
-        <button class="btn-primary" onclick="doConvert('pct')">⬇️ Convert &amp; Download JSON</button>
-        <p class="note">µs = min + (value × (max − min) / 100) — min &gt; max = inverted servo</p>
+        <div class="btn-row">
+            <button class="btn-secondary" onclick="doConvert('pct','download')">⬇️ Download JSON</button>
+            <button class="btn-primary"   onclick="doConvert('pct','editor')">✏️ Edit in Editor →</button>
+        </div>
+        <p class="note">µs = min + (value × (max − min) / 100) — min &gt; max = inverted servo<br>
+        <strong style="color:var(--amber)">Tip:</strong> Use "Edit in Editor" to fill in hook config, pin assignments and other settings before saving.</p>
     </div>
 
     <!-- ═══ 0-255 PANEL ═══ -->
@@ -517,8 +521,12 @@
             <h2>✏️ Enter Servo Values (0–255)</h2>
             <div class="grid-wrap"><table class="tt" id="table-byte"></table></div>
         </div>
-        <button class="btn-primary" onclick="doConvert('byte')">⬇️ Convert &amp; Download JSON</button>
-        <p class="note">µs = min + (value × (max − min) / 255) — min &gt; max = inverted servo</p>
+        <div class="btn-row">
+            <button class="btn-secondary" onclick="doConvert('byte','download')">⬇️ Download JSON</button>
+            <button class="btn-primary"   onclick="doConvert('byte','editor')">✏️ Edit in Editor →</button>
+        </div>
+        <p class="note">µs = min + (value × (max − min) / 255) — min &gt; max = inverted servo<br>
+        <strong style="color:var(--amber)">Tip:</strong> Use "Edit in Editor" to fill in hook config, pin assignments and other settings before saving.</p>
     </div>
 
     <!-- ═══ COMING SOON ═══ -->
@@ -1042,7 +1050,7 @@ function refreshPreviews(fmtId) {
     });
 }
 
-function doConvert(fmtId) {
+function doConvert(fmtId, action) {
     const presetName = (document.getElementById(fmtId+'-name').value || 'Converted').substring(0,20);
     const timers = {};
     PHASES.forEach(ph => {
@@ -1063,8 +1071,14 @@ function doConvert(fmtId) {
         settings: Object.assign(makeDefaultSettings(), {'firmware-version':'1.20','selected-preset-index':1}),
         presets: [{'preset-name':presetName,'preset-index':1,'strobe-value':81,'timers':timers}]
     };
-    downloadJson(json, `flexitimer_${presetName.replace(/\s+/g,'_')}.json`);
-    showToast('✓ JSON downloaded!');
+    if (action === 'editor') {
+        loadJsonIntoEditor(json);
+        selectFormat('editor');
+        showToast('✓ Loaded in editor — fill in settings then save');
+    } else {
+        downloadJson(json, `flexitimer_${presetName.replace(/\s+/g,'_')}.json`);
+        showToast('✓ JSON downloaded!');
+    }
 }
 
 // ─────────────────────────────────────────────────────────────

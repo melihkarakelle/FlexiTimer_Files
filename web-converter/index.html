@@ -880,7 +880,10 @@ function loadJsonIntoEditor(json) {
     updateHookSections(); // also calls updatePinDiagram()
     initPinPreviousValues();
     buildPresetTabs();
-    selectPreset(0);
+    // Load first preset directly — don't call selectPreset() which would
+    // call commitCurrentPreset() first and overwrite the just-loaded data.
+    currentPresetIdx = 0;
+    loadPresetIntoEditor(editorJson.presets[0]);
     buildStrobeBits();
 
     document.getElementById('drop-zone').style.display = 'none';

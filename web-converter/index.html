@@ -1082,8 +1082,8 @@ function buildRanges(fmtId) {
     const tbody = document.getElementById(fmtId + '-ranges');
     tbody.innerHTML = SERVOS.map(s => `<tr>
         <td class="sl">${SERVO_LABELS[s]}</td>
-        <td><input type="number" id="${fmtId}-${s}-min" value="500" min="500" max="2500" oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
-        <td><input type="number" id="${fmtId}-${s}-max" value="2500" min="500" max="2500" oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
+        <td><input type="number" id="${fmtId}-${s}-min" value="1000" min="500" max="2500" oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
+        <td><input type="number" id="${fmtId}-${s}-max" value="2000" min="500" max="2500" oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
         <td class="sc" id="${fmtId}-${s}-status"></td>
     </tr>`).join('');
 }

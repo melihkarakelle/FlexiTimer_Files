@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlexiTimer Settings Converter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        :root {
+            --bg:        #1a1a1a;
+            --surface:   #242424;
+            --surface2:  #2e2e2e;
+            --border:    #3a3a3a;
+            --border-hi: #505050;
+            --text:      #e8e8e8;
+            --text-soft: #a0a0a0;
+            --text-faint:#666666;
+            --amber:     #FFD700;
+            --amber-dim: #b89a00;
+            --amber-bg:  rgba(255,215,0,0.08);
+            --amber-bg2: rgba(255,215,0,0.14);
+            --green:     #00b388;
+            --green-bg:  rgba(0,179,136,0.10);
+            --red:       #e05c5c;
+            --red-bg:    rgba(224,92,92,0.10);
+            --blue:      #4a9eff;
+            --radius:    10px;
+            --radius-sm: 7px;
+            --shadow:    0 2px 8px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.55);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            padding: 0 0 60px 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 20px 14px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+        .page-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--amber);
+            letter-spacing: -0.3px;
+        }
+        .page-header p {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-top: 3px;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* ── Source Format Selector ── */
+        .format-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-faint);
+            margin-bottom: 10px;
+        }
+
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        @media (min-width: 480px) {
+            .format-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .format-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s, transform 0.1s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .format-card:hover {
+            border-color: var(--border-hi);
+            background: var(--surface2);
+        }
+        .format-card:active { transform: scale(0.97); }
+        .format-card.active {
+            border-color: var(--amber);
+            background: var(--amber-bg2);
+        }
+        .format-card.soon {
+            cursor: default;
+            opacity: 0.55;
+        }
+        .format-card.soon:hover {
+            border-color: var(--border);
+            background: var(--surface);
+        }
+        .format-card.soon:active { transform: none; }
+        .format-card-icon {
+            font-size: 26px;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+        .format-card-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .format-card.active .format-card-name { color: var(--amber); }
+        .format-card-sub {
+            font-size: 11px;
+            color: var(--text-faint);
+            margin-top: 2px;
+        }
+        .soon-badge {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-faint);
+            padding: 1px 5px;
+            margin-top: 4px;
+        }
+
+        /* ── Panels ── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Coming Soon panel */
+        .coming-soon-card {
+            background: var(--surface);
+            border: 2px solid var(--amber-dim);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255,215,0,0.06);
+        }
+        .coming-soon-icon { font-size: 48px; margin-bottom: 14px; }
+        .coming-soon-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--amber);
+            margin-bottom: 10px;
+        }
+        .coming-soon-body {
+            font-size: 14px;
+            color: var(--text-soft);
+            line-height: 1.7;
+            max-width: 420px;
+            margin: 0 auto 18px;
+        }
+        .coming-soon-file {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--amber-bg);
+            border: 1px solid var(--amber-dim);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--amber);
+            font-weight: 700;
+        }
+
+        /* Converter panel */
+        .converter-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .converter-card h2 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--amber);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        /* Options row */
+        .options-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        @media (min-width: 480px) {
+            .options-row { grid-template-columns: repeat(3, 1fr); }
+        }
+        .option-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .option-group input[type="number"],
+        .option-group input[type="text"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 700;
+            padding: 9px 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            -moz-appearance: textfield;
+        }
+        .option-group input:focus {
+            outline: none;
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.12);
+        }
+        .option-group input::-webkit-outer-spin-button,
+        .option-group input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+        /* Timer grid */
+        .grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
+
+        table.timer-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 460px;
+        }
+        table.timer-table thead th {
+            background: var(--surface2);
+            color: var(--amber);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 2px solid var(--amber-dim);
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+        table.timer-table thead th:first-child { text-align: left; padding-left: 10px; border-radius: var(--radius-sm) 0 0 0; }
+        table.timer-table thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+        table.timer-table tbody tr { border-bottom: 1px solid var(--border); }
+        table.timer-table tbody tr:last-child { border-bottom: none; }
+        table.timer-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+        table.timer-table tbody tr.separator-row td {
+            height: 3px;
+            background: var(--amber-dim);
+            opacity: 0.4;
+            padding: 0;
+        }
+
+        table.timer-table td {
+            padding: 3px 3px;
+            vertical-align: middle;
+        }
+        table.timer-table td.phase-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-soft);
+            padding-left: 10px;
+            white-space: nowrap;
+            width: 52px;
+        }
+        table.timer-table td.phase-name.has-time { color: var(--text); }
+
+        table.timer-table input[type="number"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 7px 5px;
+            text-align: center;
+            -webkit-appearance: none;
+            appearance: none;
+            -moz-appearance: textfield;
+            transition: border-color 0.1s, background 0.1s;
+        }
+        table.timer-table input[type="number"]:focus {
+            outline: none;
+            border-color: var(--amber);
+            background: var(--amber-bg);
+        }
+        table.timer-table input[type="number"]::-webkit-outer-spin-button,
+        table.timer-table input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        table.timer-table input.preview-cell {
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-soft);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: default;
+            pointer-events: none;
+        }
+        table.timer-table td.no-time { background: rgba(0,0,0,0.15); }
+        table.timer-table td.no-time input {
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-faint);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* Convert button */
+        .convert-btn {
+            width: 100%;
+            background: var(--amber);
+            color: #111;
+            font-size: 16px;
+            font-weight: 900;
+            padding: 15px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: background 0.15s, transform 0.1s;
+            box-shadow: 0 3px 14px rgba(255,215,0,0.25);
+            margin-top: 6px;
+        }
+        .convert-btn:hover { background: #ffe44d; }
+        .convert-btn:active { transform: scale(0.99); background: var(--amber-dim); }
+
+        /* Success toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--green);
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 11px 22px;
+            border-radius: 40px;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 9999;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Divider */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        /* Note */
+        .note {
+            font-size: 12px;
+            color: var(--text-faint);
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Preview column header */
+        .preview-header { color: var(--text-faint) !important; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <h1>⚡ FlexiTimer Settings Converter</h1>
+    <p>Convert servo settings from other formats into FlexiTimer JSON</p>
+</div>
+
+<div class="content">
+
+    <!-- Format selector -->
+    <div class="format-section-label">Select source format</div>
+    <div class="format-grid">
+        <div class="format-card" onclick="selectFormat('pct')">
+            <div class="format-card-icon">%</div>
+            <div class="format-card-name">0–100</div>
+            <div class="format-card-sub">Percentage</div>
+        </div>
+        <div class="format-card" onclick="selectFormat('byte')">
+            <div class="format-card-icon">8</div>
+            <div class="format-card-name">0–255</div>
+            <div class="format-card-sub">8-bit integer</div>
+        </div>
+        <div class="format-card soon" onclick="selectFormat('bmt')">
+            <div class="format-card-icon">⌚</div>
+            <div class="format-card-name">BMT</div>
+            <div class="format-card-sub">Black Magic Timer</div>
+            <div class="soon-badge">Coming Soon</div>
+        </div>
+        <div class="format-card soon" onclick="selectFormat('sidus')">
+            <div class="format-card-icon">🔭</div>
+            <div class="format-card-name">Sidus</div>
+            <div class="format-card-sub">Sidus Timer</div>
+            <div class="soon-badge">Coming Soon</div>
+        </div>
+        <div class="format-card soon" onclick="selectFormat('mk')">
+            <div class="format-card-icon">🛠</div>
+            <div class="format-card-name">M&amp;K</div>
+            <div class="format-card-sub">M&amp;K Timer</div>
+            <div class="soon-badge">Coming Soon</div>
+        </div>
+        <div class="format-card soon" onclick="selectFormat('fx10')">
+            <div class="format-card-icon">🔲</div>
+            <div class="format-card-name">Fx10</div>
+            <div class="format-card-sub">Fx10 Timer</div>
+            <div class="soon-badge">Coming Soon</div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ 0-100 PANEL ═══════════════ -->
+    <div id="panel-pct" class="panel">
+        <div class="converter-card">
+            <h2>⚙️ Conversion Options</h2>
+            <div class="options-row">
+                <div class="option-group">
+                    <label>Servo Min (µs)</label>
+                    <input type="number" id="pct-min" value="500" min="500" max="2400" oninput="refreshPreviews('pct')">
+                </div>
+                <div class="option-group">
+                    <label>Servo Max (µs)</label>
+                    <input type="number" id="pct-max" value="2500" min="600" max="2500" oninput="refreshPreviews('pct')">
+                </div>
+                <div class="option-group">
+                    <label>Preset Name</label>
+                    <input type="text" id="pct-name" value="Converted" maxlength="20">
+                </div>
+            </div>
+        </div>
+
+        <div class="converter-card">
+            <h2>✏️ Enter Servo Values (0–100)</h2>
+            <div class="grid-wrap">
+                <table class="timer-table" id="table-pct"></table>
+            </div>
+        </div>
+
+        <button class="convert-btn" onclick="doConvert('pct')">⬇️ Convert &amp; Download JSON</button>
+        <p class="note">Formula: µs = min + (value × (max − min) / 100) — output is always µs, clamped to 500–2500</p>
+    </div>
+
+    <!-- ═══════════════ 0-255 PANEL ═══════════════ -->
+    <div id="panel-byte" class="panel">
+        <div class="converter-card">
+            <h2>⚙️ Conversion Options</h2>
+            <div class="options-row">
+                <div class="option-group">
+                    <label>Servo Min (µs)</label>
+                    <input type="number" id="byte-min" value="500" min="500" max="2400" oninput="refreshPreviews('byte')">
+                </div>
+                <div class="option-group">
+                    <label>Servo Max (µs)</label>
+                    <input type="number" id="byte-max" value="2500" min="600" max="2500" oninput="refreshPreviews('byte')">
+                </div>
+                <div class="option-group">
+                    <label>Preset Name</label>
+                    <input type="text" id="byte-name" value="Converted" maxlength="20">
+                </div>
+            </div>
+        </div>
+
+        <div class="converter-card">
+            <h2>✏️ Enter Servo Values (0–255)</h2>
+            <div class="grid-wrap">
+                <table class="timer-table" id="table-byte"></table>
+            </div>
+        </div>
+
+        <button class="convert-btn" onclick="doConvert('byte')">⬇️ Convert &amp; Download JSON</button>
+        <p class="note">Formula: µs = min + (value × (max − min) / 255) — output is always µs, clamped to 500–2500</p>
+    </div>
+
+    <!-- ═══════════════ COMING SOON PANELS ═══════════════ -->
+    <div id="panel-bmt" class="panel">
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">⌚</div>
+            <div class="coming-soon-title">BMT Converter — Coming Soon</div>
+            <div class="coming-soon-body">This converter is currently in the design phase. We are working on adding support for Black Magic Timer settings files. Please check back later.</div>
+            <div class="coming-soon-file">📁 Will accept: .bmt file</div>
+        </div>
+    </div>
+
+    <div id="panel-sidus" class="panel">
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">🔭</div>
+            <div class="coming-soon-title">Sidus Converter — Coming Soon</div>
+            <div class="coming-soon-body">This converter is currently in the design phase. We are working on adding support for Sidus Timer settings files. Please check back later.</div>
+            <div class="coming-soon-file">📁 Will accept: format TBD</div>
+        </div>
+    </div>
+
+    <div id="panel-mk" class="panel">
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">🛠</div>
+            <div class="coming-soon-title">M&amp;K Converter — Coming Soon</div>
+            <div class="coming-soon-body">This converter is currently in the design phase. We are working on adding support for M&K Timer settings files. Please check back later.</div>
+            <div class="coming-soon-file">📁 Will accept: format TBD</div>
+        </div>
+    </div>
+
+    <div id="panel-fx10" class="panel">
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">🔲</div>
+            <div class="coming-soon-title">Fx10 Converter — Coming Soon</div>
+            <div class="coming-soon-body">This converter is currently in the design phase. We are working on adding support for Fx10 Timer settings files. Please check back later.</div>
+            <div class="coming-soon-file">📁 Will accept: format TBD</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast">✓ JSON downloaded!</div>
+
+<script>
+// ───────────────────────────────────────────────
+//  Phase definitions
+// ───────────────────────────────────────────────
+const PHASES = [
+    { key: 'str',  label: 'Str',  hasTime: false },
+    { key: 'cir',  label: 'Cir',  hasTime: false },
+    { key: 'ola',  label: 'OLA',  hasTime: false },
+    // separator
+    { key: '_sep1', label: '', separator: true },
+    { key: 'pu1',  label: 'Pu1',  hasTime: false },
+    { key: 'pu2',  label: 'Pu2',  hasTime: true  },
+    { key: 'cr1',  label: 'Cr1',  hasTime: true  },
+    { key: 'cr2',  label: 'Cr2',  hasTime: true  },
+    { key: 'cr3',  label: 'Cr3',  hasTime: true  },
+    { key: 'bu1',  label: 'Bu1',  hasTime: true  },
+    { key: 'bu2',  label: 'Bu2',  hasTime: true  },
+    { key: 'bu3',  label: 'Bu3',  hasTime: true  },
+    { key: 'fg',   label: 'Fg',   hasTime: true  },
+    { key: 'gl',   label: 'GL',   hasTime: true  },
+    // separator
+    { key: '_sep2', label: '', separator: true },
+    { key: 'dt',   label: 'DT',   hasTime: true  },
+    { key: 'pk',   label: 'Pk',   hasTime: true  },
+];
+
+const SERVOS = ['RU', 'TL', 'WW', 'WW2'];
+const DEFAULT_TIMES = { pu2:0.03, cr1:0.1, cr2:0.4, cr3:0.7, bu1:0.7, bu2:0.5, bu3:1.1, fg:1.7, gl:7.1, dt:180, pk:2 };
+
+// ───────────────────────────────────────────────
+//  Build tables on page load
+// ───────────────────────────────────────────────
+function buildTable(fmtId) {
+    const table = document.getElementById('table-' + fmtId);
+    const maxVal = fmtId === 'pct' ? 100 : 255;
+    const defaultMid = fmtId === 'pct' ? 50 : 128;
+
+    // Header
+    let html = '<thead><tr>';
+    html += '<th>Phase</th>';
+    html += '<th>Time (s)</th>';
+    SERVOS.forEach(s => {
+        html += `<th>${s}</th>`;
+    });
+    html += '<th class="preview-header">Preview (µs)</th>';
+    html += '</tr></thead><tbody>';
+
+    PHASES.forEach(ph => {
+        if (ph.separator) {
+            html += '<tr class="separator-row"><td colspan="7"></td></tr>';
+            return;
+        }
+
+        const hasTime = ph.hasTime;
+        const defaultTime = DEFAULT_TIMES[ph.key] || 0;
+        html += `<tr>`;
+        html += `<td class="phase-name${hasTime ? ' has-time' : ''}">${ph.label}</td>`;
+
+        // Time cell
+        if (hasTime) {
+            html += `<td><input type="number" id="${fmtId}-${ph.key}-time" value="${defaultTime}" min="0" max="9999" step="0.01" placeholder="s" oninput="refreshPreviews('${fmtId}')"></td>`;
+        } else {
+            html += `<td class="no-time"><input type="number" disabled placeholder="—"></td>`;
+        }
+
+        // Servo cells
+        SERVOS.forEach(s => {
+            const sKey = s.toLowerCase();
+            html += `<td><input type="number" id="${fmtId}-${ph.key}-${sKey}" value="${defaultMid}" min="0" max="${maxVal}" step="1" oninput="refreshPreviews('${fmtId}')"></td>`;
+        });
+
+        // Preview cell (µs, read-only)
+        html += `<td><input class="preview-cell" type="text" id="${fmtId}-${ph.key}-preview" readonly tabindex="-1"></td>`;
+        html += '</tr>';
+    });
+
+    html += '</tbody>';
+    table.innerHTML = html;
+    refreshPreviews(fmtId);
+}
+
+// ───────────────────────────────────────────────
+//  Conversion helpers
+// ───────────────────────────────────────────────
+function toUs(value, fmt, minUs, maxUs) {
+    const v = parseFloat(value);
+    if (isNaN(v)) return 1500;
+    const span = maxUs - minUs;
+    let us;
+    if (fmt === 'pct') {
+        us = minUs + (v * span / 100);
+    } else { // byte
+        us = minUs + (v * span / 255);
+    }
+    return Math.round(Math.max(500, Math.min(2500, us)));
+}
+
+function refreshPreviews(fmtId) {
+    const minUs = parseInt(document.getElementById(fmtId + '-min').value) || 500;
+    const maxUs = parseInt(document.getElementById(fmtId + '-max').value) || 2500;
+
+    PHASES.forEach(ph => {
+        if (ph.separator) return;
+        const previewEl = document.getElementById(`${fmtId}-${ph.key}-preview`);
+        if (!previewEl) return;
+
+        const parts = [];
+        SERVOS.forEach(s => {
+            const sKey = s.toLowerCase();
+            const el = document.getElementById(`${fmtId}-${ph.key}-${sKey}`);
+            if (el) {
+                parts.push(toUs(el.value, fmtId, minUs, maxUs));
+            }
+        });
+        previewEl.value = parts.join(' / ');
+    });
+}
+
+// ───────────────────────────────────────────────
+//  Build output JSON
+// ───────────────────────────────────────────────
+function buildJson(fmtId) {
+    const minUs = parseInt(document.getElementById(fmtId + '-min').value) || 500;
+    const maxUs = parseInt(document.getElementById(fmtId + '-max').value) || 2500;
+    const presetName = (document.getElementById(fmtId + '-name').value || 'Converted').substring(0, 20);
+
+    const timers = {};
+
+    PHASES.forEach(ph => {
+        if (ph.separator) return;
+
+        const t = {};
+
+        if (ph.hasTime) {
+            const timeEl = document.getElementById(`${fmtId}-${ph.key}-time`);
+            t.time = timeEl ? (parseFloat(timeEl.value) || 0) : 0;
+        }
+
+        SERVOS.forEach(s => {
+            const sKey = s.toLowerCase();
+            const el = document.getElementById(`${fmtId}-${ph.key}-${sKey}`);
+            t[sKey] = el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
+        });
+
+        timers[ph.key] = t;
+    });
+
+    return {
+        settings: {
+            'model-class':           'F1A',
+            'firmware-version':      '1.20',
+            'ru-servo-pin':          1,
+            'tl-servo-pin':          2,
+            'ww-servo-pin':          3,
+            'ww2-servo-pin':         0,
+            'selected-preset-index': 1
+        },
+        presets: [{
+            'preset-name':  presetName,
+            'preset-index': 1,
+            'strobe-value': 81,
+            timers: timers
+        }]
+    };
+}
+
+// ───────────────────────────────────────────────
+//  Download
+// ───────────────────────────────────────────────
+function doConvert(fmtId) {
+    const json = buildJson(fmtId);
+    const str = JSON.stringify(json, null, 2);
+    const blob = new Blob([str], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const presetName = json.presets[0]['preset-name'].replace(/\s+/g, '_');
+    a.href = url;
+    a.download = `flexitimer_${presetName}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('✓ JSON downloaded!');
+}
+
+// ───────────────────────────────────────────────
+//  Toast
+// ───────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ───────────────────────────────────────────────
+//  Format selection
+// ───────────────────────────────────────────────
+let currentFormat = null;
+const SOON_FORMATS = ['bmt', 'sidus', 'mk', 'fx10'];
+
+function selectFormat(fmtId) {
+    if (SOON_FORMATS.includes(fmtId)) {
+        // still show the coming-soon panel
+        setActiveFormat(fmtId);
+        return;
+    }
+    setActiveFormat(fmtId);
+}
+
+function setActiveFormat(fmtId) {
+    // Update cards
+    document.querySelectorAll('.format-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    const cards = document.querySelectorAll('.format-card');
+    const formatOrder = ['pct', 'byte', 'bmt', 'sidus', 'mk', 'fx10'];
+    const idx = formatOrder.indexOf(fmtId);
+    if (idx !== -1 && cards[idx]) cards[idx].classList.add('active');
+
+    // Update panels
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('panel-' + fmtId);
+    if (panel) panel.classList.add('active');
+
+    currentFormat = fmtId;
+}
+
+// ───────────────────────────────────────────────
+//  Init
+// ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    buildTable('pct');
+    buildTable('byte');
+    // Default: select 0-100
+    selectFormat('pct');
+});
+</script>
+</body>
+</html>

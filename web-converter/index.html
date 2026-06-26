@@ -65,7 +65,7 @@
         }
 
         .content {
-            max-width: 800px;
+            max-width: 860px;
             margin: 0 auto;
             padding: 20px 16px;
         }
@@ -208,46 +208,100 @@
             gap: 7px;
         }
 
-        /* Options row */
-        .options-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        /* Servo range table */
+        .servo-range-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-bottom: 4px;
         }
-        @media (min-width: 480px) {
-            .options-row { grid-template-columns: repeat(3, 1fr); }
-        }
-        .option-group label {
-            display: block;
+        .servo-range-table th {
             font-size: 11px;
             font-weight: 700;
-            color: var(--text-soft);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            color: var(--text-faint);
+            padding: 4px 8px 8px;
+            text-align: center;
         }
-        .option-group input[type="number"],
-        .option-group input[type="text"] {
+        .servo-range-table th:first-child { text-align: left; }
+        .servo-range-table td {
+            padding: 4px 6px;
+            vertical-align: middle;
+        }
+        .servo-range-table td.servo-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--amber);
+            width: 44px;
+            white-space: nowrap;
+        }
+        .servo-range-table input[type="number"] {
             width: 100%;
             background: var(--surface2);
             border: 1.5px solid var(--border);
             border-radius: var(--radius-sm);
             color: var(--text);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            padding: 9px 10px;
+            padding: 8px 8px;
+            text-align: center;
             -webkit-appearance: none;
             appearance: none;
             -moz-appearance: textfield;
         }
-        .option-group input:focus {
+        .servo-range-table input[type="number"]:focus {
             outline: none;
             border-color: var(--amber);
             box-shadow: 0 0 0 3px rgba(255,215,0,0.12);
         }
-        .option-group input::-webkit-outer-spin-button,
-        .option-group input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .servo-range-table input[type="number"]::-webkit-outer-spin-button,
+        .servo-range-table input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        .inverted-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--blue);
+            background: rgba(74,158,255,0.12);
+            border: 1px solid rgba(74,158,255,0.3);
+            border-radius: 4px;
+            padding: 1px 5px;
+            white-space: nowrap;
+        }
+        .servo-range-table td.status-cell {
+            width: 70px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        /* Name row */
+        .name-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .name-row label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .name-row input[type="text"] {
+            flex: 1;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 10px;
+        }
+        .name-row input[type="text"]:focus {
+            outline: none;
+            border-color: var(--amber);
+        }
 
         /* Timer grid */
         .grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
@@ -255,7 +309,7 @@
         table.timer-table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 460px;
+            min-width: 520px;
         }
         table.timer-table thead th {
             background: var(--surface2);
@@ -324,7 +378,7 @@
             background: transparent;
             border-color: transparent;
             color: var(--text-soft);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: default;
             pointer-events: none;
@@ -379,13 +433,6 @@
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
-        }
-
-        /* Divider */
-        .divider {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 20px 0;
         }
 
         /* Note */
@@ -452,20 +499,21 @@
     <!-- ═══════════════ 0-100 PANEL ═══════════════ -->
     <div id="panel-pct" class="panel">
         <div class="converter-card">
-            <h2>⚙️ Conversion Options</h2>
-            <div class="options-row">
-                <div class="option-group">
-                    <label>Servo Min (µs)</label>
-                    <input type="number" id="pct-min" value="500" min="500" max="2400" oninput="refreshPreviews('pct')">
-                </div>
-                <div class="option-group">
-                    <label>Servo Max (µs)</label>
-                    <input type="number" id="pct-max" value="2500" min="600" max="2500" oninput="refreshPreviews('pct')">
-                </div>
-                <div class="option-group">
-                    <label>Preset Name</label>
-                    <input type="text" id="pct-name" value="Converted" maxlength="20">
-                </div>
+            <h2>⚙️ Servo Ranges &amp; Options</h2>
+            <table class="servo-range-table">
+                <thead>
+                    <tr>
+                        <th>Servo</th>
+                        <th>Min (µs)</th>
+                        <th>Max (µs)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="pct-ranges"></tbody>
+            </table>
+            <div class="name-row">
+                <label>Preset Name</label>
+                <input type="text" id="pct-name" value="Converted" maxlength="20">
             </div>
         </div>
 
@@ -477,26 +525,27 @@
         </div>
 
         <button class="convert-btn" onclick="doConvert('pct')">⬇️ Convert &amp; Download JSON</button>
-        <p class="note">Formula: µs = min + (value × (max − min) / 100) — output is always µs, clamped to 500–2500</p>
+        <p class="note">Formula: µs = min + (value × (max − min) / 100) — if min &gt; max the servo is inverted</p>
     </div>
 
     <!-- ═══════════════ 0-255 PANEL ═══════════════ -->
     <div id="panel-byte" class="panel">
         <div class="converter-card">
-            <h2>⚙️ Conversion Options</h2>
-            <div class="options-row">
-                <div class="option-group">
-                    <label>Servo Min (µs)</label>
-                    <input type="number" id="byte-min" value="500" min="500" max="2400" oninput="refreshPreviews('byte')">
-                </div>
-                <div class="option-group">
-                    <label>Servo Max (µs)</label>
-                    <input type="number" id="byte-max" value="2500" min="600" max="2500" oninput="refreshPreviews('byte')">
-                </div>
-                <div class="option-group">
-                    <label>Preset Name</label>
-                    <input type="text" id="byte-name" value="Converted" maxlength="20">
-                </div>
+            <h2>⚙️ Servo Ranges &amp; Options</h2>
+            <table class="servo-range-table">
+                <thead>
+                    <tr>
+                        <th>Servo</th>
+                        <th>Min (µs)</th>
+                        <th>Max (µs)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="byte-ranges"></tbody>
+            </table>
+            <div class="name-row">
+                <label>Preset Name</label>
+                <input type="text" id="byte-name" value="Converted" maxlength="20">
             </div>
         </div>
 
@@ -508,7 +557,7 @@
         </div>
 
         <button class="convert-btn" onclick="doConvert('byte')">⬇️ Convert &amp; Download JSON</button>
-        <p class="note">Formula: µs = min + (value × (max − min) / 255) — output is always µs, clamped to 500–2500</p>
+        <p class="note">Formula: µs = min + (value × (max − min) / 255) — if min &gt; max the servo is inverted</p>
     </div>
 
     <!-- ═══════════════ COMING SOON PANELS ═══════════════ -->
@@ -561,8 +610,7 @@ const PHASES = [
     { key: 'str',  label: 'Str',  hasTime: false },
     { key: 'cir',  label: 'Cir',  hasTime: false },
     { key: 'ola',  label: 'OLA',  hasTime: false },
-    // separator
-    { key: '_sep1', label: '', separator: true },
+    { key: '_sep1', separator: true },
     { key: 'pu1',  label: 'Pu1',  hasTime: false },
     { key: 'pu2',  label: 'Pu2',  hasTime: true  },
     { key: 'cr1',  label: 'Cr1',  hasTime: true  },
@@ -573,58 +621,87 @@ const PHASES = [
     { key: 'bu3',  label: 'Bu3',  hasTime: true  },
     { key: 'fg',   label: 'Fg',   hasTime: true  },
     { key: 'gl',   label: 'GL',   hasTime: true  },
-    // separator
-    { key: '_sep2', label: '', separator: true },
+    { key: '_sep2', separator: true },
     { key: 'dt',   label: 'DT',   hasTime: true  },
     { key: 'pk',   label: 'Pk',   hasTime: true  },
 ];
 
-const SERVOS = ['RU', 'TL', 'WW', 'WW2'];
+const SERVOS = ['ru', 'tl', 'ww', 'ww2'];
+const SERVO_LABELS = { ru: 'RU', tl: 'TL', ww: 'WW', ww2: 'WW2' };
 const DEFAULT_TIMES = { pu2:0.03, cr1:0.1, cr2:0.4, cr3:0.7, bu1:0.7, bu2:0.5, bu3:1.1, fg:1.7, gl:7.1, dt:180, pk:2 };
 
 // ───────────────────────────────────────────────
-//  Build tables on page load
+//  Build per-servo range rows
+// ───────────────────────────────────────────────
+function buildRanges(fmtId) {
+    const tbody = document.getElementById(fmtId + '-ranges');
+    let html = '';
+    SERVOS.forEach(s => {
+        html += `<tr>
+            <td class="servo-label">${SERVO_LABELS[s]}</td>
+            <td><input type="number" id="${fmtId}-${s}-min" value="500" min="500" max="2500"
+                oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
+            <td><input type="number" id="${fmtId}-${s}-max" value="2500" min="500" max="2500"
+                oninput="onRangeChange('${fmtId}','${s}')" step="1"></td>
+            <td class="status-cell" id="${fmtId}-${s}-status">—</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+function onRangeChange(fmtId, servo) {
+    updateStatusBadge(fmtId, servo);
+    refreshPreviews(fmtId);
+}
+
+function updateStatusBadge(fmtId, servo) {
+    const minVal = parseInt(document.getElementById(`${fmtId}-${servo}-min`).value);
+    const maxVal = parseInt(document.getElementById(`${fmtId}-${servo}-max`).value);
+    const cell = document.getElementById(`${fmtId}-${servo}-status`);
+    if (!cell) return;
+    if (isNaN(minVal) || isNaN(maxVal)) { cell.innerHTML = ''; return; }
+    if (minVal > maxVal) {
+        cell.innerHTML = '<span class="inverted-badge">Inverted</span>';
+    } else {
+        cell.innerHTML = '<span style="color:var(--text-faint);font-size:11px;">Normal</span>';
+    }
+}
+
+// ───────────────────────────────────────────────
+//  Build main timer table
 // ───────────────────────────────────────────────
 function buildTable(fmtId) {
     const table = document.getElementById('table-' + fmtId);
     const maxVal = fmtId === 'pct' ? 100 : 255;
     const defaultMid = fmtId === 'pct' ? 50 : 128;
 
-    // Header
     let html = '<thead><tr>';
     html += '<th>Phase</th>';
     html += '<th>Time (s)</th>';
-    SERVOS.forEach(s => {
-        html += `<th>${s}</th>`;
-    });
+    SERVOS.forEach(s => { html += `<th>${SERVO_LABELS[s]}</th>`; });
     html += '<th class="preview-header">Preview (µs)</th>';
     html += '</tr></thead><tbody>';
 
     PHASES.forEach(ph => {
         if (ph.separator) {
-            html += '<tr class="separator-row"><td colspan="7"></td></tr>';
+            html += `<tr class="separator-row"><td colspan="${2 + SERVOS.length + 1}"></td></tr>`;
             return;
         }
-
         const hasTime = ph.hasTime;
         const defaultTime = DEFAULT_TIMES[ph.key] || 0;
         html += `<tr>`;
         html += `<td class="phase-name${hasTime ? ' has-time' : ''}">${ph.label}</td>`;
 
-        // Time cell
         if (hasTime) {
-            html += `<td><input type="number" id="${fmtId}-${ph.key}-time" value="${defaultTime}" min="0" max="9999" step="0.01" placeholder="s" oninput="refreshPreviews('${fmtId}')"></td>`;
+            html += `<td><input type="number" id="${fmtId}-${ph.key}-time" value="${defaultTime}" min="0" max="9999" step="0.01" oninput="refreshPreviews('${fmtId}')"></td>`;
         } else {
             html += `<td class="no-time"><input type="number" disabled placeholder="—"></td>`;
         }
 
-        // Servo cells
         SERVOS.forEach(s => {
-            const sKey = s.toLowerCase();
-            html += `<td><input type="number" id="${fmtId}-${ph.key}-${sKey}" value="${defaultMid}" min="0" max="${maxVal}" step="1" oninput="refreshPreviews('${fmtId}')"></td>`;
+            html += `<td><input type="number" id="${fmtId}-${ph.key}-${s}" value="${defaultMid}" min="0" max="${maxVal}" step="1" oninput="refreshPreviews('${fmtId}')"></td>`;
         });
 
-        // Preview cell (µs, read-only)
         html += `<td><input class="preview-cell" type="text" id="${fmtId}-${ph.key}-preview" readonly tabindex="-1"></td>`;
         html += '</tr>';
     });
@@ -637,6 +714,14 @@ function buildTable(fmtId) {
 // ───────────────────────────────────────────────
 //  Conversion helpers
 // ───────────────────────────────────────────────
+function getServoRange(fmtId, servo) {
+    const minEl = document.getElementById(`${fmtId}-${servo}-min`);
+    const maxEl = document.getElementById(`${fmtId}-${servo}-max`);
+    const minUs = minEl ? (parseInt(minEl.value) || 500) : 500;
+    const maxUs = maxEl ? (parseInt(maxEl.value) || 2500) : 2500;
+    return { minUs, maxUs };
+}
+
 function toUs(value, fmt, minUs, maxUs) {
     const v = parseFloat(value);
     if (isNaN(v)) return 1500;
@@ -644,28 +729,23 @@ function toUs(value, fmt, minUs, maxUs) {
     let us;
     if (fmt === 'pct') {
         us = minUs + (v * span / 100);
-    } else { // byte
+    } else {
         us = minUs + (v * span / 255);
     }
+    // Clamp to valid servo range regardless of direction
     return Math.round(Math.max(500, Math.min(2500, us)));
 }
 
 function refreshPreviews(fmtId) {
-    const minUs = parseInt(document.getElementById(fmtId + '-min').value) || 500;
-    const maxUs = parseInt(document.getElementById(fmtId + '-max').value) || 2500;
-
     PHASES.forEach(ph => {
         if (ph.separator) return;
         const previewEl = document.getElementById(`${fmtId}-${ph.key}-preview`);
         if (!previewEl) return;
 
-        const parts = [];
-        SERVOS.forEach(s => {
-            const sKey = s.toLowerCase();
-            const el = document.getElementById(`${fmtId}-${ph.key}-${sKey}`);
-            if (el) {
-                parts.push(toUs(el.value, fmtId, minUs, maxUs));
-            }
+        const parts = SERVOS.map(s => {
+            const { minUs, maxUs } = getServoRange(fmtId, s);
+            const el = document.getElementById(`${fmtId}-${ph.key}-${s}`);
+            return el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
         });
         previewEl.value = parts.join(' / ');
     });
@@ -675,28 +755,21 @@ function refreshPreviews(fmtId) {
 //  Build output JSON
 // ───────────────────────────────────────────────
 function buildJson(fmtId) {
-    const minUs = parseInt(document.getElementById(fmtId + '-min').value) || 500;
-    const maxUs = parseInt(document.getElementById(fmtId + '-max').value) || 2500;
     const presetName = (document.getElementById(fmtId + '-name').value || 'Converted').substring(0, 20);
-
     const timers = {};
 
     PHASES.forEach(ph => {
         if (ph.separator) return;
-
         const t = {};
-
         if (ph.hasTime) {
             const timeEl = document.getElementById(`${fmtId}-${ph.key}-time`);
             t.time = timeEl ? (parseFloat(timeEl.value) || 0) : 0;
         }
-
         SERVOS.forEach(s => {
-            const sKey = s.toLowerCase();
-            const el = document.getElementById(`${fmtId}-${ph.key}-${sKey}`);
-            t[sKey] = el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
+            const { minUs, maxUs } = getServoRange(fmtId, s);
+            const el = document.getElementById(`${fmtId}-${ph.key}-${s}`);
+            t[s] = el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
         });
-
         timers[ph.key] = t;
     });
 
@@ -755,31 +828,15 @@ function showToast(msg) {
 // ───────────────────────────────────────────────
 let currentFormat = null;
 const SOON_FORMATS = ['bmt', 'sidus', 'mk', 'fx10'];
+const FORMAT_ORDER  = ['pct', 'byte', 'bmt', 'sidus', 'mk', 'fx10'];
 
 function selectFormat(fmtId) {
-    if (SOON_FORMATS.includes(fmtId)) {
-        // still show the coming-soon panel
-        setActiveFormat(fmtId);
-        return;
-    }
-    setActiveFormat(fmtId);
-}
-
-function setActiveFormat(fmtId) {
-    // Update cards
-    document.querySelectorAll('.format-card').forEach(card => {
-        card.classList.remove('active');
+    document.querySelectorAll('.format-card').forEach((card, i) => {
+        card.classList.toggle('active', FORMAT_ORDER[i] === fmtId);
     });
-    const cards = document.querySelectorAll('.format-card');
-    const formatOrder = ['pct', 'byte', 'bmt', 'sidus', 'mk', 'fx10'];
-    const idx = formatOrder.indexOf(fmtId);
-    if (idx !== -1 && cards[idx]) cards[idx].classList.add('active');
-
-    // Update panels
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     const panel = document.getElementById('panel-' + fmtId);
     if (panel) panel.classList.add('active');
-
     currentFormat = fmtId;
 }
 
@@ -787,9 +844,14 @@ function setActiveFormat(fmtId) {
 //  Init
 // ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
+    buildRanges('pct');
+    buildRanges('byte');
     buildTable('pct');
     buildTable('byte');
-    // Default: select 0-100
+    // Init status badges
+    ['pct', 'byte'].forEach(fmtId => {
+        SERVOS.forEach(s => updateStatusBadge(fmtId, s));
+    });
     selectFormat('pct');
 });
 </script>

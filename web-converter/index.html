@@ -180,6 +180,13 @@
             background: transparent; border-color: transparent; color: var(--text-soft);
             font-size: 11px; cursor: default; pointer-events: none;
         }
+        table.tt input.prev.out-of-range {
+            color: var(--red); font-weight: 800;
+        }
+        .range-warn {
+            font-size: 11px; color: var(--red); margin-top: 6px; display: none;
+        }
+        .range-warn.visible { display: block; }
         table.tt td.nt { background: rgba(0,0,0,.18); }
         table.tt td.nt input { background: transparent; border-color: transparent; color: var(--text-faint); cursor: default; pointer-events: none; }
 
@@ -557,6 +564,7 @@
         <div class="card">
             <h2>✏️ Enter Servo Values (0–100)</h2>
             <div class="grid-wrap"><table class="tt" id="table-pct"></table></div>
+            <p class="range-warn" id="pct-range-warn">⚠️ Some converted values fall outside the safe servo range (500–2500 µs). These are shown in red.</p>
         </div>
         <div class="btn-row">
             <button class="btn-secondary" onclick="doConvert('pct','download')">⬇️ Download JSON</button>
@@ -579,6 +587,7 @@
         <div class="card">
             <h2>✏️ Enter Servo Values (0–255)</h2>
             <div class="grid-wrap"><table class="tt" id="table-byte"></table></div>
+            <p class="range-warn" id="byte-range-warn">⚠️ Some converted values fall outside the safe servo range (500–2500 µs). These are shown in red.</p>
         </div>
         <div class="btn-row">
             <button class="btn-secondary" onclick="doConvert('byte','download')">⬇️ Download JSON</button>
@@ -1132,20 +1141,27 @@ function toUs(value, fmt, minUs, maxUs) {
     const v = parseFloat(value);
     if (isNaN(v)) return 1500;
     const us = minUs + v * (maxUs - minUs) / (fmt === 'pct' ? 100 : 255);
-    return Math.round(Math.max(500, Math.min(2500, us)));
+    return Math.round(us); // no clamping — caller checks range
 }
 
 function refreshPreviews(fmtId) {
+    let anyOutOfRange = false;
     PHASES.forEach(ph => {
         if (ph.sep) return;
         const pre = document.getElementById(`${fmtId}-${ph.key}-preview`);
         if (!pre) return;
-        pre.value = SERVOS.map(s => {
+        const parts = SERVOS.map(s => {
             const { minUs, maxUs } = getServoRange(fmtId, s);
             const el = document.getElementById(`${fmtId}-${ph.key}-${s}`);
             return el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
-        }).join(' / ');
+        });
+        const rowOutOfRange = parts.some(us => us < 500 || us > 2500);
+        if (rowOutOfRange) anyOutOfRange = true;
+        pre.value = parts.join(' / ');
+        pre.classList.toggle('out-of-range', rowOutOfRange);
     });
+    const warn = document.getElementById(`${fmtId}-range-warn`);
+    if (warn) warn.classList.toggle('visible', anyOutOfRange);
 }
 
 function doConvert(fmtId, action) {

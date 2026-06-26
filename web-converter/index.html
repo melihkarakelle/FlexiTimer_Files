@@ -1068,7 +1068,7 @@ function loadPresetIntoEditor(preset) {
 function commitCurrentPreset() {
     if (!editorJson || !editorJson.presets[currentPresetIdx]) return;
     const preset = editorJson.presets[currentPresetIdx];
-    preset['preset-name'] = document.getElementById('e-preset-name').value || ('Preset '+(currentPresetIdx+1));
+    preset['preset-name'] = document.getElementById('e-preset-name').value || ('Preset '+(preset['preset-index']||currentPresetIdx+1));
     preset['strobe-value'] = readStrobeValue();
     const timers = {};
     PHASES.forEach(ph => {
@@ -1095,10 +1095,11 @@ function addPreset() {
     commitCurrentPreset();
     const nextIdx = (editorJson.presets.reduce((m,p) => Math.max(m, p['preset-index']||0), 0)) + 1;
     const newP = makeDefaultPreset(nextIdx);
+    newP['preset-name'] = 'Preset ' + nextIdx;
     editorJson.presets.push(newP);
     currentPresetIdx = editorJson.presets.length - 1;
     buildPresetTabs();
-    selectPreset(currentPresetIdx);
+    loadPresetIntoEditor(editorJson.presets[currentPresetIdx]);
 }
 
 function deleteCurrentPreset() {

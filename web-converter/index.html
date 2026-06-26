@@ -372,6 +372,65 @@
                     <div class="fg"><label>RDT Rx Pin</label><select id="e-rdt-rx-pin"></select></div>
                 </div>
 
+                <!-- Pin Header Layout diagram -->
+                <div style="margin-top:12px;">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Pin Header Layout</div>
+                    <svg id="pin-diagram-svg" viewBox="15 15 270 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"
+                         style="width:100%;height:auto;max-width:100%;display:block;background:var(--surface2);border-radius:var(--radius-sm);padding:6px;">
+                        <!-- Header Outline -->
+                        <rect x="20" y="20" width="260" height="110" rx="5" ry="5" fill="#333" stroke="#555" stroke-width="2"/>
+                        <!-- Top Row: S6, S4, S2 -->
+                        <rect x="30"  y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="40"  y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="55"  y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="65"  y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="80"  y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="90"  y="44" font-size="12" text-anchor="middle" fill="#000">S6</text>
+                        <text x="55"  y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s6-label"></text>
+
+                        <rect x="110" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="120" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="135" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="145" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="160" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="170" y="44" font-size="12" text-anchor="middle" fill="#000">S4</text>
+                        <text x="135" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s4-label"></text>
+
+                        <rect x="190" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="200" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="215" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="225" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="240" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="250" y="44" font-size="12" text-anchor="middle" fill="#000">S2</text>
+                        <text x="215" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s2-label"></text>
+
+                        <!-- Bottom Row: S5, S3, S1 -->
+                        <rect x="30"  y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="40"  y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="55"  y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="65"  y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="80"  y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="90"  y="94" font-size="12" text-anchor="middle" fill="#000">S5</text>
+                        <text x="55"  y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s5-label"></text>
+
+                        <rect x="110" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="120" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="135" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="145" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="160" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="170" y="94" font-size="12" text-anchor="middle" fill="#000">S3</text>
+                        <text x="135" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s3-label"></text>
+
+                        <rect x="190" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
+                        <text x="200" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
+                        <rect x="215" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
+                        <text x="225" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
+                        <rect x="240" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                        <text x="250" y="94" font-size="12" text-anchor="middle" fill="#000">S1</text>
+                        <text x="215" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s1-label"></text>
+                    </svg>
+                </div>
+
                 <hr class="div">
                 <div style="font-size:12px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Hook Configuration</div>
                 <div class="row2">
@@ -695,7 +754,7 @@ function loadJsonIntoEditor(json) {
     sv('e-max-distance-value',  s['max-distance-value']  ?? 1000);
     sv('e-flip-loop-detection', s['flip-loop-detection'] ?? 0);
 
-    updateHookSections();
+    updateHookSections(); // also calls updatePinDiagram()
     buildPresetTabs();
     selectPreset(0);
     buildStrobeBits();
@@ -713,6 +772,45 @@ function updateHookSections() {
         const el = document.getElementById('hs-'+t);
         if (el) el.classList.toggle('visible', t === type);
     });
+    updatePinDiagram();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Pin Header Diagram
+// ─────────────────────────────────────────────────────────────
+function updatePinDiagram() {
+    // Clear all labels S1–S6
+    for (let i = 1; i <= 6; i++) {
+        const el = document.getElementById(`pd-s${i}-label`);
+        if (el) el.textContent = '';
+    }
+
+    function setPinLabel(pin, text) {
+        if (!pin || isNaN(pin) || pin < 1 || pin > 6) return;
+        const el = document.getElementById(`pd-s${pin}-label`);
+        if (el) el.textContent = text;
+    }
+
+    function gp(id) { const e = document.getElementById(id); return e ? parseInt(e.value) : 0; }
+
+    setPinLabel(gp('e-ru-servo-pin'),  'RU Servo');
+    setPinLabel(gp('e-tl-servo-pin'),  'TL Servo');
+    setPinLabel(gp('e-ww-servo-pin'),  'WW Servo');
+    setPinLabel(gp('e-ww2-servo-pin'), 'WW2 Servo');
+    setPinLabel(gp('e-rdt-rx-pin'),    'RDT Rx');
+
+    const hookType = document.getElementById('e-hook-type')?.value;
+    if (hookType === '2switch') {
+        setPinLabel(gp('e-hook-sw1-pin-2s'), 'Hook SW1');
+        setPinLabel(gp('e-hook-sw2-pin-2s'), 'Hook SW2');
+    } else if (hookType === '2switch_servo') {
+        setPinLabel(gp('e-hook-sw1-pin-2ss'),   'Hook SW1');
+        setPinLabel(gp('e-hook-sw2-pin-2ss'),   'Hook SW2');
+        setPinLabel(gp('e-hook-servo-pin-2ss'), 'Hook Servo');
+    } else if (hookType === 'rotary_servo') {
+        setPinLabel(gp('e-encoder-pin'),       'Encoder');
+        setPinLabel(gp('e-hook-servo-pin-rs'), 'Hook Servo');
+    }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1121,6 +1219,19 @@ function selectFormat(fmtId) {
 document.addEventListener('DOMContentLoaded', () => {
     fillAllPinSelects();
     buildStrobeBits();
+
+    // Live pin diagram updates on every pin select change
+    const PIN_SELECT_IDS = [
+        'e-ru-servo-pin','e-tl-servo-pin','e-ww-servo-pin','e-ww2-servo-pin','e-rdt-rx-pin',
+        'e-hook-sw1-pin-2s','e-hook-sw2-pin-2s',
+        'e-hook-sw1-pin-2ss','e-hook-sw2-pin-2ss','e-hook-servo-pin-2ss',
+        'e-encoder-pin','e-hook-servo-pin-rs',
+    ];
+    PIN_SELECT_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', updatePinDiagram);
+    });
+
     buildRanges('pct');
     buildRanges('byte');
     buildConverterTable('pct');

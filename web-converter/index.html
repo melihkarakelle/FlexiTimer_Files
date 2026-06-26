@@ -431,59 +431,121 @@
                 <!-- Pin Header Layout diagram -->
                 <div style="margin-top:12px;">
                     <div style="font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Pin Header Layout</div>
-                    <svg id="pin-diagram-svg" viewBox="15 15 270 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"
-                         style="width:100%;height:auto;max-width:100%;display:block;background:var(--surface2);border-radius:var(--radius-sm);padding:6px;">
-                        <!-- Header Outline -->
-                        <rect x="20" y="20" width="260" height="110" rx="5" ry="5" fill="#333" stroke="#555" stroke-width="2"/>
-                        <!-- Top Row: S6, S4, S2 -->
-                        <rect x="30"  y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="40"  y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="55"  y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="65"  y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="80"  y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="90"  y="44" font-size="12" text-anchor="middle" fill="#000">S6</text>
-                        <text x="55"  y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s6-label"></text>
+                    <!--
+                        viewBox: x=0 y=0 w=300 h=175
+                        Layout:
+                          y=0..14   → "TOP VIEW" label area
+                          y=14..130 → PCB (green board)
+                          y=130..160 → PCB edge stripe + "PCB EDGE" label
+                          y=160..175 → bottom margin
+                    -->
+                    <svg id="pin-diagram-svg" viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg"
+                         preserveAspectRatio="xMidYMid meet"
+                         style="width:100%;height:auto;max-width:100%;display:block;border-radius:var(--radius-sm);border:1px solid var(--border);">
 
-                        <rect x="110" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="120" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="135" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="145" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="160" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="170" y="44" font-size="12" text-anchor="middle" fill="#000">S4</text>
-                        <text x="135" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s4-label"></text>
+                        <!-- ░ PCB background (top portion) -->
+                        <rect x="0" y="0" width="300" height="138" fill="#1a472a"/>
 
-                        <rect x="190" y="30" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="200" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="215" y="30" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="225" y="44" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="240" y="30" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="250" y="44" font-size="12" text-anchor="middle" fill="#000">S2</text>
-                        <text x="215" y="60" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s2-label"></text>
+                        <!-- "TOP VIEW" label top-left -->
+                        <text x="6" y="11" font-size="8" font-family="monospace" font-weight="bold"
+                              fill="#4ade80" letter-spacing="1" opacity="0.7">TOP VIEW</text>
+                        <!-- eye icon hint -->
+                        <text x="272" y="11" font-size="8" font-family="monospace" fill="#4ade80" opacity="0.5">👁</text>
 
-                        <!-- Bottom Row: S5, S3, S1 -->
-                        <rect x="30"  y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="40"  y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="55"  y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="65"  y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="80"  y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="90"  y="94" font-size="12" text-anchor="middle" fill="#000">S5</text>
-                        <text x="55"  y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s5-label"></text>
+                        <!-- ── Connector housing (dark plastic body) ── -->
+                        <rect x="14" y="16" width="272" height="112" rx="5" ry="5" fill="#2a2a2a" stroke="#444" stroke-width="1.5"/>
 
-                        <rect x="110" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="120" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="135" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="145" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="160" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="170" y="94" font-size="12" text-anchor="middle" fill="#000">S3</text>
-                        <text x="135" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s3-label"></text>
+                        <!-- ── PCB copper pads visible under pins (subtle) ── -->
+                        <!-- top row pads -->
+                        <circle cx="40"  cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="63"  cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="88"  cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="120" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="143" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="168" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="200" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="223" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="248" cy="36" r="9" fill="#b87333" opacity="0.35"/>
+                        <!-- bottom row pads -->
+                        <circle cx="40"  cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="63"  cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="88"  cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="120" cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="143" cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="168" cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="200" cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="223" cy="88" r="9" fill="#b87333" opacity="0.35"/>
+                        <circle cx="248" cy="88" r="9" fill="#b87333" opacity="0.35"/>
 
-                        <rect x="190" y="80" width="20" height="20" fill="#000" stroke="#555" stroke-width="1"/>
-                        <text x="200" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">-</text>
-                        <rect x="215" y="80" width="20" height="20" fill="#FF0000" stroke="#000" stroke-width="1"/>
-                        <text x="225" y="94" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFF">+</text>
-                        <rect x="240" y="80" width="20" height="20" fill="#FFD700" stroke="#000" stroke-width="1"/>
-                        <text x="250" y="94" font-size="12" text-anchor="middle" fill="#000">S1</text>
-                        <text x="215" y="110" font-size="10" text-anchor="middle" fill="#FFD700" id="pd-s1-label"></text>
+                        <!-- ── Top Row: S6, S4, S2 ── -->
+                        <!-- S6 group -->
+                        <rect x="30" y="26" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="39"  y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="54" y="26" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="63"  y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="79" y="26" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="88"  y="38" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S6</text>
+                        <text x="63"  y="56" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s6-label"></text>
+
+                        <!-- S4 group -->
+                        <rect x="110" y="26" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="119" y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="134" y="26" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="143" y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="158" y="26" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="167" y="38" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S4</text>
+                        <text x="143" y="56" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s4-label"></text>
+
+                        <!-- S2 group -->
+                        <rect x="190" y="26" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="199" y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="214" y="26" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="223" y="38" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="238" y="26" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="247" y="38" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S2</text>
+                        <text x="223" y="56" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s2-label"></text>
+
+                        <!-- ── Bottom Row: S5, S3, S1 ── -->
+                        <!-- S5 group -->
+                        <rect x="30" y="78" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="39"  y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="54" y="78" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="63"  y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="79" y="78" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="88"  y="90" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S5</text>
+                        <text x="63"  y="108" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s5-label"></text>
+
+                        <!-- S3 group -->
+                        <rect x="110" y="78" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="119" y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="134" y="78" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="143" y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="158" y="78" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="167" y="90" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S3</text>
+                        <text x="143" y="108" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s3-label"></text>
+
+                        <!-- S1 group -->
+                        <rect x="190" y="78" width="18" height="18" rx="2" fill="#111" stroke="#555" stroke-width="1"/>
+                        <text x="199" y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#ddd">−</text>
+                        <rect x="214" y="78" width="18" height="18" rx="2" fill="#c0392b" stroke="#900" stroke-width="1"/>
+                        <text x="223" y="90" font-size="11" text-anchor="middle" font-weight="bold" fill="#fff">+</text>
+                        <rect x="238" y="78" width="18" height="18" rx="2" fill="#e6b800" stroke="#a07a00" stroke-width="1"/>
+                        <text x="247" y="90" font-size="10" text-anchor="middle" font-weight="bold" fill="#111">S1</text>
+                        <text x="223" y="108" font-size="9" text-anchor="middle" fill="#FFD700" id="pd-s1-label"></text>
+
+                        <!-- ── PCB Board Edge zone (bottom) ── -->
+                        <!-- PCB green continues to y=138, then edge stripe -->
+                        <rect x="0" y="138" width="300" height="14" fill="#0f2d17"/>
+                        <!-- yellow board edge line (Altium-style) -->
+                        <line x1="0" y1="138" x2="300" y2="138" stroke="#e6b800" stroke-width="2.5" stroke-dasharray="8,4"/>
+                        <!-- "PCB EDGE" label -->
+                        <text x="150" y="148" font-size="8" font-family="monospace" font-weight="bold"
+                              text-anchor="middle" fill="#e6b800" letter-spacing="1.5" opacity="0.85">▼  PCB EDGE  ▼</text>
+
+                        <!-- ── Light grey area below edge (air / outside PCB) ── -->
+                        <rect x="0" y="152" width="300" height="18" fill="#d0d4d8"/>
+                        <text x="150" y="163" font-size="7.5" font-family="monospace"
+                              text-anchor="middle" fill="#666" letter-spacing="0.5">connector extends off-board</text>
                     </svg>
                 </div>
 

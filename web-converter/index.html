@@ -1373,33 +1373,38 @@ function refreshPreviews(fmtId) {
 }
 
 function doConvert(fmtId, action) {
-    const presetName = (document.getElementById(fmtId+'-name').value || 'Converted').substring(0,20);
-    const timers = {};
-    PHASES.forEach(ph => {
-        if (ph.sep) return;
-        const t = {};
-        if (ph.hasTime) {
-            const te = document.getElementById(`${fmtId}-${ph.key}-time`);
-            t.time = te ? (parseFloat(te.value) || 0) : 0;
-        }
-        SERVOS.forEach(s => {
-            const { minUs, maxUs } = getServoRange(fmtId, s);
-            const el = document.getElementById(`${fmtId}-${ph.key}-${s}`);
-            t[s] = el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
+    try {
+        const presetName = (document.getElementById(fmtId+'-name').value || 'Converted').substring(0,20);
+        const timers = {};
+        PHASES.forEach(ph => {
+            if (ph.sep) return;
+            const t = {};
+            if (ph.hasTime) {
+                const te = document.getElementById(`${fmtId}-${ph.key}-time`);
+                t.time = te ? (parseFloat(te.value) || 0) : 0;
+            }
+            SERVOS.forEach(s => {
+                const { minUs, maxUs } = getServoRange(fmtId, s);
+                const el = document.getElementById(`${fmtId}-${ph.key}-${s}`);
+                t[s] = el ? toUs(el.value, fmtId, minUs, maxUs) : 1500;
+            });
+            timers[ph.key] = t;
         });
-        timers[ph.key] = t;
-    });
-    const json = {
-        settings: Object.assign(makeDefaultSettings(), {'firmware-version':'1.20','selected-preset-index':1}),
-        presets: [{'preset-name':presetName,'preset-index':1,'strobe-value':81,'timers':timers}]
-    };
-    if (action === 'editor') {
-        loadJsonIntoEditor(json);
-        selectFormat('editor');
-        showToast('✓ Loaded in editor — fill in settings then save');
-    } else {
-        downloadJson(json, `flexitimer_${presetName.replace(/\s+/g,'_')}.json`);
-        showToast('✓ JSON downloaded!');
+        const json = {
+            settings: Object.assign(makeDefaultSettings(), {'firmware-version':'1.20','selected-preset-index':1}),
+            presets: [{'preset-name':presetName,'preset-index':1,'strobe-value':81,'timers':timers}]
+        };
+        if (action === 'editor') {
+            loadJsonIntoEditor(json);
+            selectFormat('editor');
+            showToast('✓ Loaded in editor — fill in settings then save');
+        } else {
+            downloadJson(json, `flexitimer_${presetName.replace(/\s+/g,'_')}.json`);
+            showToast('✓ JSON downloaded!');
+        }
+    } catch(err) {
+        showToast('⚠️ Error: ' + err.message);
+        console.error('doConvert error:', err);
     }
 }
 

@@ -413,7 +413,7 @@
                 <h2>⚙️ Device Settings</h2>
                 <div class="row2">
                     <div class="fg"><label>Model Name</label><input type="text" id="e-model-name" maxlength="30" placeholder="e.g. My F1A Model"></div>
-                    <div class="fg"><label>Firmware Version</label><input type="text" id="e-firmware-version" readonly style="background:var(--surface3);color:var(--text-soft);cursor:default;border-style:dashed;"></div>
+                    <div class="fg"><label>Firmware Version</label><span id="e-firmware-version" style="font-size:14px;font-weight:700;color:var(--text-soft);padding:2px 0;display:block;"></span></div>
                 </div>
 
                 <hr class="div">
@@ -833,7 +833,8 @@ function loadJsonIntoEditor(json) {
     // Settings fields
     function sv(id, val) { const el=document.getElementById(id); if(el) el.value = (val !== undefined ? val : ''); }
     sv('e-model-name',          s['model-name']          || '');
-    sv('e-firmware-version',    s['firmware-version']    || '1.20');
+    const fwEl = document.getElementById('e-firmware-version');
+    if (fwEl) fwEl.textContent = s['firmware-version'] || '1.20';
     fillPinSelect(document.getElementById('e-ru-servo-pin'),   s['ru-servo-pin']   ?? 1);
     fillPinSelect(document.getElementById('e-tl-servo-pin'),   s['tl-servo-pin']   ?? 3);
     fillPinSelect(document.getElementById('e-ww-servo-pin'),   s['ww-servo-pin']   ?? 5);
@@ -1189,7 +1190,7 @@ function collectSettings() {
     const hookType = gv('e-hook-type');
     const s = {
         'model-name':           gv('e-model-name'),
-        'firmware-version':     gv('e-firmware-version') || '1.20',
+        'firmware-version':     (document.getElementById('e-firmware-version')?.textContent || '1.20'),
         'ru-servo-pin':         gi('e-ru-servo-pin'),
         'tl-servo-pin':         gi('e-tl-servo-pin'),
         'ww-servo-pin':         gi('e-ww-servo-pin'),

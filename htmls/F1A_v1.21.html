@@ -1167,34 +1167,6 @@
         </div>
     </div>
 
-    <!-- Servo Value Out of Range Modal -->
-    <div id="servoRangeModal" class="modal-overlay">
-        <div class="modal-dialog-conflict">
-            <div class="modal-header-conflict">
-                <span class="modal-icon-conflict">⚠️</span>
-                <h3 class="modal-title-conflict">Value Out of Range!</h3>
-            </div>
-            <div class="modal-body-conflict">
-                <div class="modal-msg-text">
-                    The value you entered is outside the valid range.
-                </div>
-
-                <div class="conflict-detail">
-                    <strong>Entered:</strong> <span class="conflict-pin" id="servoEnteredValue"></span>
-                    <br>
-                    <strong>Valid Range:</strong> <span class="conflict-component" id="servoValidRange"></span>
-                </div>
-
-                <div class="modal-reverted-block">
-                    ✓ Reverted to: <span class="conflict-reverted" id="servoRevertedValue"></span>
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-conflict" onclick="closeServoRangeModal()">OK, Got it</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Time Sequence Error Modal -->
     <div id="timeSequenceModal" class="modal-overlay">
         <div class="modal-dialog-conflict">
@@ -2039,23 +2011,6 @@
     phases.forEach(phase => updateTimerRowDisabledState(phase));
   }
 
-  // JSON Schema Validation
-  function validateDeviceJson(json) {
-    try {
-      if (!json || typeof json !== 'object') return false;
-      // New structure: {settings: {...}, presets: [...]}
-      if (!json.settings || typeof json.settings !== 'object') return false;
-      if (!Array.isArray(json.presets) || json.presets.length === 0) return false;
-      for (var i = 0; i < json.presets.length; i++) {
-        if (typeof json.presets[i]['preset-index'] !== 'number') return false;
-      }
-      return true;
-    } catch (error) {
-      console.error('❌ JSON validation error:', error);
-      return false;
-    }
-  }
-
   // SAVE butonunu yeniden aktif et (Flutter'dan çağrılacak)
   function onSaveComplete(success) {
     document.getElementById('savingOverlay').classList.remove('active');
@@ -2340,18 +2295,6 @@
   // Info modal kapat
   function closeInfoModal() {
     document.getElementById('infoModal').classList.remove('show');
-  }
-
-  // Servo Range Modal fonksiyonları
-  function showServoRangeModal(enteredValue, validRange, revertedValue) {
-    document.getElementById('servoEnteredValue').textContent = enteredValue;
-    document.getElementById('servoValidRange').textContent = validRange;
-    document.getElementById('servoRevertedValue').textContent = revertedValue;
-    document.getElementById('servoRangeModal').classList.add('show');
-  }
-
-  function closeServoRangeModal() {
-    document.getElementById('servoRangeModal').classList.remove('show');
   }
 
   // Time Sequence Modal fonksiyonları
@@ -2952,13 +2895,6 @@
         }
     }
 
-    // Gereksiz sıfırları kaldır
-    function formatNumber(value) {
-        // 2 ondalık basamağa yuvarla, sonra gereksiz sıfırları kaldır
-        const rounded = Math.round(value * 100) / 100;
-        return rounded.toString();
-    }
-
     // Son basamağa göre step hesapla (maksimum 2 ondalık basamak)
     function getSmartStep() {
         // OLA delay/period and release time step in 0.1s (decimal fields), regardless of
@@ -3208,55 +3144,6 @@
     // PK dahil değil (DT fazının sabit süresi)
     const timerPhaseOrder = ['pu2', 'cr1', 'cr2', 'cr3', 'bu1', 'bu2', 'bu3', 'fg', 'gl'];
     // GL: FG fazının süresi (interval), dönüşüme dahil
-
-    // Interval değerlerini Absolute'e dönüştür
-    function intervalToAbsolute(intervalValue, phaseKey) {
-        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
-        if (phaseIndex === -1) return intervalValue; // Bilinmeyen phase
-
-        let cumulativeTime = 0;
-
-        // Bu phase'e kadar olan tüm interval'leri topla
-        for (let i = 0; i <= phaseIndex; i++) {
-            const phaseId = timerPhaseOrder[i];
-            const timeInput = document.getElementById(phaseId + '-time');
-            if (timeInput) {
-                const value = parseFloat(timeInput.value) || 0;
-
-                // Son phase ise (yani güncellediğimiz), yeni değeri kullan
-                if (i === phaseIndex) {
-                    cumulativeTime += intervalValue;
-                } else {
-                    cumulativeTime += value;
-                }
-            }
-        }
-
-        return cumulativeTime;
-    }
-
-    // Absolute değeri Interval'e dönüştür
-    function absoluteToInterval(absoluteValue, phaseKey) {
-        const phaseIndex = timerPhaseOrder.indexOf(phaseKey);
-        if (phaseIndex === -1) return absoluteValue; // Bilinmeyen phase
-
-        // Bir önceki phase'in absolute değerini bul
-        let previousAbsolute = 0;
-
-        if (phaseIndex > 0) {
-            // Önceki tüm interval'leri topla
-            for (let i = 0; i < phaseIndex; i++) {
-                const phaseId = timerPhaseOrder[i];
-                const timeInput = document.getElementById(phaseId + '-time');
-                if (timeInput) {
-                    previousAbsolute += parseFloat(timeInput.value) || 0;
-                }
-            }
-        }
-
-        // Interval = Absolute - Önceki Absolute
-        return absoluteValue - previousAbsolute;
-    }
 
     // Tüm time input'ları yeni mode'a dönüştür
     function convertAllTimeInputs(newMode) {

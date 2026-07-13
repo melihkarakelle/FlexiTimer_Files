@@ -1,10 +1,10 @@
 {
   "firmwares": [
    {
-      "firmware_name": "F1A Firmware v1.21",
-      "firmware_code": "F1A_121",
-      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/F1A_v1_21.zip",
-      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/F1A_v1.21.html",
+      "firmware_name": "F1A Firmware v1.22",
+      "firmware_code": "F1A_122",
+      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/F1A_v1_22.zip",
+      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/F1A_v1.22.html",
       "firmware_type": "firmware"
     },
    {

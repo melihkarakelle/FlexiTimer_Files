@@ -2809,7 +2809,13 @@
         }
 
         // Value is always µs directly
-        var pwmUs = Math.max(500, Math.min(2500, numValue));
+        if (numValue < 500 || numValue > 2500) {
+            showNumberError('⚠️ Out of range! Valid: 500–2500 µs');
+            testBtn.classList.add('test-error');
+            setTimeout(function() { testBtn.classList.remove('test-error'); }, 800);
+            return;
+        }
+        var pwmUs = Math.round(numValue);
 
         try {
             FormChannel.postMessage(JSON.stringify({ SET_SERVO_POS: { servo: info.servoName, value: pwmUs } }));
@@ -2828,7 +2834,11 @@
     function testHookServo(inputId, btn) {
         var el = document.getElementById(inputId);
         if (!el) return;
-        var us = Math.max(500, Math.min(2500, parseInt(el.value) || 1500));
+        var us = parseInt(el.value);
+        if (isNaN(us) || us < 500 || us > 2500) {
+            if (btn) { btn.classList.add('test-error'); setTimeout(function(){ btn.classList.remove('test-error'); }, 800); }
+            return;
+        }
         try {
             FormChannel.postMessage(JSON.stringify({ SET_SERVO_POS: { servo: 'hook', value: us } }));
             if (btn) { btn.classList.add('test-success'); setTimeout(function(){ btn.classList.remove('test-success'); }, 600); }

@@ -332,6 +332,75 @@
 
         /* ---------- Strobe pattern ---------- */
         .strobe-pattern { margin: 8px 0 2px; }
+        /* "Disable strobe" — label left, toggle switch right, in a subtle card */
+        .strobe-disable-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 10px auto 2px;
+            max-width: 320px;
+            padding: 8px 14px;
+            background: var(--field);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+        }
+        .strobe-disable-label {
+            font-weight: 600;
+            border-bottom-style: dotted;
+        }
+        /* iOS-style toggle switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+            flex: 0 0 auto;
+            margin: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            background: #b6c0cc;
+            border-radius: 26px;
+            transition: background 0.2s ease;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        /* ON = strobe disabled → red, as a "turned off / danger" cue */
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--c-red);
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+        .toggle-switch input:focus-visible + .toggle-slider {
+            box-shadow: 0 0 0 3px rgba(45,125,210,0.35);
+        }
+        /* Greyed-out pattern checkboxes + LED when the strobe is disabled */
+        .checkbox-group input[type="checkbox"]:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        .strobe-container.strobe-off {
+            opacity: 0.55;
+        }
         .strobe-container {
             display: flex;
             flex-direction: row;
@@ -1609,6 +1678,17 @@
                     </div>
                     <input type="hidden" id="strobe-value" name="strobe-value" value="81">
                 </div>
+                <!-- Disable strobe entirely. A disabled strobe is just strobe-value = 0 (no bit
+                     ever lights), so this needs no firmware change — it only forces the pattern
+                     to 0 and greys out the checkboxes. The last non-zero pattern is remembered
+                     so unchecking restores it. Label left, toggle switch right. -->
+                <div class="strobe-disable-row">
+                    <span class="info-label strobe-disable-label" onclick="showFunctionInfo('strobe-disable')">Disable strobe</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="strobe-disable" name="strobe-disable" onchange="onStrobeDisableChange()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
 
                 <!-- OLA timing — PER-PRESET (#6). Tail servo ramp (delay before + period of
                      the STR→OLA tail move). 0 = instant. Other servos always go instantly. -->
@@ -2559,6 +2639,51 @@
             updateStrobeAnimation(); // LED animasyonunu güncelle
         });
     });
+
+    // Remembers the last non-zero pattern so unchecking "Disable strobe" can restore it
+    // instead of coming back as a blank pattern. Seeded to the default 81 (01010001).
+    var lastStrobePattern = 81;
+
+    // "Disable strobe" toggle. Disabled = pattern 0 (nothing lights). Checked: remember the
+    // current pattern, zero it out, grey out the bit checkboxes. Unchecked: restore the pattern.
+    function onStrobeDisableChange() {
+        var disabled = document.getElementById('strobe-disable').checked;
+        var bits = document.querySelectorAll('input[name="strobe-bit"]');
+        var container = document.querySelector('.strobe-container');
+
+        if (disabled) {
+            var cur = parseInt(document.getElementById('strobe-value').value) || 0;
+            if (cur !== 0) lastStrobePattern = cur;   // keep only real patterns
+            bits.forEach(function(cb) { cb.checked = false; cb.disabled = true; });
+            document.getElementById('strobe-value').value = 0;
+        } else {
+            bits.forEach(function(cb) {
+                cb.disabled = false;
+                cb.checked = (lastStrobePattern & parseInt(cb.value)) !== 0;  // value = bit weight
+            });
+            document.getElementById('strobe-value').value = lastStrobePattern;
+        }
+        if (container) container.classList.toggle('strobe-off', disabled);
+        updateStrobeAnimation();
+    }
+
+    // Sync the disable checkbox + checkbox enabled-state to a strobe-value (called on load).
+    // strobe-value 0 → disabled+checked; non-zero → enabled, remembered as the last pattern.
+    function syncStrobeDisableUI() {
+        var val = parseInt(document.getElementById('strobe-value').value) || 0;
+        var disableBox = document.getElementById('strobe-disable');
+        var bits = document.querySelectorAll('input[name="strobe-bit"]');
+        var container = document.querySelector('.strobe-container');
+        if (val === 0) {
+            if (disableBox) disableBox.checked = true;
+            bits.forEach(function(cb) { cb.disabled = true; });
+        } else {
+            lastStrobePattern = val;
+            if (disableBox) disableBox.checked = false;
+            bits.forEach(function(cb) { cb.disabled = false; });
+        }
+        if (container) container.classList.toggle('strobe-off', val === 0);
+    }
 
     // Strobe LED animasyonu için değişkenler
     let strobeInterval;
@@ -3753,6 +3878,11 @@
                     }
                 }
 
+                // Sync the "Disable strobe" checkbox (strobe-value 0 → disabled) before animating.
+                if (typeof syncStrobeDisableUI === 'function') {
+                    syncStrobeDisableUI();
+                }
+
                 // Strobe LED animasyonunu güncelle
                 if (typeof updateStrobeAnimation === 'function') {
                     updateStrobeAnimation();
@@ -3928,6 +4058,11 @@
             icon: '🔁',
             title: 'Reverse MS2 (Hall Switch)',
             description: 'Reverses the sense of the second switch (MS2) for 2-switch hooks.\n\nMany models use Hall-effect switches where MS2 is closed when latched and open when un-latched — the opposite of a standard mechanical switch.\n\nEnable this if your MS2 reads inverted.'
+        },
+        'strobe-disable': {
+            icon: '🚫',
+            title: 'Disable Strobe',
+            description: 'Turns the strobe beacon off completely for this preset.\n\nWhen checked, the strobe pattern is set to empty (nothing flashes) and the pattern checkboxes are greyed out. Unchecking restores your previous pattern.\n\nUse this for models where a strobe is not wanted, or to save power. Per-preset — you can disable the strobe on one preset and keep it on another.\n\nNote: the DT locator flash (on RDT / de-thermalization) is separate and still works.'
         },
         'ola-delay': {
             icon: '⏲️',

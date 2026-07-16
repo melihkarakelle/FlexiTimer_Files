@@ -2499,6 +2499,8 @@
 
     // Preset'e özgü alanları currentPreset'e kaydet
     currentPreset['strobe-value'] = parseInt(document.getElementById('strobe-value').value);
+    // Explicit strobe-disable flag (firmware skips all in-flight beacon strobe events when true).
+    currentPreset['strobe-disable'] = document.getElementById('strobe-disable').checked;
     // OLA delay/period are now PER-PRESET (#6) — each preset keeps its own tail ramp timing.
     currentPreset['ola-delay']  = parseFloat(document.getElementById('ola-delay').value)  || 0;
     currentPreset['ola-period'] = parseFloat(document.getElementById('ola-period').value) || 0;
@@ -2667,22 +2669,19 @@
         updateStrobeAnimation();
     }
 
-    // Sync the disable checkbox + checkbox enabled-state to a strobe-value (called on load).
-    // strobe-value 0 → disabled+checked; non-zero → enabled, remembered as the last pattern.
-    function syncStrobeDisableUI() {
+    // Sync the disable toggle + pattern enabled-state on load.
+    // Disabled if the explicit flag is true OR (legacy presets) strobe-value is 0.
+    // When enabled, remember the pattern; when disabled, pattern shows greyed + off.
+    function syncStrobeDisableUI(explicitDisable) {
         var val = parseInt(document.getElementById('strobe-value').value) || 0;
+        var disabled = (explicitDisable === true) || (val === 0);
         var disableBox = document.getElementById('strobe-disable');
         var bits = document.querySelectorAll('input[name="strobe-bit"]');
         var container = document.querySelector('.strobe-container');
-        if (val === 0) {
-            if (disableBox) disableBox.checked = true;
-            bits.forEach(function(cb) { cb.disabled = true; });
-        } else {
-            lastStrobePattern = val;
-            if (disableBox) disableBox.checked = false;
-            bits.forEach(function(cb) { cb.disabled = false; });
-        }
-        if (container) container.classList.toggle('strobe-off', val === 0);
+        if (!disabled && val !== 0) lastStrobePattern = val;   // keep only real patterns
+        if (disableBox) disableBox.checked = disabled;
+        bits.forEach(function(cb) { cb.disabled = disabled; });
+        if (container) container.classList.toggle('strobe-off', disabled);
     }
 
     // Strobe LED animasyonu için değişkenler
@@ -3878,9 +3877,12 @@
                     }
                 }
 
-                // Sync the "Disable strobe" checkbox (strobe-value 0 → disabled) before animating.
+                // Explicit "strobe-disable" flag wins; older presets without it fall back to
+                // "strobe-value == 0 means disabled". Pass it through so the toggle + greying
+                // are set correctly (and a disabled preset with value 0 is handled).
+                var explicitDisable = (presetData['strobe-disable'] === true);
                 if (typeof syncStrobeDisableUI === 'function') {
-                    syncStrobeDisableUI();
+                    syncStrobeDisableUI(explicitDisable);
                 }
 
                 // Strobe LED animasyonunu güncelle

@@ -36,6 +36,13 @@
       "firmware_type": "firmware"
     },
     {
+      "firmware_name": "SkyLink2.4G Firmware v1.25",
+      "firmware_code": "SkyLink24_125",
+      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/SkyLink24_v1_25.zip",
+      "html_link": "",
+      "firmware_type": "firmware"
+    },
+    {
       "firmware_name": "SkyLink2.4G Firmware v1.1",
       "firmware_code": "SkyLink24",
       "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/SkyLink24_v1_1.zip",

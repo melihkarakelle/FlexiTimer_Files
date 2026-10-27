@@ -1963,55 +1963,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- GPS Beacon (AltiLoc-compatible, received by FlexiDisplay) -->
-            <div class="section" id="section-beacon">
-                <h2>GPS Beacon</h2>
-                <div class="option-row">
-                    <label for="beacon-channel" class="info-label" onclick="showFunctionInfo('beacon-channel')">Beacon Channel:</label>
-                    <select id="beacon-channel" name="beacon-channel">
-                        <option value="0">Ch 0 — 434.000 MHz</option>
-                        <option value="1">Ch 1 — 434.025 MHz</option>
-                        <option value="2">Ch 2 — 434.050 MHz</option>
-                        <option value="3">Ch 3 — 434.075 MHz</option>
-                        <option value="4">Ch 4 — 434.100 MHz</option>
-                        <option value="5">Ch 5 — 434.125 MHz</option>
-                        <option value="6">Ch 6 — 434.150 MHz</option>
-                        <option value="7">Ch 7 — 434.175 MHz</option>
-                        <option value="8">Ch 8 — 434.200 MHz</option>
-                        <option value="9">Ch 9 — 434.225 MHz</option>
-                        <option value="10" selected>Ch 10 — 434.250 MHz</option>
-                        <option value="11">Ch 11 — 434.275 MHz</option>
-                        <option value="12">Ch 12 — 434.300 MHz</option>
-                        <option value="13">Ch 13 — 434.325 MHz</option>
-                        <option value="14">Ch 14 — 434.350 MHz</option>
-                        <option value="15">Ch 15 — 434.375 MHz</option>
-                        <option value="16">Ch 16 — 434.400 MHz</option>
-                        <option value="17">Ch 17 — 434.425 MHz</option>
-                        <option value="18">Ch 18 — 434.450 MHz</option>
-                        <option value="19">Ch 19 — 434.475 MHz</option>
-                        <option value="20">Ch 20 — 434.500 MHz</option>
-                        <option value="21">Ch 21 — 434.525 MHz</option>
-                        <option value="22">Ch 22 — 434.550 MHz</option>
-                        <option value="23">Ch 23 — 434.575 MHz</option>
-                        <option value="24">Ch 24 — 434.600 MHz</option>
-                        <option value="25">Ch 25 — 434.625 MHz</option>
-                        <option value="26">Ch 26 — 434.650 MHz</option>
-                        <option value="27">Ch 27 — 434.675 MHz</option>
-                        <option value="28">Ch 28 — 434.700 MHz</option>
-                        <option value="29">Ch 29 — 434.725 MHz</option>
-                        <option value="30">Ch 30 — 434.750 MHz</option>
-                        <option value="31">Ch 31 — 434.775 MHz</option>
-                        <option value="32">Ch 32 — 434.800 MHz</option>
-                        <option value="33">Ch 33 — 434.825 MHz</option>
-                        <option value="34">Ch 34 — 434.850 MHz</option>
-                        <option value="35">Ch 35 — 434.875 MHz</option>
-                        <option value="36">Ch 36 — 434.900 MHz</option>
-                        <option value="37">Ch 37 — 434.925 MHz</option>
-                        <option value="38">Ch 38 — 434.950 MHz</option>
-                        <option value="39">Ch 39 — 434.975 MHz</option>
-                    </select>
-                </div>
             </div>
         </div>
 
@@ -2606,7 +2557,7 @@
     s['ww-servo-pin']        = parseInt(document.getElementById('ww-servo-pin').value);
     s['ww2-servo-pin']       = parseInt(document.getElementById('ww2-servo-pin').value);
     delete s['rdt-rx-pin'];  // v2.00: external RDT Rx removed (RDT comes from the built-in 433 MHz receiver)
-    s['beacon-channel']      = parseInt(document.getElementById('beacon-channel').value);
+    delete s['beacon-channel'];  // hardware setting — set in the app's Device Settings, not here
     s['hook-type']           = document.getElementById('hook-type').value;
     var hookSw1Elem = document.getElementById('hook-sw1-pin');
     s['hook-sw1-pin']        = hookSw1Elem ? parseInt(hookSw1Elem.value) : -1;
@@ -4108,11 +4059,6 @@
             icon: '🎚️',
             title: 'WW2 Servo (Wing 2)',
             description: 'Second wing servo for F1A Flapper models with dual wing control.\n\nFlapper models use two wing servos to control independent wing surfaces for enhanced flight control and stability.\n\nThis servo typically mirrors or complements WW servo movements for coordinated wing control.\n\nPin assignment determines which hardware output channel controls this servo. Required for Flapper configurations.'
-        },
-        'beacon-channel': {
-            icon: '📍',
-            title: 'GPS Beacon Channel',
-            description: 'The timer transmits an AltiLoc-compatible GPS beacon on 433 MHz, so a FlexiDisplay can track the model (position, altitude, climb/sink, battery) without a separate GPS beacon.\n\nChannel N = 434.000 MHz + N × 25 kHz (Ch 10 = 434.250 MHz, the default). Set the FlexiDisplay to the same channel.\n\nThe beacon sends on every new GPS fix, when the altitude changes, and at least every 4 seconds (8 seconds on a low battery).'
         },
         'time-mode': {
             icon: '⏱️',

@@ -1,0 +1,4 @@
+{
+  "_comment": "Firmware catalogue for the LoRa timer (hardware nRF52832-v3-LoRa, firmware v2.xx), read by app builds after 1.0.2+18. Newest entry first. Every entry must name its hardware; the app hides entries for any other hardware. ftlist.json stays the v1.x (2.4 GHz) catalogue for older apps.",
+  "firmwares": []
+}

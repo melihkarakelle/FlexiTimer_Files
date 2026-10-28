@@ -1780,6 +1780,16 @@
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+                <!-- Desk mode — a DEVICE setting (settings['desk-mode'], 1/0, default on), shown here next
+                     to the strobe. On the ground (not launched, not in PARK, below 5 m) the timer plays the
+                     buzzer at 1/10 volume and the blue LED + strobe at 5 % brightness. -->
+                <div class="strobe-disable-row">
+                    <span class="info-label strobe-disable-label" onclick="showFunctionInfo('desk-mode')">Desk mode</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="desk-mode" name="desk-mode" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
 
                 <!-- OLA timing — PER-PRESET (#6). Tail servo ramp (delay before + period of
                      the STR→OLA tail move). 0 = instant. Other servos always go instantly. -->
@@ -2746,6 +2756,8 @@
     s['max-altitude-value']  = parseFloat(document.getElementById('max-altitude-value').value);
     s['max-distance-value']  = parseFloat(document.getElementById('max-distance-value').value);
     s['flip-loop-detection'] = document.getElementById('flip-loop-detection').checked ? 1 : 0;
+    var deskElem = document.getElementById('desk-mode');
+    s['desk-mode']           = (deskElem && !deskElem.checked) ? 0 : 1;
     s['time-mode']           = window.currentTimeMode || 'interval';
 
     // Timers - nested structure
@@ -2852,8 +2864,17 @@
     }
   }
 
+    // At most STROBE_MAX_ON of the 8 steps may be lit: the strobe is a pulse beacon, not a lamp
+    // (an all-on pattern would also hold the LED + its 10 Ω resistor on continuously).
+    var STROBE_MAX_ON = 5;
     document.querySelectorAll('input[name="strobe-bit"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
+            var onCount = document.querySelectorAll('input[name="strobe-bit"]:checked').length;
+            if (this.checked && onCount > STROBE_MAX_ON) {
+                this.checked = false;
+                showMessage('⚠️', 'Strobe pattern', 'At most ' + STROBE_MAX_ON + ' of the 8 steps can be on. Switch one off first.');
+                return;
+            }
             let value = 0;
             document.querySelectorAll('input[name="strobe-bit"]').forEach(cb => {
                 if (cb.checked) {
@@ -4164,6 +4185,10 @@
                 }
             }
 
+            // Desk mode defaults to ON: settings without the key (older timers) show it switched on.
+            var deskBox = document.getElementById('desk-mode');
+            if (deskBox) deskBox.checked = !(presetData['desk-mode'] === 0 || presetData['desk-mode'] === '0' || presetData['desk-mode'] === false);
+
             // OLA delay/period are PER-PRESET (#6): restore each preset's own values.
             // These inputs are static (not rebuilt by updateHookOptions), so set here.
             if (presetData['ola-delay'] !== undefined && document.getElementById('ola-delay'))
@@ -4368,6 +4393,11 @@
             icon: '🔁',
             title: 'Reverse MS2 (Hall Switch)',
             description: 'Reverses the sense of the second switch (MS2) for 2-switch hooks.\n\nMany models use Hall-effect switches where MS2 is closed when latched and open when un-latched — the opposite of a standard mechanical switch.\n\nEnable this if your MS2 reads inverted.'
+        },
+        'desk-mode': {
+            icon: '🤫',
+            title: 'Desk Mode',
+            description: 'Keeps the timer quiet and dim while you work on it at the table.\n\nWhen on, and the model is on the ground (not launched, not in PARK, less than 5 m above where it was switched on), the buzzer plays at 1/10 volume and the blue LED and strobe light at 5 % brightness.\n\nFrom launch, in PARK and above 5 m everything is at full volume and brightness again. The low-battery warning is always at full volume.\n\nDevice setting (applies to all presets). On by default.'
         },
         'strobe-disable': {
             icon: '🚫',

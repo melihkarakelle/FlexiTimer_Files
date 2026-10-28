@@ -195,6 +195,12 @@
             box-shadow: var(--shadow);
         }
         input[type="submit"]:active { transform: scale(0.99); }
+        /* Disabled while the timer would refuse a save (phone too far / model in flight). */
+        input[type="submit"]:disabled {
+            background-color: #9aa6b2;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
         .checkbox-label {
             display: flex;
@@ -2186,10 +2192,30 @@
   // Called by the app when the save sequence has ended. success = the timer confirmed every write
   // (it restarts now). On failure [message] says why; the form keeps all edits, so SAVE can simply
   // be pressed again and sends the same values.
+  // Link status pushed by the app (app 1.0.2+22, every ~2 s while the form is open): can the timer be
+  // changed from here right now? Shown on the SAVE button itself, which is disabled when the phone
+  // is too far or the model is in flight. Until the app reports anything, SAVE works as before.
+  var linkState = { canSave: true, label: '' };
+  var saveBusy = false;     // saving, or showing a result — the button text belongs to that meanwhile
+
+  function onLinkStatusUpdate(canSave, label) {
+    linkState = { canSave: !!canSave, label: label || '' };
+    if (!saveBusy) renderSaveButton();
+  }
+
+  function renderSaveButton() {
+    var b = document.querySelector('input[type="submit"]');
+    if (!b) return;
+    b.style.backgroundColor = '';
+    b.disabled = !linkState.canSave;
+    b.value = linkState.label || 'SAVE';
+  }
+
   function onSaveComplete(success, message) {
     document.getElementById('savingOverlay').classList.remove('active');
     var saveButton = document.querySelector('input[type="submit"]');
     saveButton.disabled = false;
+    saveBusy = true;
 
     if (success) {
       saveButton.value = 'SAVED ✓';
@@ -2202,8 +2228,8 @@
       savedMappingSnapshot = readServoMapping();
       refreshServoTestAvailability();
       setTimeout(function() {
-        saveButton.value = 'SAVE';
-        saveButton.style.backgroundColor = '';
+        saveBusy = false;
+        renderSaveButton();
       }, 2000);
     } else {
       saveButton.value = 'SAVE FAILED ✗';
@@ -2211,8 +2237,8 @@
       var reason = (message || 'The save did not complete').replace(/[.\s]+$/, '');
       setSaveStatus('error', reason + '. Your changes are still here — press SAVE to try again.');
       setTimeout(function() {
-        saveButton.value = 'SAVE';
-        saveButton.style.backgroundColor = '';
+        saveBusy = false;
+        renderSaveButton();
       }, 3000);
     }
   }
@@ -2848,6 +2874,7 @@
       };
 
       setSaveStatus('', '');
+      saveBusy = true;
       saveButton.disabled = true;
       saveButton.value = 'SAVING...';
       document.getElementById('savingOverlay').classList.add('active');

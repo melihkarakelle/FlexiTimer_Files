@@ -1788,7 +1788,7 @@
                 </div>
                 <!-- Desk mode — a DEVICE setting (settings['desk-mode'], 1/0, default on), shown here next
                      to the strobe. On the ground (not launched, not in PARK, below 5 m) the timer plays the
-                     buzzer at 1/10 volume and the blue LED + strobe at 5 % brightness. -->
+                     buzzer at 1/10 volume and the strobe at 5 % brightness (status LED not dimmed). -->
                 <div class="strobe-disable-row">
                     <span class="info-label strobe-disable-label" onclick="showFunctionInfo('desk-mode')">Desk mode</span>
                     <label class="toggle-switch">
@@ -4424,7 +4424,7 @@
         'desk-mode': {
             icon: '🤫',
             title: 'Desk Mode',
-            description: 'Keeps the timer quiet and dim while you work on it at the table.\n\nWhen on, and the model is on the ground (not launched, not in PARK, less than 5 m above where it was switched on), the buzzer plays at 1/10 volume and the blue LED and strobe light at 5 % brightness.\n\nFrom launch, in PARK and above 5 m everything is at full volume and brightness again. The low-battery warning is always at full volume.\n\nDevice setting (applies to all presets). On by default.'
+            description: 'Keeps the timer quiet and dim while you work on it at the table.\n\nWhen on, and the model is on the ground (not launched, not in PARK, less than 5 m above where it was switched on), the buzzer plays at 1/10 volume and the strobe lights at 5 % brightness (the small status LED is not dimmed).\n\nFrom launch, in PARK and above 5 m everything is at full volume and brightness again. The low-battery warning is always at full volume.\n\nDevice setting (applies to all presets). On by default.'
         },
         'strobe-disable': {
             icon: '🚫',

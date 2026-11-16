@@ -1,4 +1,13 @@
 {
   "_comment": "Firmware catalogue for the LoRa timer (hardware nRF52832-v3-LoRa, firmware v2.xx), read by app builds after 1.0.2+18. Newest entry first. Every entry must name its hardware; the app hides entries for any other hardware. ftlist.json stays the v1.x (2.4 GHz) catalogue for older apps.",
-  "firmwares": []
+  "firmwares": [
+    {
+      "firmware_name": "F1A Firmware v2.02",
+      "firmware_code": "F1A_202",
+      "firmware_link": "https://github.com/melihkarakelle/FlexiTimer_Files/raw/main/firmwares/F1A_v2_02.zip",
+      "html_link": "https://raw.githubusercontent.com/melihkarakelle/FlexiTimer_Files/main/htmls/F1A_v2.02.html",
+      "firmware_type": "firmware",
+      "hardware": "nRF52832-v3-LoRa"
+    }
+  ]
 }
